@@ -1,0 +1,98 @@
+type FundingProject @entity {
+  id: ID! # the NFT Registry Address (ERC-721 address)
+  projectName: String
+  projectOwner: Bytes! # address
+  dripsTokenTemplate: Bytes! # addess of ERC-721 contract used
+  blockTimestampCreated: BigInt!
+  daiCollected: BigInt!
+  daiSplit: BigInt!
+  tokenTypes: [TokenType!]! @derivedFrom(field: "fundingProject")
+  tokens: [Token!]! @derivedFrom(field: "fundingProject")
+  ipfsHash: String
+}
+
+type TokenType @entity {
+  id: ID! # the ERC-721 address + "-" + the tokenID
+  tokenRegistryAddress: Bytes!
+  tokenTypeId: BigInt!
+  streaming: Boolean!
+  limit: BigInt!
+  minAmtPerSec: BigInt!
+  fundingProject: FundingProject!
+  ipfsHash: String
+  currentTotalAmtPerSec: BigInt!
+  currentTotalGiven: BigInt!
+}
+
+type Token @entity {
+  id: ID! # the tokenId
+  tokenId: BigInt!
+  tokenRegistryAddress: Bytes!
+  tokenType: TokenType!
+  tokenReceiver: Bytes! # address
+  rank: BigInt!
+  amtPerSec: BigInt!
+  giveAmt: BigInt!
+  fundingProject: FundingProject!
+}
+
+type DripsConfig @entity {
+  id: ID! # user
+  lastUpdatedBlockTimestamp: BigInt!
+  dripsEntryIDs: [String!]!
+  dripsEntries: [DripsEntry!]! @derivedFrom(field: "dripsConfig")
+  dripsAccount: [DripsAccount!]! @derivedFrom(field: "dripsConfig")
+  balance: BigInt! # the balance of the main account (for detailed sub-account balances, query DripsAccount)
+}
+
+type DripsAccount @entity {
+  id: ID! # user + ["-" + account if present]
+  lastUpdatedBlockTimestamp: BigInt!
+  dripsConfig: DripsConfig!
+  dripsEntries: [DripsEntry!]! @derivedFrom(field: "dripsAccount")
+  isAccountDrip: Boolean! # true if this is a sub-account
+  account: BigInt! # the sub-account (if isAccountDrip == true)
+  balance: BigInt!
+}
+
+type DripsEntry @entity {
+  id: ID! # user + "-" + receiver + ["-" + account if present]
+  user: Bytes! # the user's address
+  dripsConfig: DripsConfig!
+  dripsAccount: DripsAccount!
+  isAccountDrip: Boolean! # true if this is an account Drip, false otherwise
+  account: BigInt! # the user's account
+  receiver: Bytes! # the receiver's address
+  amtPerSec: BigInt!
+}
+
+type SplitsConfig @entity {
+  id: ID! # user
+  lastUpdatedBlockTimestamp: BigInt!
+  receiverAddresses: [String!]!
+  splitsEntries: [SplitsEntry!]! @derivedFrom(field: "splitsConfig")
+}
+
+type SplitsEntry @entity {
+  id: ID! # user + "-" + receiver
+  splitsConfig: SplitsConfig!
+  sender: Bytes! # the user's address
+  receiver: Bytes! # the receiver's address
+  weight: BigInt!
+}
+
+type Give @entity {
+  id: ID! # the transaction hash
+  sender: Bytes!
+  isAccountGive: Boolean! # true if this is a sub-account
+  account: BigInt! # the sub-account (if isAccountDrip == true)
+  receiver: Bytes!
+  amount: BigInt!
+  blockTimestampGiven: BigInt!
+}
+
+type IdentityMetaData @entity {
+  id: ID! # the address
+  key: Bytes!
+  multiHash: Bytes!
+}

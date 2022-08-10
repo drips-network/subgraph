@@ -1,0 +1,105 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: MetaData
+    network: {{network}}
+    source:
+      address: "{{metaData.address}}"
+      abi: MetaData
+      startBlock: {{metaData.block}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - IdentityMetaData
+      abis:
+        - name: MetaData
+          file: ./abis/MetaData.json
+      eventHandlers:
+        - event: MultiHash(indexed address,indexed bytes32,bytes)
+          handler: handleIdentityMetaData
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: RadicleRegistry
+    network: {{network}}
+    source:
+      address: "{{radicleRegistry.address}}"
+      abi: RadicleRegistry
+      startBlock: {{radicleRegistry.block}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FundingProject
+      abis:
+        - name: RadicleRegistry
+          file: ./abis/RadicleRegistry.json
+        - name: DripsToken
+          file: ./abis/DripsToken.json
+      eventHandlers:
+        - event: NewProject(address,indexed address,indexed address,string)
+          handler: handleNewProject
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: DaiDripsHub
+    network: {{network}}
+    source:
+      address: "{{daiDripsHub.address}}"
+      abi: DaiDripsHub
+      startBlock: {{daiDripsHub.block}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - DaiDripsHub
+      abis:
+        - name: DaiDripsHub
+          file: ./abis/DaiDripsHub.json
+      eventHandlers:
+        - event: Collected(indexed address,uint128,uint128)
+          handler: handleCollected
+        - event: SplitsUpdated(indexed address,(address,uint32)[])
+          handler: handleSplitsUpdated
+        - event: DripsUpdated(indexed address,uint128,(address,uint128)[])
+          handler: handleDripsUpdated
+        - event: DripsUpdated(indexed address,indexed uint256,uint128,(address,uint128)[])
+          handler: handleDripsUpdatedWithAccount
+        - event: Given(indexed address,indexed address,uint128)
+          handler: handleGive
+        - event: Given(indexed address,indexed uint256,indexed address,uint128)
+          handler: handleGiveWithAccount
+      file: ./src/mapping.ts
+templates:
+  - kind: ethereum/contract
+    name: DripsToken
+    network: {{network}}
+    source:
+      abi: DripsToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/funding.ts
+      entities:
+        - FundingProject
+        - TokenType
+        - Token
+      abis:
+        - name: DripsToken
+          file: ./abis/DripsToken.json
+      eventHandlers:
+        - event: NewType(indexed uint128,uint64,uint128,bool,string)
+          handler: handleNewType
+        - event: NewStreamingToken(indexed uint256,indexed address,indexed uint128,uint128,uint128)
+          handler: handleNewStreamingToken
+        - event: NewToken(indexed uint256,indexed address,indexed uint128,uint128)
+          handler: handleNewToken
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: NewContractURI(string)
+          handler: handleNewContractURI

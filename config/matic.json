@@ -1,0 +1,15 @@
+{
+  "network": "matic",
+  "radicleRegistry": {
+    "address": "0x2f91577AC283a57C2AA06dc579d1ce1391151103",
+    "block": 23920443
+  },
+  "daiDripsHub": {
+    "address": "0x8715FA4d3831301Ae46EbF19bE37F7a2CA9655D3",
+    "block": 23920314
+  },
+  "metaData": {
+    "address": "0x1C465B0249Fb7c92896709768b9d4aBD0135DBc9",
+    "block": 23920314
+  }
+}
