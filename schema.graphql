@@ -1,98 +1,111 @@
-type FundingProject @entity {
-  id: ID! # the NFT Registry Address (ERC-721 address)
-  projectName: String
-  projectOwner: Bytes! # address
-  dripsTokenTemplate: Bytes! # addess of ERC-721 contract used
-  blockTimestampCreated: BigInt!
-  daiCollected: BigInt!
-  daiSplit: BigInt!
-  tokenTypes: [TokenType!]! @derivedFrom(field: "fundingProject")
-  tokens: [Token!]! @derivedFrom(field: "fundingProject")
-  ipfsHash: String
-}
-
-type TokenType @entity {
-  id: ID! # the ERC-721 address + "-" + the tokenID
-  tokenRegistryAddress: Bytes!
-  tokenTypeId: BigInt!
-  streaming: Boolean!
-  limit: BigInt!
-  minAmtPerSec: BigInt!
-  fundingProject: FundingProject!
-  ipfsHash: String
-  currentTotalAmtPerSec: BigInt!
-  currentTotalGiven: BigInt!
-}
-
-type Token @entity {
-  id: ID! # the tokenId
-  tokenId: BigInt!
-  tokenRegistryAddress: Bytes!
-  tokenType: TokenType!
-  tokenReceiver: Bytes! # address
-  rank: BigInt!
-  amtPerSec: BigInt!
-  giveAmt: BigInt!
-  fundingProject: FundingProject!
-}
-
-type DripsConfig @entity {
-  id: ID! # user
+type User @entity {
+  id: ID! # the userId
+  assetConfigs: [UserAssetConfig!]! @derivedFrom(field: "user")
+  splitsEntryIds: [String!]!
+  splitsEntries: [SplitsEntry!]! @derivedFrom(field: "sender")
+  splitsReceiversHash: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
-  dripsEntryIDs: [String!]!
-  dripsEntries: [DripsEntry!]! @derivedFrom(field: "dripsConfig")
-  dripsAccount: [DripsAccount!]! @derivedFrom(field: "dripsConfig")
-  balance: BigInt! # the balance of the main account (for detailed sub-account balances, query DripsAccount)
 }
 
-type DripsAccount @entity {
-  id: ID! # user + ["-" + account if present]
+type UserAssetConfig @entity {
+  id: ID! # the userId + "-" + assetId
+  user: User!
+  assetId: BigInt!
+  dripsEntryIds: [String!]!
+  dripsEntries: [DripsEntry!]! @derivedFrom(field: "senderAssetConfig")
+  balance: BigInt! # the user's balance for the asset at last top-up
+  assetConfigHash: Bytes!
+  amountCollected: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
-  dripsConfig: DripsConfig!
-  dripsEntries: [DripsEntry!]! @derivedFrom(field: "dripsAccount")
-  isAccountDrip: Boolean! # true if this is a sub-account
-  account: BigInt! # the sub-account (if isAccountDrip == true)
+}
+
+type DripsSetEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: BigInt! # the userId of the sender
+  assetId: BigInt!
+  receiversHash: Bytes! # the hash of the receivers list
   balance: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type HashToDripsSetDetail @entity {
+  id: ID! # receiversHash
+  userId: BigInt! # the sender's userId
+  assetId: BigInt!
+  currentDripsSetEvent: DripsSetEvent!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
+type DripsReceiverSeenEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  receiversHash: Bytes!
+  userId: BigInt! # the receiver's userId
+  config: BigInt!
+  blockTimestamp: BigInt!
 }
 
 type DripsEntry @entity {
-  id: ID! # user + "-" + receiver + ["-" + account if present]
-  user: Bytes! # the user's address
-  dripsConfig: DripsConfig!
-  dripsAccount: DripsAccount!
-  isAccountDrip: Boolean! # true if this is an account Drip, false otherwise
-  account: BigInt! # the user's account
-  receiver: Bytes! # the receiver's address
-  amtPerSec: BigInt!
+  id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
+  sender: User!
+  senderAssetConfig: UserAssetConfig!
+  receiverUserId: BigInt! # the receiver's userId
+  config: BigInt!
 }
 
-type SplitsConfig @entity {
-  id: ID! # user
+type SplitsSetEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: BigInt! # the userId of the sender
+  receiversHash: Bytes! # the hash of the receivers list
+  blockTimestamp: BigInt!
+}
+
+type HashToSplitsSetDetail @entity {
+  id: ID! # receiversHash
+  userId: BigInt! # the sender's userId
   lastUpdatedBlockTimestamp: BigInt!
-  receiverAddresses: [String!]!
-  splitsEntries: [SplitsEntry!]! @derivedFrom(field: "splitsConfig")
+}
+
+type SplitsReceiverSeenEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  receiversHash: Bytes!
+  userId: BigInt! # the receiver's userId
+  weight: BigInt!
+  blockTimestamp: BigInt!
 }
 
 type SplitsEntry @entity {
-  id: ID! # user + "-" + receiver
-  splitsConfig: SplitsConfig!
-  sender: Bytes! # the user's address
-  receiver: Bytes! # the receiver's address
+  id: ID! # sender's userId + "-" + receiver's userId
+  sender: User!
+  receiverUserId: BigInt! # the receiver's userId
   weight: BigInt!
 }
 
-type Give @entity {
-  id: ID! # the transaction hash
-  sender: Bytes!
-  isAccountGive: Boolean! # true if this is a sub-account
-  account: BigInt! # the sub-account (if isAccountDrip == true)
-  receiver: Bytes!
-  amount: BigInt!
-  blockTimestampGiven: BigInt!
+type CollectedEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  user: User!
+  assetId: BigInt!
+  collected: BigInt!
+  blockTimestamp: BigInt!
 }
 
 type IdentityMetaData @entity {
   id: ID! # the address
   key: Bytes!
   multiHash: Bytes!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
+type GivenEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: BigInt!
+  receiverUserId: BigInt! # the receiver's userId
+  assetId: BigInt!
+  amt: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type App @entity {
+  id: ID! # the appId
+  appAddress: Bytes!
+  lastUpdatedBlockTimestamp: BigInt!
 }

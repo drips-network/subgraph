@@ -1,0 +1,11 @@
+{
+  "network": "goerli",
+  "dripsHub": {
+    "address": "0x4FaAB6032dd0264a8e2671F56fd30F69362f31Ad",
+    "block": 7178551
+  },
+  "metaData": {
+    "address": "0xC58cEa5a448A761d2dE80DFa8BfE298780e9dd66",
+    "block": 7178551
+  }
+}
