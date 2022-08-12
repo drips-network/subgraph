@@ -55,6 +55,7 @@ export function handleDripsSet(event: DripsSet): void {
   let user = User.load(userId)
   if (!user) {
     user = new User(userId)
+    user.splitsEntryIds = []
     user.lastUpdatedBlockTimestamp = event.block.timestamp
     user.save()
   }
@@ -162,19 +163,20 @@ export function handleSplitsSet(event: SplitsSet): void {
   let user = User.load(userId)
   if (!user) {
     user = new User(userId)
+    user.splitsEntryIds = []
   } else {
     // If this is an update, we need to delete the old SplitsEntry values and clear the
     // splitsEntryIds field
     if (event.params.receiversHash != user.splitsReceiversHash) {
-      let newDripsEntryIds: string[] = []
-      for (let i = 0; i<user.splitsEntries.length; i++) {
+      let newSplitsEntryIds: string[] = []
+      for (let i = 0; i<user.splitsEntryIds.length; i++) {
         let splitsEntryId = user.splitsEntryIds[i]
         let splitsEntry = SplitsEntry.load(splitsEntryId)
         if (splitsEntry) {
           store.remove('SplitsEntry', splitsEntryId)
         }
       }
-      user.splitsEntryIds = newDripsEntryIds
+      user.splitsEntryIds = newSplitsEntryIds
     }
   }
   user.lastUpdatedBlockTimestamp = event.block.timestamp
@@ -207,6 +209,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   let user = User.load(userId)
   if (!user) {
     user = new User(userId)
+    user.splitsEntryIds = []
     user.lastUpdatedBlockTimestamp = event.block.timestamp
     user.save()
   }
