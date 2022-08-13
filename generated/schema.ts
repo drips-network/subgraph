@@ -519,6 +519,92 @@ export class DripsEntry extends Entity {
   }
 }
 
+export class ReceivedDripsEvent extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("assetId", Value.fromBigInt(BigInt.zero()));
+    this.set("amt", Value.fromBigInt(BigInt.zero()));
+    this.set("receivableCycles", Value.fromBigInt(BigInt.zero()));
+    this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ReceivedDripsEvent entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ReceivedDripsEvent entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ReceivedDripsEvent", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ReceivedDripsEvent | null {
+    return changetype<ReceivedDripsEvent | null>(
+      store.get("ReceivedDripsEvent", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get userId(): BigInt {
+    let value = this.get("userId");
+    return value!.toBigInt();
+  }
+
+  set userId(value: BigInt) {
+    this.set("userId", Value.fromBigInt(value));
+  }
+
+  get assetId(): BigInt {
+    let value = this.get("assetId");
+    return value!.toBigInt();
+  }
+
+  set assetId(value: BigInt) {
+    this.set("assetId", Value.fromBigInt(value));
+  }
+
+  get amt(): BigInt {
+    let value = this.get("amt");
+    return value!.toBigInt();
+  }
+
+  set amt(value: BigInt) {
+    this.set("amt", Value.fromBigInt(value));
+  }
+
+  get receivableCycles(): BigInt {
+    let value = this.get("receivableCycles");
+    return value!.toBigInt();
+  }
+
+  set receivableCycles(value: BigInt) {
+    this.set("receivableCycles", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+}
+
 export class SplitsSetEvent extends Entity {
   constructor(id: string) {
     super();
@@ -782,6 +868,90 @@ export class SplitsEntry extends Entity {
 
   set weight(value: BigInt) {
     this.set("weight", Value.fromBigInt(value));
+  }
+}
+
+export class SplitEvent extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("receiverId", Value.fromBigInt(BigInt.zero()));
+    this.set("assetId", Value.fromBigInt(BigInt.zero()));
+    this.set("amt", Value.fromBigInt(BigInt.zero()));
+    this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save SplitEvent entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save SplitEvent entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("SplitEvent", id.toString(), this);
+    }
+  }
+
+  static load(id: string): SplitEvent | null {
+    return changetype<SplitEvent | null>(store.get("SplitEvent", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get userId(): BigInt {
+    let value = this.get("userId");
+    return value!.toBigInt();
+  }
+
+  set userId(value: BigInt) {
+    this.set("userId", Value.fromBigInt(value));
+  }
+
+  get receiverId(): BigInt {
+    let value = this.get("receiverId");
+    return value!.toBigInt();
+  }
+
+  set receiverId(value: BigInt) {
+    this.set("receiverId", Value.fromBigInt(value));
+  }
+
+  get assetId(): BigInt {
+    let value = this.get("assetId");
+    return value!.toBigInt();
+  }
+
+  set assetId(value: BigInt) {
+    this.set("assetId", Value.fromBigInt(value));
+  }
+
+  get amt(): BigInt {
+    let value = this.get("amt");
+    return value!.toBigInt();
+  }
+
+  set amt(value: BigInt) {
+    this.set("amt", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
   }
 }
 

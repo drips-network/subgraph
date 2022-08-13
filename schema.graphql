@@ -52,6 +52,15 @@ type DripsEntry @entity {
   config: BigInt!
 }
 
+type ReceivedDripsEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: BigInt! # the sender's userId
+  assetId: BigInt!
+  amt: BigInt!
+  receivableCycles: BigInt!
+  blockTimestamp: BigInt!
+}
+
 type SplitsSetEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   userId: BigInt! # the userId of the sender
@@ -78,6 +87,15 @@ type SplitsEntry @entity {
   sender: User!
   receiverUserId: BigInt! # the receiver's userId
   weight: BigInt!
+}
+
+type SplitEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: BigInt! # the sender's userId
+  receiverId: BigInt! # the receiver's userId
+  assetId: BigInt!
+  amt: BigInt!
+  blockTimestamp: BigInt!
 }
 
 type CollectedEvent @entity {

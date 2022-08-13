@@ -1,11 +1,11 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import { MultiHash } from "../generated/MetaData/MetaData"
-import { DripsSet, DripsReceiverSeen, SplitsSet, SplitsReceiverSeen, Given, AppRegistered, AppAddressUpdated} from "../generated/DripsHub/DripsHub"
+import { DripsSet, DripsReceiverSeen, ReceivedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, AppRegistered, AppAddressUpdated} from "../generated/DripsHub/DripsHub"
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
-import { User, DripsEntry, UserAssetConfig, DripsSetEvent, HashToDripsSetDetail, DripsReceiverSeenEvent, SplitsEntry,
-  SplitsSetEvent, HashToSplitsSetDetail, SplitsReceiverSeenEvent, CollectedEvent, IdentityMetaData, GivenEvent, App} from "../generated/schema"
+import { User, DripsEntry, UserAssetConfig, DripsSetEvent, HashToDripsSetDetail, DripsReceiverSeenEvent, ReceivedDripsEvent, SplitsEntry,
+  SplitsSetEvent, HashToSplitsSetDetail, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, IdentityMetaData, GivenEvent, App} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
 export function handleIdentityMetaData(event: MultiHash): void {
@@ -156,6 +156,17 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
 }
 
+export function handleReceivedDrips(event: ReceivedDrips): void {
+
+    let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+    receivedDripsEvent.userId = event.params.userId
+    receivedDripsEvent.assetId = event.params.assetId
+    receivedDripsEvent.amt = event.params.amt
+    receivedDripsEvent.receivableCycles = event.params.receivableCycles
+    receivedDripsEvent.blockTimestamp = event.block.timestamp
+    receivedDripsEvent.save()
+}
+
 export function handleSplitsSet(event: SplitsSet): void {
 
   // If the User doesn't exist, create it
@@ -248,6 +259,17 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   splitsReceiverSeenEvent.save()
 
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
+}
+
+export function handleSplit(event: Split): void {
+
+  let splitEvent = new SplitEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+  splitEvent.userId = event.params.userId
+  splitEvent.receiverId = event.params.receiver
+  splitEvent.assetId = event.params.assetId
+  splitEvent.amt = event.params.amt
+  splitEvent.blockTimestamp = event.block.timestamp
+  splitEvent.save()
 }
 
 export function handleGiven(event: Given): void {
