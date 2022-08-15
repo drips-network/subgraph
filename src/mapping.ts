@@ -67,7 +67,6 @@ export function handleDripsSet(event: DripsSet): void {
     userAssetConfig = new UserAssetConfig(userAssetConfigId)
     userAssetConfig.user = userId
     userAssetConfig.assetId = event.params.assetId
-    userAssetConfig.balance = new BigInt(0)
     userAssetConfig.dripsEntryIds = []
   } else {
     // If this is an update, we need to delete the old DripsEntry values and clear the
@@ -84,6 +83,7 @@ export function handleDripsSet(event: DripsSet): void {
       userAssetConfig.dripsEntryIds = newDripsEntryIds
     }
   }
+  userAssetConfig.balance = event.params.balance
   userAssetConfig.assetConfigHash = event.params.receiversHash
   userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
   userAssetConfig.save()
