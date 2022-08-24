@@ -214,8 +214,10 @@ export class DripsSetEvent extends Entity {
     this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
+    this.set("dripsHistoryHash", Value.fromBytes(Bytes.empty()));
     this.set("balance", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("maxEnd", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -271,6 +273,15 @@ export class DripsSetEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
+  get dripsHistoryHash(): Bytes {
+    let value = this.get("dripsHistoryHash");
+    return value!.toBytes();
+  }
+
+  set dripsHistoryHash(value: Bytes) {
+    this.set("dripsHistoryHash", Value.fromBytes(value));
+  }
+
   get balance(): BigInt {
     let value = this.get("balance");
     return value!.toBigInt();
@@ -287,6 +298,15 @@ export class DripsSetEvent extends Entity {
 
   set blockTimestamp(value: BigInt) {
     this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get maxEnd(): BigInt {
+    let value = this.get("maxEnd");
+    return value!.toBigInt();
+  }
+
+  set maxEnd(value: BigInt) {
+    this.set("maxEnd", Value.fromBigInt(value));
   }
 }
 
@@ -593,6 +613,102 @@ export class ReceivedDripsEvent extends Entity {
 
   set receivableCycles(value: BigInt) {
     this.set("receivableCycles", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+}
+
+export class SqueezedDripsEvent extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("assetId", Value.fromBigInt(BigInt.zero()));
+    this.set("senderId", Value.fromBigInt(BigInt.zero()));
+    this.set("amt", Value.fromBigInt(BigInt.zero()));
+    this.set("nextSqueezed", Value.fromBigInt(BigInt.zero()));
+    this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save SqueezedDripsEvent entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save SqueezedDripsEvent entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("SqueezedDripsEvent", id.toString(), this);
+    }
+  }
+
+  static load(id: string): SqueezedDripsEvent | null {
+    return changetype<SqueezedDripsEvent | null>(
+      store.get("SqueezedDripsEvent", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get userId(): BigInt {
+    let value = this.get("userId");
+    return value!.toBigInt();
+  }
+
+  set userId(value: BigInt) {
+    this.set("userId", Value.fromBigInt(value));
+  }
+
+  get assetId(): BigInt {
+    let value = this.get("assetId");
+    return value!.toBigInt();
+  }
+
+  set assetId(value: BigInt) {
+    this.set("assetId", Value.fromBigInt(value));
+  }
+
+  get senderId(): BigInt {
+    let value = this.get("senderId");
+    return value!.toBigInt();
+  }
+
+  set senderId(value: BigInt) {
+    this.set("senderId", Value.fromBigInt(value));
+  }
+
+  get amt(): BigInt {
+    let value = this.get("amt");
+    return value!.toBigInt();
+  }
+
+  set amt(value: BigInt) {
+    this.set("amt", Value.fromBigInt(value));
+  }
+
+  get nextSqueezed(): BigInt {
+    let value = this.get("nextSqueezed");
+    return value!.toBigInt();
+  }
+
+  set nextSqueezed(value: BigInt) {
+    this.set("nextSqueezed", Value.fromBigInt(value));
   }
 
   get blockTimestamp(): BigInt {

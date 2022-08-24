@@ -1,10 +1,10 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import { MultiHash } from "../generated/MetaData/MetaData"
-import { DripsSet, DripsReceiverSeen, ReceivedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, AppRegistered, AppAddressUpdated} from "../generated/DripsHub/DripsHub"
+import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, AppRegistered, AppAddressUpdated} from "../generated/DripsHub/DripsHub"
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
-import { User, DripsEntry, UserAssetConfig, DripsSetEvent, HashToDripsSetDetail, DripsReceiverSeenEvent, ReceivedDripsEvent, SplitsEntry,
+import { User, DripsEntry, UserAssetConfig, DripsSetEvent, HashToDripsSetDetail, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
   SplitsSetEvent, HashToSplitsSetDetail, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, IdentityMetaData, GivenEvent, App} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
@@ -94,7 +94,9 @@ export function handleDripsSet(event: DripsSet): void {
   dripsSetEvent.userId = event.params.userId
   dripsSetEvent.assetId = event.params.assetId
   dripsSetEvent.receiversHash = event.params.receiversHash
+  dripsSetEvent.dripsHistoryHash = event.params.dripsHistoryHash
   dripsSetEvent.balance = event.params.balance
+  dripsSetEvent.maxEnd = event.params.maxEnd
   dripsSetEvent.blockTimestamp = event.block.timestamp
   dripsSetEvent.save()
 
@@ -156,15 +158,27 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
 }
 
+export function handleSqueezedDrips(event: SqueezedDrips): void {
+
+    let squeezedDripsEvent = new SqueezedDripsEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+    squeezedDripsEvent.userId = event.params.userId
+    squeezedDripsEvent.assetId = event.params.assetId
+    squeezedDripsEvent.senderId = event.params.senderId
+    squeezedDripsEvent.amt = event.params.amt
+    squeezedDripsEvent.nextSqueezed = event.params.nextSqueezed
+    squeezedDripsEvent.blockTimestamp = event.block.timestamp
+    squeezedDripsEvent.save()
+}
+
 export function handleReceivedDrips(event: ReceivedDrips): void {
 
-    let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-    receivedDripsEvent.userId = event.params.userId
-    receivedDripsEvent.assetId = event.params.assetId
-    receivedDripsEvent.amt = event.params.amt
-    receivedDripsEvent.receivableCycles = event.params.receivableCycles
-    receivedDripsEvent.blockTimestamp = event.block.timestamp
-    receivedDripsEvent.save()
+  let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+  receivedDripsEvent.userId = event.params.userId
+  receivedDripsEvent.assetId = event.params.assetId
+  receivedDripsEvent.amt = event.params.amt
+  receivedDripsEvent.receivableCycles = event.params.receivableCycles
+  receivedDripsEvent.blockTimestamp = event.block.timestamp
+  receivedDripsEvent.save()
 }
 
 export function handleSplitsSet(event: SplitsSet): void {

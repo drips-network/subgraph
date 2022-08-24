@@ -41,10 +41,12 @@ dataSources:
       eventHandlers:
         - event: Collected(indexed uint256,indexed uint256,uint128)
           handler: handleCollected
-        - event: DripsSet(indexed uint256,indexed uint256,indexed bytes32,uint128)
+        - event: DripsSet(indexed uint256,indexed uint256,indexed bytes32,bytes32,uint128,uint32)
           handler: handleDripsSet
-        - event: DripsReceiverSeen(indexed bytes32,indexed uint256,uint192)
+        - event: DripsReceiverSeen(indexed bytes32,indexed uint256,uint256)
           handler: handleDripsReceiverSeen
+        - event: SqueezedDrips(indexed uint256,indexed uint256,indexed uint256,uint128,uint32)
+          handler: handleSqueezedDrips
         - event: SplitsSet(indexed uint256,indexed bytes32)
           handler: handleSplitsSet
         - event: SplitsReceiverSeen(indexed bytes32,indexed uint256,uint32)

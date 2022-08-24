@@ -3,12 +3,12 @@
         "inputs": [
             {
                 "internalType": "uint32",
-                "name": "_cycleSecs",
+                "name": "cycleSecs_",
                 "type": "uint32"
             },
             {
                 "internalType": "contract IReserve",
-                "name": "_reserve",
+                "name": "reserve_",
                 "type": "address"
             }
         ],
@@ -95,6 +95,155 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            }
+        ],
+        "name": "Collectable",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "collected",
+                "type": "uint128"
+            }
+        ],
+        "name": "Collected",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "receiversHash",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "DripsConfig",
+                "name": "config",
+                "type": "uint256"
+            }
+        ],
+        "name": "DripsReceiverSeen",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "receiversHash",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "dripsHistoryHash",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "balance",
+                "type": "uint128"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32",
+                "name": "maxEnd",
+                "type": "uint32"
+            }
+        ],
+        "name": "DripsSet",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "receiver",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            }
+        ],
+        "name": "Given",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": false,
                 "internalType": "address",
                 "name": "caller",
@@ -102,6 +251,149 @@
             }
         ],
         "name": "Paused",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32",
+                "name": "receivableCycles",
+                "type": "uint32"
+            }
+        ],
+        "name": "ReceivedDrips",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "receiver",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            }
+        ],
+        "name": "Split",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "receiversHash",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32",
+                "name": "weight",
+                "type": "uint32"
+            }
+        ],
+        "name": "SplitsReceiverSeen",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "receiversHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "SplitsSet",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "assetId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "senderId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint32",
+                "name": "nextSqueezed",
+                "type": "uint32"
+            }
+        ],
+        "name": "SqueezedDrips",
         "type": "event"
     },
     {
@@ -132,12 +424,90 @@
     },
     {
         "inputs": [],
+        "name": "AMT_PER_SEC_EXTRA_DECIMALS",
+        "outputs": [
+            {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "AMT_PER_SEC_MULTIPLIER",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "APP_ID_OFFSET",
         "outputs": [
             {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "MAX_DRIPS_RECEIVERS",
+        "outputs": [
+            {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "MAX_SPLITS_RECEIVERS",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "MAX_TOTAL_BALANCE",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "TOTAL_SPLITS_WEIGHT",
+        "outputs": [
+            {
+                "internalType": "uint32",
+                "name": "",
+                "type": "uint32"
             }
         ],
         "stateMutability": "view",
@@ -197,7 +567,7 @@
                     {
                         "internalType": "DripsConfig",
                         "name": "config",
-                        "type": "uint192"
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DripsReceiver[]",
@@ -380,7 +750,7 @@
         "outputs": [
             {
                 "internalType": "uint32",
-                "name": "",
+                "name": "cycleSecs_",
                 "type": "uint32"
             }
         ],
@@ -408,6 +778,11 @@
                 "type": "bytes32"
             },
             {
+                "internalType": "bytes32",
+                "name": "dripsHistoryHash",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "uint32",
                 "name": "updateTime",
                 "type": "uint32"
@@ -419,7 +794,7 @@
             },
             {
                 "internalType": "uint32",
-                "name": "defaultEnd",
+                "name": "maxEnd",
                 "type": "uint32"
             }
         ],
@@ -466,7 +841,7 @@
                     {
                         "internalType": "DripsConfig",
                         "name": "config",
-                        "type": "uint192"
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DripsReceiver[]",
@@ -478,7 +853,41 @@
         "outputs": [
             {
                 "internalType": "bytes32",
-                "name": "dripsConfigurationHash",
+                "name": "dripsHash",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "oldDripsHistoryHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "dripsHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint32",
+                "name": "updateTime",
+                "type": "uint32"
+            },
+            {
+                "internalType": "uint32",
+                "name": "maxEnd",
+                "type": "uint32"
+            }
+        ],
+        "name": "hashDripsHistory",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "dripsHistoryHash",
                 "type": "bytes32"
             }
         ],
@@ -518,24 +927,11 @@
     },
     {
         "inputs": [],
-        "name": "maxDripsReceivers",
-        "outputs": [
-            {
-                "internalType": "uint8",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "maxSplitsReceivers",
+        "name": "nextAppId",
         "outputs": [
             {
                 "internalType": "uint32",
-                "name": "",
+                "name": "appId",
                 "type": "uint32"
             }
         ],
@@ -543,12 +939,28 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "nextAppId",
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "contract IERC20",
+                "name": "erc20",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "senderId",
+                "type": "uint256"
+            }
+        ],
+        "name": "nextSqueezedDrips",
         "outputs": [
             {
                 "internalType": "uint32",
-                "name": "appId",
+                "name": "nextSqueezed",
                 "type": "uint32"
             }
         ],
@@ -734,7 +1146,7 @@
                     {
                         "internalType": "DripsConfig",
                         "name": "config",
-                        "type": "uint192"
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DripsReceiver[]",
@@ -756,7 +1168,7 @@
                     {
                         "internalType": "DripsConfig",
                         "name": "config",
-                        "type": "uint192"
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DripsReceiver[]",
@@ -900,13 +1312,175 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "totalSplitsWeight",
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "contract IERC20",
+                "name": "erc20",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "senderId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "historyHash",
+                "type": "bytes32"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "dripsHash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "uint256",
+                                "name": "userId",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "DripsConfig",
+                                "name": "config",
+                                "type": "uint256"
+                            }
+                        ],
+                        "internalType": "struct DripsReceiver[]",
+                        "name": "receivers",
+                        "type": "tuple[]"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "updateTime",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "maxEnd",
+                        "type": "uint32"
+                    }
+                ],
+                "internalType": "struct DripsHistory[]",
+                "name": "dripsHistory",
+                "type": "tuple[]"
+            }
+        ],
+        "name": "squeezableDrips",
         "outputs": [
             {
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            },
+            {
                 "internalType": "uint32",
-                "name": "",
+                "name": "nextSqueezed",
                 "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "contract IERC20",
+                "name": "erc20",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "senderId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "historyHash",
+                "type": "bytes32"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "dripsHash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "uint256",
+                                "name": "userId",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "DripsConfig",
+                                "name": "config",
+                                "type": "uint256"
+                            }
+                        ],
+                        "internalType": "struct DripsReceiver[]",
+                        "name": "receivers",
+                        "type": "tuple[]"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "updateTime",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "maxEnd",
+                        "type": "uint32"
+                    }
+                ],
+                "internalType": "struct DripsHistory[]",
+                "name": "dripsHistory",
+                "type": "tuple[]"
+            }
+        ],
+        "name": "squeezeDrips",
+        "outputs": [
+            {
+                "internalType": "uint128",
+                "name": "amt",
+                "type": "uint128"
+            },
+            {
+                "internalType": "uint32",
+                "name": "nextSqueezed",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "erc20",
+                "type": "address"
+            }
+        ],
+        "name": "totalBalance",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "balance",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -966,275 +1540,6 @@
         "name": "upgradeToAndCall",
         "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "receiversHash",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "DripsConfig",
-                "name": "config",
-                "type": "uint192"
-            }
-        ],
-        "name": "DripsReceiverSeen",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "assetId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "receiversHash",
-                "type": "bytes32"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint128",
-                "name": "balance",
-                "type": "uint128"
-            }
-        ],
-        "name": "DripsSet",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "assetId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint128",
-                "name": "amt",
-                "type": "uint128"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint32",
-                "name": "receivableCycles",
-                "type": "uint32"
-            }
-        ],
-        "name": "ReceivedDrips",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "assetId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint128",
-                "name": "amt",
-                "type": "uint128"
-            }
-        ],
-        "name": "Collectable",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "assetId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint128",
-                "name": "collected",
-                "type": "uint128"
-            }
-        ],
-        "name": "Collected",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "receiver",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "assetId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint128",
-                "name": "amt",
-                "type": "uint128"
-            }
-        ],
-        "name": "Given",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "receiver",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "assetId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint128",
-                "name": "amt",
-                "type": "uint128"
-            }
-        ],
-        "name": "Split",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "receiversHash",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint32",
-                "name": "weight",
-                "type": "uint32"
-            }
-        ],
-        "name": "SplitsReceiverSeen",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "receiversHash",
-                "type": "bytes32"
-            }
-        ],
-        "name": "SplitsSet",
-        "type": "event"
-    },
-    {
-        "inputs": [],
-        "name": "MAX_SPLITS_RECEIVERS",
-        "outputs": [
-            {
-                "internalType": "uint32",
-                "name": "",
-                "type": "uint32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "TOTAL_SPLITS_WEIGHT",
-        "outputs": [
-            {
-                "internalType": "uint32",
-                "name": "",
-                "type": "uint32"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     }
 ]

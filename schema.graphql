@@ -24,8 +24,10 @@ type DripsSetEvent @entity {
   userId: BigInt! # the userId of the sender
   assetId: BigInt!
   receiversHash: Bytes! # the hash of the receivers list
+  dripsHistoryHash: Bytes! # the history hash of this drips-set for squeezing
   balance: BigInt!
   blockTimestamp: BigInt!
+  maxEnd: BigInt!
 }
 
 type HashToDripsSetDetail @entity {
@@ -58,6 +60,16 @@ type ReceivedDripsEvent @entity {
   assetId: BigInt!
   amt: BigInt!
   receivableCycles: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type SqueezedDripsEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: BigInt! # the sender's userId
+  assetId: BigInt!
+  senderId: BigInt!
+  amt: BigInt!
+  nextSqueezed: BigInt!
   blockTimestamp: BigInt!
 }
 
