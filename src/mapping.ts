@@ -204,6 +204,7 @@ export function handleSplitsSet(event: SplitsSet): void {
       user.splitsEntryIds = newSplitsEntryIds
     }
   }
+  user.splitsReceiversHash = event.params.receiversHash
   user.lastUpdatedBlockTimestamp = event.block.timestamp
   user.save()
 
