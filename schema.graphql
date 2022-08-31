@@ -30,12 +30,10 @@ type DripsSetEvent @entity {
   maxEnd: BigInt!
 }
 
-type HashToDripsSetDetail @entity {
+type LastSetDripsUserMapping @entity {
   id: ID! # receiversHash
-  userId: BigInt! # the sender's userId
-  assetId: BigInt!
-  currentDripsSetEvent: DripsSetEvent!
-  lastUpdatedBlockTimestamp: BigInt!
+  userId: BigInt! # the last userId that SetDrips was called for with this receiversHash
+  assetId: BigInt! # the last assetId that SetDrips was called for with this receiversHash
 }
 
 type DripsReceiverSeenEvent @entity {
@@ -80,10 +78,9 @@ type SplitsSetEvent @entity {
   blockTimestamp: BigInt!
 }
 
-type HashToSplitsSetDetail @entity {
+type LastSetSplitsUserMapping @entity {
   id: ID! # receiversHash
-  userId: BigInt! # the sender's userId
-  lastUpdatedBlockTimestamp: BigInt!
+  userId: BigInt! # the last userId that SetSplits was called for with this receiversHash
 }
 
 type SplitsReceiverSeenEvent @entity {
