@@ -130,6 +130,7 @@ export function handleDripsUpdated(event: DripsUpdated): void {
   if (!dripsAccount) {
     dripsAccount = new DripsAccount(dripsAccountId)
     dripsAccount.isAccountDrip = false
+    dripsAccount.dripsConfig = dripsConfigId
   }
   dripsAccount.balance = event.params.balance
   dripsAccount.lastUpdatedBlockTimestamp = event.block.timestamp
@@ -194,6 +195,7 @@ export function handleDripsUpdatedWithAccount(event: DripsUpdated1): void {
     dripsAccount = new DripsAccount(dripsAccountId)
     dripsAccount.isAccountDrip = true
     dripsAccount.account = event.params.account
+    dripsAccount.dripsConfig = dripsConfigId
   }
   dripsAccount.balance = event.params.balance
   dripsAccount.lastUpdatedBlockTimestamp = event.block.timestamp
