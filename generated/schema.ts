@@ -310,33 +310,34 @@ export class DripsSetEvent extends Entity {
   }
 }
 
-export class HashToDripsSetDetail extends Entity {
+export class LastSetDripsUserMapping extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
     this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
-    this.set("currentDripsSetEvent", Value.fromString(""));
-    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save HashToDripsSetDetail entity without an ID");
+    assert(
+      id != null,
+      "Cannot save LastSetDripsUserMapping entity without an ID"
+    );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save HashToDripsSetDetail entity with non-string ID. " +
+        "Cannot save LastSetDripsUserMapping entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("HashToDripsSetDetail", id.toString(), this);
+      store.set("LastSetDripsUserMapping", id.toString(), this);
     }
   }
 
-  static load(id: string): HashToDripsSetDetail | null {
-    return changetype<HashToDripsSetDetail | null>(
-      store.get("HashToDripsSetDetail", id)
+  static load(id: string): LastSetDripsUserMapping | null {
+    return changetype<LastSetDripsUserMapping | null>(
+      store.get("LastSetDripsUserMapping", id)
     );
   }
 
@@ -365,24 +366,6 @@ export class HashToDripsSetDetail extends Entity {
 
   set assetId(value: BigInt) {
     this.set("assetId", Value.fromBigInt(value));
-  }
-
-  get currentDripsSetEvent(): string {
-    let value = this.get("currentDripsSetEvent");
-    return value!.toString();
-  }
-
-  set currentDripsSetEvent(value: string) {
-    this.set("currentDripsSetEvent", Value.fromString(value));
-  }
-
-  get lastUpdatedBlockTimestamp(): BigInt {
-    let value = this.get("lastUpdatedBlockTimestamp");
-    return value!.toBigInt();
-  }
-
-  set lastUpdatedBlockTimestamp(value: BigInt) {
-    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(value));
   }
 }
 
@@ -785,34 +768,33 @@ export class SplitsSetEvent extends Entity {
   }
 }
 
-export class HashToSplitsSetDetail extends Entity {
+export class LastSetSplitsUserMapping extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
     this.set("userId", Value.fromBigInt(BigInt.zero()));
-    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save HashToSplitsSetDetail entity without an ID"
+      "Cannot save LastSetSplitsUserMapping entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save HashToSplitsSetDetail entity with non-string ID. " +
+        "Cannot save LastSetSplitsUserMapping entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("HashToSplitsSetDetail", id.toString(), this);
+      store.set("LastSetSplitsUserMapping", id.toString(), this);
     }
   }
 
-  static load(id: string): HashToSplitsSetDetail | null {
-    return changetype<HashToSplitsSetDetail | null>(
-      store.get("HashToSplitsSetDetail", id)
+  static load(id: string): LastSetSplitsUserMapping | null {
+    return changetype<LastSetSplitsUserMapping | null>(
+      store.get("LastSetSplitsUserMapping", id)
     );
   }
 
@@ -832,15 +814,6 @@ export class HashToSplitsSetDetail extends Entity {
 
   set userId(value: BigInt) {
     this.set("userId", Value.fromBigInt(value));
-  }
-
-  get lastUpdatedBlockTimestamp(): BigInt {
-    let value = this.get("lastUpdatedBlockTimestamp");
-    return value!.toBigInt();
-  }
-
-  set lastUpdatedBlockTimestamp(value: BigInt) {
-    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(value));
   }
 }
 

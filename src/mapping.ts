@@ -4,8 +4,8 @@ import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, S
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
-import { User, DripsEntry, UserAssetConfig, DripsSetEvent, HashToDripsSetDetail, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
-  SplitsSetEvent, HashToSplitsSetDetail, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, IdentityMetaData, GivenEvent, App} from "../generated/schema"
+import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
+  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, IdentityMetaData, GivenEvent, App} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
 export function handleIdentityMetaData(event: MultiHash): void {
@@ -102,38 +102,37 @@ export function handleDripsSet(event: DripsSet): void {
 
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
 
-  // Add the HashToDripsSetDetail here
-  let hashToDripsSetDetail = HashToDripsSetDetail.load(event.params.receiversHash.toHexString())
-  if (!hashToDripsSetDetail) {
-    hashToDripsSetDetail = new HashToDripsSetDetail(event.params.receiversHash.toHexString())
+  // Create/update LastDripsSetUserMapping for this receiversHash
+  let lastDripsSetUserMappingId = event.params.receiversHash.toHexString()
+  let lastDripsSetUserMapping = LastSetDripsUserMapping.load(lastDripsSetUserMappingId)
+  if (!lastDripsSetUserMapping) {
+    lastDripsSetUserMapping = new LastSetDripsUserMapping(lastDripsSetUserMappingId)
   }
-  hashToDripsSetDetail.userId = event.params.userId
-  hashToDripsSetDetail.assetId = event.params.assetId
-  hashToDripsSetDetail.currentDripsSetEvent = dripsSetEventId
-  hashToDripsSetDetail.lastUpdatedBlockTimestamp = event.block.timestamp
-  hashToDripsSetDetail.save()
+  lastDripsSetUserMapping.userId = event.params.userId
+  lastDripsSetUserMapping.assetId = event.params.assetId
+  lastDripsSetUserMapping.save()
 }
 
 export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
 
   let receiversHash = event.params.receiversHash
-  let hashToDripsSetDetail = HashToDripsSetDetail.load(receiversHash.toHexString())
+  let lastSetDripsUserMapping = LastSetDripsUserMapping.load(receiversHash.toHexString())
 
-  // We need to use the HashToDripsSetDetail to look up the assetId associated with this receiverHash
-  if (hashToDripsSetDetail) {
-    let userAssetConfigId = hashToDripsSetDetail.userId.toString() + "-" + hashToDripsSetDetail.assetId.toString()
+  // We need to use the LastSetDripsUserMapping to look up the userId and assetId associated with this receiverHash
+  if (lastSetDripsUserMapping) {
+    let userAssetConfigId = lastSetDripsUserMapping.userId.toString() + "-" + lastSetDripsUserMapping.assetId.toString()
     let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
     if (userAssetConfig) {
       
       // Now we can create the DripsEntry
       if (!userAssetConfig.dripsEntryIds) userAssetConfig.dripsEntryIds = []
       let newDripsEntryIds = userAssetConfig.dripsEntryIds
-      let dripsEntryId = hashToDripsSetDetail.userId.toString() + "-" + event.params.userId.toString() + "-" + hashToDripsSetDetail.assetId.toString()
+      let dripsEntryId = lastSetDripsUserMapping.userId.toString() + "-" + event.params.userId.toString() + "-" + lastSetDripsUserMapping.assetId.toString()
       let dripsEntry = DripsEntry.load(dripsEntryId)
       if (!dripsEntry) {
         dripsEntry = new DripsEntry(dripsEntryId)
       }
-      dripsEntry.sender = hashToDripsSetDetail.userId.toString()
+      dripsEntry.sender = lastSetDripsUserMapping.userId.toString()
       dripsEntry.senderAssetConfig = userAssetConfigId
       dripsEntry.receiverUserId = event.params.userId
       dripsEntry.config = event.params.config
@@ -208,14 +207,14 @@ export function handleSplitsSet(event: SplitsSet): void {
   user.lastUpdatedBlockTimestamp = event.block.timestamp
   user.save()
 
-  // Add the HashToSplitsSetDetail
-  let hashToSplitsSetDetail = HashToSplitsSetDetail.load(event.params.receiversHash.toHexString())
-  if (!hashToSplitsSetDetail) {
-    hashToSplitsSetDetail = new HashToSplitsSetDetail(event.params.receiversHash.toHexString())
+  // Create/update LastSplitsSetUserMapping for this receiversHash
+  let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
+  let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
+  if (!lastSplitsSetUserMapping) {
+    lastSplitsSetUserMapping = new LastSetSplitsUserMapping(lastSplitsSetUserMappingId)
   }
-  hashToSplitsSetDetail.userId = event.params.userId
-  hashToSplitsSetDetail.lastUpdatedBlockTimestamp = event.block.timestamp
-  hashToSplitsSetDetail.save()
+  lastSplitsSetUserMapping.userId = event.params.userId
+  lastSplitsSetUserMapping.save()
 
   // Add the SplitsSetEvent
   let splitsSetEventId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
@@ -240,20 +239,19 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
     user.save()
   }
 
-  let receiversHash = event.params.receiversHash
-  let hashToSplitsSetDetail = HashToSplitsSetDetail.load(receiversHash.toHexString())
-
-  // We need to use the HashToSplitsSetDetail to look up the assetId associated with this receiverHash
-  if (hashToSplitsSetDetail) {
+  let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
+  let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
+  if (lastSplitsSetUserMapping) {
     // Now we can create the SplitsEntry
     if (!user.splitsEntryIds) user.splitsEntryIds = []
     let newSplitsEntryIds = user.splitsEntryIds
-    let splitsEntryId = hashToSplitsSetDetail.userId.toString() + "-" + event.params.userId.toString()
+    // splitsEntryId = (sender's user ID + "-" + receiver's user ID)
+    let splitsEntryId = lastSplitsSetUserMapping.userId.toString() + "-" + event.params.userId.toString()
     let splitsEntry = SplitsEntry.load(splitsEntryId)
     if (!splitsEntry) {
       splitsEntry = new SplitsEntry(splitsEntryId)
     }
-    splitsEntry.sender = hashToSplitsSetDetail.userId.toString()
+    splitsEntry.sender = lastSplitsSetUserMapping.userId.toString()
     splitsEntry.receiverUserId = event.params.userId
     splitsEntry.weight = event.params.weight
     splitsEntry.save()
