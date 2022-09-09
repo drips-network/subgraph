@@ -71,7 +71,7 @@ export function handleDripsSet(event: DripsSet): void {
   } else {
     // If this is an update, we need to delete the old DripsEntry values and clear the
     // dripsEntryIds field
-    if (event.params.receiversHash != userAssetConfig.assetConfigHash) {
+    if (!(event.params.receiversHash.toString() === userAssetConfig.assetConfigHash.toString())) {
       let newDripsEntryIds: string[] = []
       for (let i = 0; i<userAssetConfig.dripsEntryIds.length; i++) {
         let dripsEntryId = userAssetConfig.dripsEntryIds[i]
@@ -191,7 +191,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   } else {
     // If this is an update, we need to delete the old SplitsEntry values and clear the
     // splitsEntryIds field
-    if (event.params.receiversHash != user.splitsReceiversHash) {
+    if (!(event.params.receiversHash.toString() === user.splitsReceiversHash.toString())) {
       let newSplitsEntryIds: string[] = []
       for (let i = 0; i<user.splitsEntryIds.length; i++) {
         let splitsEntryId = user.splitsEntryIds[i]
@@ -229,19 +229,19 @@ export function handleSplitsSet(event: SplitsSet): void {
 
 export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
 
-  // If the User doesn't exist, create it
-  let userId = event.params.userId.toString()
-  let user = User.load(userId)
-  if (!user) {
-    user = new User(userId)
-    user.splitsEntryIds = []
-    user.lastUpdatedBlockTimestamp = event.block.timestamp
-    user.save()
-  }
-
   let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
   let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
   if (lastSplitsSetUserMapping) {
+  // If the User doesn't exist, create it
+    let userId = lastSplitsSetUserMapping.userId.toString()
+    let user = User.load(userId)
+    if (!user) {
+      user = new User(userId)
+      user.splitsEntryIds = []
+      user.lastUpdatedBlockTimestamp = event.block.timestamp
+      user.save()
+    }
+
     // Now we can create the SplitsEntry
     if (!user.splitsEntryIds) user.splitsEntryIds = []
     let newSplitsEntryIds = user.splitsEntryIds
