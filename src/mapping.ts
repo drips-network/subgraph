@@ -29,23 +29,18 @@ export function handleCollected(event: Collected): void {
 
   let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
 
-  if (!userAssetConfig) {
-    userAssetConfig = new UserAssetConfig(userAssetConfigId)
-    userAssetConfig.user = userId
-    userAssetConfig.balance = new BigInt(0)
-    userAssetConfig.dripsEntryIds = []
+  if (userAssetConfig) {
+    userAssetConfig.amountCollected = userAssetConfig.amountCollected.plus(event.params.collected)
+    userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+    userAssetConfig.save()
+  
+    let collectedEvent = new CollectedEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
+    collectedEvent.user = userId
+    collectedEvent.assetId = event.params.assetId
+    collectedEvent.collected = event.params.collected
+    collectedEvent.blockTimestamp = event.block.timestamp
+    collectedEvent.save()
   }
-
-  userAssetConfig.amountCollected = userAssetConfig.amountCollected.plus(event.params.collected)
-  userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
-  userAssetConfig.save()
-
-  let collectedEvent = new CollectedEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  collectedEvent.user = userId
-  collectedEvent.assetId = event.params.assetId
-  collectedEvent.collected = event.params.collected
-  collectedEvent.blockTimestamp = event.block.timestamp
-  collectedEvent.save()
 }
 
 export function handleDripsSet(event: DripsSet): void {
