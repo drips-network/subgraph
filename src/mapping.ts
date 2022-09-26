@@ -148,7 +148,10 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
     dripsReceiverSeenEvent.dripsSetEvent = lastSetDripsUserMapping.dripsSetEventId
   }
   dripsReceiverSeenEvent.receiversHash = event.params.receiversHash
-  dripsReceiverSeenEvent.userId = event.params.userId
+  if (lastSetDripsUserMapping) {
+    dripsReceiverSeenEvent.senderUserId = lastSetDripsUserMapping.userId
+  }
+  dripsReceiverSeenEvent.receiverUserId = event.params.userId
   dripsReceiverSeenEvent.config = event.params.config
   dripsReceiverSeenEvent.blockTimestamp = event.block.timestamp
   dripsReceiverSeenEvent.save()
@@ -268,10 +271,11 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   splitsReceiverSeenEvent.receiversHash = event.params.receiversHash
   if (lastSplitsSetUserMapping) {
     splitsReceiverSeenEvent.splitsSetEvent = lastSplitsSetUserMapping.splitsSetEventId
-  } else {
-    splitsReceiverSeenEvent.splitsSetEvent = ""
   }
-  splitsReceiverSeenEvent.userId = event.params.userId
+  if (lastSplitsSetUserMapping) {
+    splitsReceiverSeenEvent.senderUserId = lastSplitsSetUserMapping.userId
+  }
+  splitsReceiverSeenEvent.receiverUserId = event.params.userId
   splitsReceiverSeenEvent.weight = event.params.weight
   splitsReceiverSeenEvent.blockTimestamp = event.block.timestamp
   splitsReceiverSeenEvent.save()

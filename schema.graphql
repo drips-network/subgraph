@@ -42,7 +42,8 @@ type DripsReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   dripsSetEvent: DripsSetEvent!
   receiversHash: Bytes!
-  userId: BigInt! # the receiver's userId
+  senderUserId: BigInt!
+  receiverUserId: BigInt! # the receiver's userId
   config: BigInt!
   blockTimestamp: BigInt!
 }
@@ -92,7 +93,8 @@ type SplitsReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   splitsSetEvent: SplitsSetEvent!
   receiversHash: Bytes!
-  userId: BigInt! # the receiver's userId
+  senderUserId: BigInt! # the sender's userId
+  receiverUserId: BigInt! # the receiver's userId
   weight: BigInt!
   blockTimestamp: BigInt!
 }

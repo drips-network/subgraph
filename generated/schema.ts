@@ -395,7 +395,8 @@ export class DripsReceiverSeenEvent extends Entity {
 
     this.set("dripsSetEvent", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("senderUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
     this.set("config", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -449,13 +450,22 @@ export class DripsReceiverSeenEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get userId(): BigInt {
-    let value = this.get("userId");
+  get senderUserId(): BigInt {
+    let value = this.get("senderUserId");
     return value!.toBigInt();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set senderUserId(value: BigInt) {
+    this.set("senderUserId", Value.fromBigInt(value));
+  }
+
+  get receiverUserId(): BigInt {
+    let value = this.get("receiverUserId");
+    return value!.toBigInt();
+  }
+
+  set receiverUserId(value: BigInt) {
+    this.set("receiverUserId", Value.fromBigInt(value));
   }
 
   get config(): BigInt {
@@ -872,7 +882,8 @@ export class SplitsReceiverSeenEvent extends Entity {
 
     this.set("splitsSetEvent", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("senderUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
     this.set("weight", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -926,13 +937,22 @@ export class SplitsReceiverSeenEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get userId(): BigInt {
-    let value = this.get("userId");
+  get senderUserId(): BigInt {
+    let value = this.get("senderUserId");
     return value!.toBigInt();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set senderUserId(value: BigInt) {
+    this.set("senderUserId", Value.fromBigInt(value));
+  }
+
+  get receiverUserId(): BigInt {
+    let value = this.get("receiverUserId");
+    return value!.toBigInt();
+  }
+
+  set receiverUserId(value: BigInt) {
+    this.set("receiverUserId", Value.fromBigInt(value));
   }
 
   get weight(): BigInt {
