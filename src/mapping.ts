@@ -103,6 +103,7 @@ export function handleDripsSet(event: DripsSet): void {
   if (!lastDripsSetUserMapping) {
     lastDripsSetUserMapping = new LastSetDripsUserMapping(lastDripsSetUserMappingId)
   }
+  lastDripsSetUserMapping.dripsSetEventId = dripsSetEventId
   lastDripsSetUserMapping.userId = event.params.userId
   lastDripsSetUserMapping.assetId = event.params.assetId
   lastDripsSetUserMapping.save()
@@ -143,6 +144,9 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
   // Create the DripsReceiverSeenEvent entity
   let dripsReceiverSeenEventId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let dripsReceiverSeenEvent = new DripsReceiverSeenEvent(dripsReceiverSeenEventId)
+  if (lastSetDripsUserMapping) {
+    dripsReceiverSeenEvent.dripsSetEvent = lastSetDripsUserMapping.dripsSetEventId
+  }
   dripsReceiverSeenEvent.receiversHash = event.params.receiversHash
   dripsReceiverSeenEvent.userId = event.params.userId
   dripsReceiverSeenEvent.config = event.params.config
@@ -202,15 +206,6 @@ export function handleSplitsSet(event: SplitsSet): void {
   user.lastUpdatedBlockTimestamp = event.block.timestamp
   user.save()
 
-  // Create/update LastSplitsSetUserMapping for this receiversHash
-  let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
-  let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
-  if (!lastSplitsSetUserMapping) {
-    lastSplitsSetUserMapping = new LastSetSplitsUserMapping(lastSplitsSetUserMappingId)
-  }
-  lastSplitsSetUserMapping.userId = event.params.userId
-  lastSplitsSetUserMapping.save()
-
   // Add the SplitsSetEvent
   let splitsSetEventId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let splitsSetEvent = new SplitsSetEvent(splitsSetEventId)
@@ -218,6 +213,16 @@ export function handleSplitsSet(event: SplitsSet): void {
   splitsSetEvent.receiversHash = event.params.receiversHash
   splitsSetEvent.blockTimestamp = event.block.timestamp
   splitsSetEvent.save()
+
+  // Create/update LastSplitsSetUserMapping for this receiversHash
+  let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
+  let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
+  if (!lastSplitsSetUserMapping) {
+    lastSplitsSetUserMapping = new LastSetSplitsUserMapping(lastSplitsSetUserMappingId)
+  }
+  lastSplitsSetUserMapping.splitsSetEventId = splitsSetEventId
+  lastSplitsSetUserMapping.userId = event.params.userId
+  lastSplitsSetUserMapping.save()
 
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
 }
@@ -261,6 +266,11 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   let splitsReceiverSeenEventId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let splitsReceiverSeenEvent = new SplitsReceiverSeenEvent(splitsReceiverSeenEventId)
   splitsReceiverSeenEvent.receiversHash = event.params.receiversHash
+  if (lastSplitsSetUserMapping) {
+    splitsReceiverSeenEvent.splitsSetEvent = lastSplitsSetUserMapping.splitsSetEventId
+  } else {
+    splitsReceiverSeenEvent.splitsSetEvent = ""
+  }
   splitsReceiverSeenEvent.userId = event.params.userId
   splitsReceiverSeenEvent.weight = event.params.weight
   splitsReceiverSeenEvent.blockTimestamp = event.block.timestamp

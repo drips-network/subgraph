@@ -273,6 +273,15 @@ export class DripsSetEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
+  get dripsReceiverSeenEvents(): Array<string> {
+    let value = this.get("dripsReceiverSeenEvents");
+    return value!.toStringArray();
+  }
+
+  set dripsReceiverSeenEvents(value: Array<string>) {
+    this.set("dripsReceiverSeenEvents", Value.fromStringArray(value));
+  }
+
   get dripsHistoryHash(): Bytes {
     let value = this.get("dripsHistoryHash");
     return value!.toBytes();
@@ -315,6 +324,7 @@ export class LastSetDripsUserMapping extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("dripsSetEventId", Value.fromString(""));
     this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
   }
@@ -350,6 +360,15 @@ export class LastSetDripsUserMapping extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get dripsSetEventId(): string {
+    let value = this.get("dripsSetEventId");
+    return value!.toString();
+  }
+
+  set dripsSetEventId(value: string) {
+    this.set("dripsSetEventId", Value.fromString(value));
+  }
+
   get userId(): BigInt {
     let value = this.get("userId");
     return value!.toBigInt();
@@ -374,6 +393,7 @@ export class DripsReceiverSeenEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("dripsSetEvent", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
     this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("config", Value.fromBigInt(BigInt.zero()));
@@ -409,6 +429,15 @@ export class DripsReceiverSeenEvent extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
+  }
+
+  get dripsSetEvent(): string {
+    let value = this.get("dripsSetEvent");
+    return value!.toString();
+  }
+
+  set dripsSetEvent(value: string) {
+    this.set("dripsSetEvent", Value.fromString(value));
   }
 
   get receiversHash(): Bytes {
@@ -758,6 +787,15 @@ export class SplitsSetEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
+  get splitsReceiverSeenEvents(): Array<string> {
+    let value = this.get("splitsReceiverSeenEvents");
+    return value!.toStringArray();
+  }
+
+  set splitsReceiverSeenEvents(value: Array<string>) {
+    this.set("splitsReceiverSeenEvents", Value.fromStringArray(value));
+  }
+
   get blockTimestamp(): BigInt {
     let value = this.get("blockTimestamp");
     return value!.toBigInt();
@@ -773,6 +811,7 @@ export class LastSetSplitsUserMapping extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("splitsSetEventId", Value.fromString(""));
     this.set("userId", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -807,6 +846,15 @@ export class LastSetSplitsUserMapping extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get splitsSetEventId(): string {
+    let value = this.get("splitsSetEventId");
+    return value!.toString();
+  }
+
+  set splitsSetEventId(value: string) {
+    this.set("splitsSetEventId", Value.fromString(value));
+  }
+
   get userId(): BigInt {
     let value = this.get("userId");
     return value!.toBigInt();
@@ -822,6 +870,7 @@ export class SplitsReceiverSeenEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("splitsSetEvent", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
     this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("weight", Value.fromBigInt(BigInt.zero()));
@@ -857,6 +906,15 @@ export class SplitsReceiverSeenEvent extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
+  }
+
+  get splitsSetEvent(): string {
+    let value = this.get("splitsSetEvent");
+    return value!.toString();
+  }
+
+  set splitsSetEvent(value: string) {
+    this.set("splitsSetEvent", Value.fromString(value));
   }
 
   get receiversHash(): Bytes {
