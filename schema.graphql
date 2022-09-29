@@ -52,7 +52,7 @@ type DripsEntry @entity {
   id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
   sender: User!
   senderAssetConfig: UserAssetConfig!
-  receiverUserId: BigInt! # the receiver's userId
+  userId: BigInt! # the receiver's userId
   config: BigInt!
 }
 
@@ -102,7 +102,7 @@ type SplitsReceiverSeenEvent @entity {
 type SplitsEntry @entity {
   id: ID! # sender's userId + "-" + receiver's userId
   sender: User!
-  receiverUserId: BigInt! # the receiver's userId
+  userId: BigInt! # the receiver's userId
   weight: BigInt!
 }
 

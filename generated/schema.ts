@@ -494,7 +494,7 @@ export class DripsEntry extends Entity {
 
     this.set("sender", Value.fromString(""));
     this.set("senderAssetConfig", Value.fromString(""));
-    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("config", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -542,13 +542,13 @@ export class DripsEntry extends Entity {
     this.set("senderAssetConfig", Value.fromString(value));
   }
 
-  get receiverUserId(): BigInt {
-    let value = this.get("receiverUserId");
+  get userId(): BigInt {
+    let value = this.get("userId");
     return value!.toBigInt();
   }
 
-  set receiverUserId(value: BigInt) {
-    this.set("receiverUserId", Value.fromBigInt(value));
+  set userId(value: BigInt) {
+    this.set("userId", Value.fromBigInt(value));
   }
 
   get config(): BigInt {
@@ -980,7 +980,7 @@ export class SplitsEntry extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("sender", Value.fromString(""));
-    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromBigInt(BigInt.zero()));
     this.set("weight", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -1019,13 +1019,13 @@ export class SplitsEntry extends Entity {
     this.set("sender", Value.fromString(value));
   }
 
-  get receiverUserId(): BigInt {
-    let value = this.get("receiverUserId");
+  get userId(): BigInt {
+    let value = this.get("userId");
     return value!.toBigInt();
   }
 
-  set receiverUserId(value: BigInt) {
-    this.set("receiverUserId", Value.fromBigInt(value));
+  set userId(value: BigInt) {
+    this.set("userId", Value.fromBigInt(value));
   }
 
   get weight(): BigInt {

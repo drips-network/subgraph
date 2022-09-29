@@ -130,7 +130,7 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
       }
       dripsEntry.sender = lastSetDripsUserMapping.userId.toString()
       dripsEntry.senderAssetConfig = userAssetConfigId
-      dripsEntry.receiverUserId = event.params.userId
+      dripsEntry.userId = event.params.userId
       dripsEntry.config = event.params.config
       dripsEntry.save()
 
@@ -255,7 +255,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
       splitsEntry = new SplitsEntry(splitsEntryId)
     }
     splitsEntry.sender = lastSplitsSetUserMapping.userId.toString()
-    splitsEntry.receiverUserId = event.params.userId
+    splitsEntry.userId = event.params.userId
     splitsEntry.weight = event.params.weight
     splitsEntry.save()
     
