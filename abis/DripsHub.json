@@ -39,50 +39,6 @@
         "inputs": [
             {
                 "indexed": true,
-                "internalType": "uint32",
-                "name": "appId",
-                "type": "uint32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "oldAppAddr",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newAppAddr",
-                "type": "address"
-            }
-        ],
-        "name": "AppAddressUpdated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint32",
-                "name": "appId",
-                "type": "uint32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "appAddr",
-                "type": "address"
-            }
-        ],
-        "name": "AppRegistered",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
                 "internalType": "address",
                 "name": "beacon",
                 "type": "address"
@@ -207,6 +163,50 @@
             }
         ],
         "name": "DripsSet",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint32",
+                "name": "driverId",
+                "type": "uint32"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "oldDriverAddr",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newDriverAddr",
+                "type": "address"
+            }
+        ],
+        "name": "DriverAddressUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint32",
+                "name": "driverId",
+                "type": "uint32"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "driverAddr",
+                "type": "address"
+            }
+        ],
+        "name": "DriverRegistered",
         "type": "event"
     },
     {
@@ -385,12 +385,6 @@
                 "internalType": "uint128",
                 "name": "amt",
                 "type": "uint128"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint32",
-                "name": "nextSqueezed",
-                "type": "uint32"
             }
         ],
         "name": "SqueezedDrips",
@@ -423,6 +417,31 @@
         "type": "event"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "key",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes",
+                "name": "value",
+                "type": "bytes"
+            }
+        ],
+        "name": "UserMetadata",
+        "type": "event"
+    },
+    {
         "inputs": [],
         "name": "AMT_PER_SEC_EXTRA_DECIMALS",
         "outputs": [
@@ -450,7 +469,7 @@
     },
     {
         "inputs": [],
-        "name": "APP_ID_OFFSET",
+        "name": "DRIVER_ID_OFFSET",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -466,9 +485,9 @@
         "name": "MAX_DRIPS_RECEIVERS",
         "outputs": [
             {
-                "internalType": "uint8",
+                "internalType": "uint256",
                 "name": "",
-                "type": "uint8"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -479,9 +498,9 @@
         "name": "MAX_SPLITS_RECEIVERS",
         "outputs": [
             {
-                "internalType": "uint32",
+                "internalType": "uint256",
                 "name": "",
-                "type": "uint32"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -520,25 +539,6 @@
             {
                 "internalType": "address",
                 "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint32",
-                "name": "appId",
-                "type": "uint32"
-            }
-        ],
-        "name": "appAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "appAddr",
                 "type": "address"
             }
         ],
@@ -639,52 +639,6 @@
                 "internalType": "contract IERC20",
                 "name": "erc20",
                 "type": "address"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "userId",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint32",
-                        "name": "weight",
-                        "type": "uint32"
-                    }
-                ],
-                "internalType": "struct SplitsReceiver[]",
-                "name": "currReceivers",
-                "type": "tuple[]"
-            }
-        ],
-        "name": "collectAll",
-        "outputs": [
-            {
-                "internalType": "uint128",
-                "name": "collectedAmt",
-                "type": "uint128"
-            },
-            {
-                "internalType": "uint128",
-                "name": "splitAmt",
-                "type": "uint128"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "contract IERC20",
-                "name": "erc20",
-                "type": "address"
             }
         ],
         "name": "collectable",
@@ -692,52 +646,6 @@
             {
                 "internalType": "uint128",
                 "name": "amt",
-                "type": "uint128"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "contract IERC20",
-                "name": "erc20",
-                "type": "address"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "userId",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint32",
-                        "name": "weight",
-                        "type": "uint32"
-                    }
-                ],
-                "internalType": "struct SplitsReceiver[]",
-                "name": "currReceivers",
-                "type": "tuple[]"
-            }
-        ],
-        "name": "collectableAll",
-        "outputs": [
-            {
-                "internalType": "uint128",
-                "name": "collectedAmt",
-                "type": "uint128"
-            },
-            {
-                "internalType": "uint128",
-                "name": "splitAmt",
                 "type": "uint128"
             }
         ],
@@ -799,6 +707,48 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint32",
+                "name": "driverId",
+                "type": "uint32"
+            }
+        ],
+        "name": "driverAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "driverAddr",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "key",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "value",
+                "type": "bytes"
+            }
+        ],
+        "name": "emitUserMetadata",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -927,40 +877,11 @@
     },
     {
         "inputs": [],
-        "name": "nextAppId",
+        "name": "nextDriverId",
         "outputs": [
             {
                 "internalType": "uint32",
-                "name": "appId",
-                "type": "uint32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "contract IERC20",
-                "name": "erc20",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "senderId",
-                "type": "uint256"
-            }
-        ],
-        "name": "nextSqueezedDrips",
-        "outputs": [
-            {
-                "internalType": "uint32",
-                "name": "nextSqueezed",
+                "name": "driverId",
                 "type": "uint32"
             }
         ],
@@ -995,40 +916,6 @@
                 "internalType": "bytes32",
                 "name": "",
                 "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "userId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "contract IERC20",
-                "name": "erc20",
-                "type": "address"
-            },
-            {
-                "internalType": "uint32",
-                "name": "maxCycles",
-                "type": "uint32"
-            }
-        ],
-        "name": "receivableDrips",
-        "outputs": [
-            {
-                "internalType": "uint128",
-                "name": "receivableAmt",
-                "type": "uint128"
-            },
-            {
-                "internalType": "uint32",
-                "name": "receivableCycles",
-                "type": "uint32"
             }
         ],
         "stateMutability": "view",
@@ -1095,16 +982,50 @@
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "contract IERC20",
+                "name": "erc20",
+                "type": "address"
+            },
+            {
+                "internalType": "uint32",
+                "name": "maxCycles",
+                "type": "uint32"
+            }
+        ],
+        "name": "receiveDripsResult",
+        "outputs": [
+            {
+                "internalType": "uint128",
+                "name": "receivableAmt",
+                "type": "uint128"
+            },
+            {
+                "internalType": "uint32",
+                "name": "receivableCycles",
+                "type": "uint32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
-                "name": "appAddr",
+                "name": "driverAddr",
                 "type": "address"
             }
         ],
-        "name": "registerApp",
+        "name": "registerDriver",
         "outputs": [
             {
                 "internalType": "uint32",
-                "name": "appId",
+                "name": "driverId",
                 "type": "uint32"
             }
         ],
@@ -1274,6 +1195,47 @@
                 "internalType": "uint256",
                 "name": "userId",
                 "type": "uint256"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "userId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "weight",
+                        "type": "uint32"
+                    }
+                ],
+                "internalType": "struct SplitsReceiver[]",
+                "name": "currReceivers",
+                "type": "tuple[]"
+            },
+            {
+                "internalType": "uint128",
+                "name": "amount",
+                "type": "uint128"
+            }
+        ],
+        "name": "splitResult",
+        "outputs": [
+            {
+                "internalType": "uint128",
+                "name": "collectableAmt",
+                "type": "uint128"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "userId",
+                "type": "uint256"
             }
         ],
         "name": "splitsHash",
@@ -1373,20 +1335,15 @@
                 "type": "tuple[]"
             }
         ],
-        "name": "squeezableDrips",
+        "name": "squeezeDrips",
         "outputs": [
             {
                 "internalType": "uint128",
                 "name": "amt",
                 "type": "uint128"
-            },
-            {
-                "internalType": "uint32",
-                "name": "nextSqueezed",
-                "type": "uint32"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -1451,20 +1408,15 @@
                 "type": "tuple[]"
             }
         ],
-        "name": "squeezeDrips",
+        "name": "squeezeDripsResult",
         "outputs": [
             {
                 "internalType": "uint128",
                 "name": "amt",
                 "type": "uint128"
-            },
-            {
-                "internalType": "uint32",
-                "name": "nextSqueezed",
-                "type": "uint32"
             }
         ],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -1497,16 +1449,16 @@
         "inputs": [
             {
                 "internalType": "uint32",
-                "name": "appId",
+                "name": "driverId",
                 "type": "uint32"
             },
             {
                 "internalType": "address",
-                "name": "newAppAddr",
+                "name": "newDriverAddr",
                 "type": "address"
             }
         ],
-        "name": "updateAppAddress",
+        "name": "updateDriverAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

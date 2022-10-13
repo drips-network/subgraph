@@ -1,6 +1,6 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import { MultiHash } from "../generated/MetaData/MetaData"
-import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, AppRegistered, AppAddressUpdated} from "../generated/DripsHub/DripsHub"
+import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated} from "../generated/DripsHub/DripsHub"
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
@@ -166,7 +166,6 @@ export function handleSqueezedDrips(event: SqueezedDrips): void {
     squeezedDripsEvent.assetId = event.params.assetId
     squeezedDripsEvent.senderId = event.params.senderId
     squeezedDripsEvent.amt = event.params.amt
-    squeezedDripsEvent.nextSqueezed = event.params.nextSqueezed
     squeezedDripsEvent.blockTimestamp = event.block.timestamp
     squeezedDripsEvent.save()
 }
@@ -307,24 +306,24 @@ export function handleGiven(event: Given): void {
   givenEvent.save()
 }
 
-export function handleAppRegistered(event: AppRegistered): void {
+export function handleAppRegistered(event: DriverRegistered): void {
 
-  let appId = event.params.appId.toString()
+  let appId = event.params.driverId.toString()
   let app = App.load(appId)
   if (!app) {
     app = new App(appId)
   }
-  app.appAddress = event.params.appAddr
+  app.appAddress = event.params.driverAddr
   app.lastUpdatedBlockTimestamp = event.block.timestamp
   app.save()
 }
 
-export function handleAppAddressUpdated(event: AppAddressUpdated): void {
+export function handleAppAddressUpdated(event: DriverAddressUpdated): void {
 
-  let appId = event.params.appId.toString()
+  let appId = event.params.driverId.toString()
   let app = App.load(appId)
   if (app) {
-    app.appAddress = event.params.newAppAddr
+    app.appAddress = event.params.newDriverAddr
     app.lastUpdatedBlockTimestamp = event.block.timestamp
     app.save()
   }
