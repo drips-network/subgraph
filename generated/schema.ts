@@ -11,6 +11,72 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class UserMetadataEvent extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("key", Value.fromBigInt(BigInt.zero()));
+    this.set("value", Value.fromBytes(Bytes.empty()));
+    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserMetadataEvent entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save UserMetadataEvent entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("UserMetadataEvent", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserMetadataEvent | null {
+    return changetype<UserMetadataEvent | null>(
+      store.get("UserMetadataEvent", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get key(): BigInt {
+    let value = this.get("key");
+    return value!.toBigInt();
+  }
+
+  set key(value: BigInt) {
+    this.set("key", Value.fromBigInt(value));
+  }
+
+  get value(): Bytes {
+    let value = this.get("value");
+    return value!.toBytes();
+  }
+
+  set value(value: Bytes) {
+    this.set("value", Value.fromBytes(value));
+  }
+
+  get lastUpdatedBlockTimestamp(): BigInt {
+    let value = this.get("lastUpdatedBlockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set lastUpdatedBlockTimestamp(value: BigInt) {
+    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(value));
+  }
+}
+
 export class User extends Entity {
   constructor(id: string) {
     super();
@@ -211,7 +277,7 @@ export class DripsSetEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
     this.set("dripsHistoryHash", Value.fromBytes(Bytes.empty()));
@@ -246,13 +312,13 @@ export class DripsSetEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -325,7 +391,7 @@ export class LastSetDripsUserMapping extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("dripsSetEventId", Value.fromString(""));
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -369,13 +435,13 @@ export class LastSetDripsUserMapping extends Entity {
     this.set("dripsSetEventId", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -395,8 +461,8 @@ export class DripsReceiverSeenEvent extends Entity {
 
     this.set("dripsSetEvent", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
-    this.set("senderUserId", Value.fromBigInt(BigInt.zero()));
-    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("senderUserId", Value.fromString(""));
+    this.set("receiverUserId", Value.fromString(""));
     this.set("config", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -450,22 +516,22 @@ export class DripsReceiverSeenEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get senderUserId(): BigInt {
+  get senderUserId(): string {
     let value = this.get("senderUserId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set senderUserId(value: BigInt) {
-    this.set("senderUserId", Value.fromBigInt(value));
+  set senderUserId(value: string) {
+    this.set("senderUserId", Value.fromString(value));
   }
 
-  get receiverUserId(): BigInt {
+  get receiverUserId(): string {
     let value = this.get("receiverUserId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set receiverUserId(value: BigInt) {
-    this.set("receiverUserId", Value.fromBigInt(value));
+  set receiverUserId(value: string) {
+    this.set("receiverUserId", Value.fromString(value));
   }
 
   get config(): BigInt {
@@ -494,7 +560,7 @@ export class DripsEntry extends Entity {
 
     this.set("sender", Value.fromString(""));
     this.set("senderAssetConfig", Value.fromString(""));
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("config", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -542,13 +608,13 @@ export class DripsEntry extends Entity {
     this.set("senderAssetConfig", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get config(): BigInt {
@@ -566,7 +632,7 @@ export class ReceivedDripsEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
     this.set("amt", Value.fromBigInt(BigInt.zero()));
     this.set("receivableCycles", Value.fromBigInt(BigInt.zero()));
@@ -601,13 +667,13 @@ export class ReceivedDripsEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -652,9 +718,9 @@ export class SqueezedDripsEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
-    this.set("senderId", Value.fromBigInt(BigInt.zero()));
+    this.set("senderId", Value.fromString(""));
     this.set("amt", Value.fromBigInt(BigInt.zero()));
     this.set("nextSqueezed", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
@@ -688,13 +754,13 @@ export class SqueezedDripsEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -706,13 +772,13 @@ export class SqueezedDripsEvent extends Entity {
     this.set("assetId", Value.fromBigInt(value));
   }
 
-  get senderId(): BigInt {
+  get senderId(): string {
     let value = this.get("senderId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set senderId(value: BigInt) {
-    this.set("senderId", Value.fromBigInt(value));
+  set senderId(value: string) {
+    this.set("senderId", Value.fromString(value));
   }
 
   get amt(): BigInt {
@@ -748,7 +814,7 @@ export class SplitsSetEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -779,13 +845,13 @@ export class SplitsSetEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get receiversHash(): Bytes {
@@ -822,7 +888,7 @@ export class LastSetSplitsUserMapping extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("splitsSetEventId", Value.fromString(""));
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
   }
 
   save(): void {
@@ -865,13 +931,13 @@ export class LastSetSplitsUserMapping extends Entity {
     this.set("splitsSetEventId", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 }
 
@@ -882,8 +948,8 @@ export class SplitsReceiverSeenEvent extends Entity {
 
     this.set("splitsSetEvent", Value.fromString(""));
     this.set("receiversHash", Value.fromBytes(Bytes.empty()));
-    this.set("senderUserId", Value.fromBigInt(BigInt.zero()));
-    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("senderUserId", Value.fromString(""));
+    this.set("receiverUserId", Value.fromString(""));
     this.set("weight", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -937,22 +1003,22 @@ export class SplitsReceiverSeenEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get senderUserId(): BigInt {
+  get senderUserId(): string {
     let value = this.get("senderUserId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set senderUserId(value: BigInt) {
-    this.set("senderUserId", Value.fromBigInt(value));
+  set senderUserId(value: string) {
+    this.set("senderUserId", Value.fromString(value));
   }
 
-  get receiverUserId(): BigInt {
+  get receiverUserId(): string {
     let value = this.get("receiverUserId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set receiverUserId(value: BigInt) {
-    this.set("receiverUserId", Value.fromBigInt(value));
+  set receiverUserId(value: string) {
+    this.set("receiverUserId", Value.fromString(value));
   }
 
   get weight(): BigInt {
@@ -980,7 +1046,7 @@ export class SplitsEntry extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("sender", Value.fromString(""));
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
     this.set("weight", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -1019,13 +1085,13 @@ export class SplitsEntry extends Entity {
     this.set("sender", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
   get weight(): BigInt {
@@ -1043,8 +1109,8 @@ export class SplitEvent extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
-    this.set("receiverId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
+    this.set("receiverId", Value.fromString(""));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
     this.set("amt", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
@@ -1076,22 +1142,22 @@ export class SplitEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
-  get receiverId(): BigInt {
+  get receiverId(): string {
     let value = this.get("receiverId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set receiverId(value: BigInt) {
-    this.set("receiverId", Value.fromBigInt(value));
+  set receiverId(value: string) {
+    this.set("receiverId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -1196,79 +1262,13 @@ export class CollectedEvent extends Entity {
   }
 }
 
-export class IdentityMetaData extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("key", Value.fromBytes(Bytes.empty()));
-    this.set("multiHash", Value.fromBytes(Bytes.empty()));
-    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save IdentityMetaData entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save IdentityMetaData entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("IdentityMetaData", id.toString(), this);
-    }
-  }
-
-  static load(id: string): IdentityMetaData | null {
-    return changetype<IdentityMetaData | null>(
-      store.get("IdentityMetaData", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get key(): Bytes {
-    let value = this.get("key");
-    return value!.toBytes();
-  }
-
-  set key(value: Bytes) {
-    this.set("key", Value.fromBytes(value));
-  }
-
-  get multiHash(): Bytes {
-    let value = this.get("multiHash");
-    return value!.toBytes();
-  }
-
-  set multiHash(value: Bytes) {
-    this.set("multiHash", Value.fromBytes(value));
-  }
-
-  get lastUpdatedBlockTimestamp(): BigInt {
-    let value = this.get("lastUpdatedBlockTimestamp");
-    return value!.toBigInt();
-  }
-
-  set lastUpdatedBlockTimestamp(value: BigInt) {
-    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(value));
-  }
-}
-
 export class GivenEvent extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("userId", Value.fromBigInt(BigInt.zero()));
-    this.set("receiverUserId", Value.fromBigInt(BigInt.zero()));
+    this.set("userId", Value.fromString(""));
+    this.set("receiverUserId", Value.fromString(""));
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
     this.set("amt", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
@@ -1300,22 +1300,22 @@ export class GivenEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): BigInt {
+  get userId(): string {
     let value = this.get("userId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set userId(value: BigInt) {
-    this.set("userId", Value.fromBigInt(value));
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
   }
 
-  get receiverUserId(): BigInt {
+  get receiverUserId(): string {
     let value = this.get("receiverUserId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set receiverUserId(value: BigInt) {
-    this.set("receiverUserId", Value.fromBigInt(value));
+  set receiverUserId(value: string) {
+    this.set("receiverUserId", Value.fromString(value));
   }
 
   get assetId(): BigInt {

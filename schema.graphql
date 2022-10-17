@@ -1,3 +1,10 @@
+type UserMetadataEvent @entity {
+  id: ID! # the userId
+  key: BigInt!
+  value: Bytes!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
 type User @entity {
   id: ID! # the userId
   assetConfigs: [UserAssetConfig!]! @derivedFrom(field: "user")
@@ -21,7 +28,7 @@ type UserAssetConfig @entity {
 
 type DripsSetEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: BigInt! # the userId of the sender
+  userId: String! # the userId of the sender
   assetId: BigInt!
   receiversHash: Bytes! # the hash of the receivers list
   dripsReceiverSeenEvents: [DripsReceiverSeenEvent!]! @derivedFrom(field: "dripsSetEvent")
@@ -34,7 +41,7 @@ type DripsSetEvent @entity {
 type LastSetDripsUserMapping @entity {
   id: ID! # receiversHash
   dripsSetEventId: String! # the ID of the last DripsSetEvent that was created with this receiversHash
-  userId: BigInt! # the last userId that SetDrips was called for with this receiversHash
+  userId: String! # the last userId that SetDrips was called for with this receiversHash
   assetId: BigInt! # the last assetId that SetDrips was called for with this receiversHash
 }
 
@@ -42,8 +49,8 @@ type DripsReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   dripsSetEvent: DripsSetEvent!
   receiversHash: Bytes!
-  senderUserId: BigInt!
-  receiverUserId: BigInt! # the receiver's userId
+  senderUserId: String!
+  receiverUserId: String! # the receiver's userId
   config: BigInt!
   blockTimestamp: BigInt!
 }
@@ -52,13 +59,13 @@ type DripsEntry @entity {
   id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
   sender: User!
   senderAssetConfig: UserAssetConfig!
-  userId: BigInt! # the receiver's userId
+  userId: String! # the receiver's userId
   config: BigInt!
 }
 
 type ReceivedDripsEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: BigInt! # the sender's userId
+  userId: String! # the sender's userId
   assetId: BigInt!
   amt: BigInt!
   receivableCycles: BigInt!
@@ -67,9 +74,9 @@ type ReceivedDripsEvent @entity {
 
 type SqueezedDripsEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: BigInt! # the sender's userId
+  userId: String! # the sender's userId
   assetId: BigInt!
-  senderId: BigInt!
+  senderId: String!
   amt: BigInt!
   nextSqueezed: BigInt!
   blockTimestamp: BigInt!
@@ -77,7 +84,7 @@ type SqueezedDripsEvent @entity {
 
 type SplitsSetEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: BigInt! # the userId of the sender
+  userId: String! # the userId of the sender
   receiversHash: Bytes! # the hash of the receivers list
   splitsReceiverSeenEvents: [SplitsReceiverSeenEvent!]! @derivedFrom(field: "splitsSetEvent")
   blockTimestamp: BigInt!
@@ -86,15 +93,15 @@ type SplitsSetEvent @entity {
 type LastSetSplitsUserMapping @entity {
   id: ID! # receiversHash
   splitsSetEventId: String! # the ID of the last SplitsSetEvent that was created with this receiversHash
-  userId: BigInt! # the last userId that SetSplits was called for with this receiversHash
+  userId: String! # the last userId that SetSplits was called for with this receiversHash
 }
 
 type SplitsReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   splitsSetEvent: SplitsSetEvent!
   receiversHash: Bytes!
-  senderUserId: BigInt! # the sender's userId
-  receiverUserId: BigInt! # the receiver's userId
+  senderUserId: String! # the sender's userId
+  receiverUserId: String! # the receiver's userId
   weight: BigInt!
   blockTimestamp: BigInt!
 }
@@ -102,14 +109,14 @@ type SplitsReceiverSeenEvent @entity {
 type SplitsEntry @entity {
   id: ID! # sender's userId + "-" + receiver's userId
   sender: User!
-  userId: BigInt! # the receiver's userId
+  userId: String! # the receiver's userId
   weight: BigInt!
 }
 
 type SplitEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: BigInt! # the sender's userId
-  receiverId: BigInt! # the receiver's userId
+  userId: String! # the sender's userId
+  receiverId: String! # the receiver's userId
   assetId: BigInt!
   amt: BigInt!
   blockTimestamp: BigInt!
@@ -123,17 +130,10 @@ type CollectedEvent @entity {
   blockTimestamp: BigInt!
 }
 
-type IdentityMetaData @entity {
-  id: ID! # the address
-  key: Bytes!
-  multiHash: Bytes!
-  lastUpdatedBlockTimestamp: BigInt!
-}
-
 type GivenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: BigInt!
-  receiverUserId: BigInt! # the receiver's userId
+  userId: String!
+  receiverUserId: String! # the receiver's userId
   assetId: BigInt!
   amt: BigInt!
   blockTimestamp: BigInt!

@@ -1,24 +1,24 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import { MultiHash } from "../generated/MetaData/MetaData"
-import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated} from "../generated/DripsHub/DripsHub"
+import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadata} from "../generated/DripsHub/DripsHub"
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
 import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
-  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, IdentityMetaData, GivenEvent, App} from "../generated/schema"
+  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, UserMetadataEvent, GivenEvent, App} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
-export function handleIdentityMetaData(event: MultiHash): void {
+export function handleUserMetadata(event: UserMetadata): void {
 
-  let id = event.params.addr.toHex()
-  let identityMetaData = IdentityMetaData.load(id)
-  if (!identityMetaData) {
-    identityMetaData = new IdentityMetaData(id)
+  let id = event.params.userId.toHex()
+  let userMetadata = UserMetadataEvent.load(id)
+  if (!userMetadata) {
+    userMetadata = new UserMetadataEvent(id)
   }
-  identityMetaData.key = event.params.id
-  identityMetaData.multiHash = event.params.multiHash
-  identityMetaData.lastUpdatedBlockTimestamp = event.block.timestamp
-  identityMetaData.save()
+  userMetadata.key = event.params.key
+  userMetadata.value = event.params.value
+  userMetadata.lastUpdatedBlockTimestamp = event.block.timestamp
+  userMetadata.save()
 }
 
 export function handleCollected(event: Collected): void {
@@ -86,7 +86,7 @@ export function handleDripsSet(event: DripsSet): void {
   // Add the DripsSetEvent
   let dripsSetEventId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let dripsSetEvent = new DripsSetEvent(dripsSetEventId)
-  dripsSetEvent.userId = event.params.userId
+  dripsSetEvent.userId = event.params.userId.toString()
   dripsSetEvent.assetId = event.params.assetId
   dripsSetEvent.receiversHash = event.params.receiversHash
   dripsSetEvent.dripsHistoryHash = event.params.dripsHistoryHash
@@ -104,7 +104,7 @@ export function handleDripsSet(event: DripsSet): void {
     lastDripsSetUserMapping = new LastSetDripsUserMapping(lastDripsSetUserMappingId)
   }
   lastDripsSetUserMapping.dripsSetEventId = dripsSetEventId
-  lastDripsSetUserMapping.userId = event.params.userId
+  lastDripsSetUserMapping.userId = event.params.userId.toString()
   lastDripsSetUserMapping.assetId = event.params.assetId
   lastDripsSetUserMapping.save()
 }
@@ -130,7 +130,7 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
       }
       dripsEntry.sender = lastSetDripsUserMapping.userId.toString()
       dripsEntry.senderAssetConfig = userAssetConfigId
-      dripsEntry.userId = event.params.userId
+      dripsEntry.userId = event.params.userId.toString()
       dripsEntry.config = event.params.config
       dripsEntry.save()
 
@@ -151,7 +151,7 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
   if (lastSetDripsUserMapping) {
     dripsReceiverSeenEvent.senderUserId = lastSetDripsUserMapping.userId
   }
-  dripsReceiverSeenEvent.receiverUserId = event.params.userId
+  dripsReceiverSeenEvent.receiverUserId = event.params.userId.toString()
   dripsReceiverSeenEvent.config = event.params.config
   dripsReceiverSeenEvent.blockTimestamp = event.block.timestamp
   dripsReceiverSeenEvent.save()
@@ -162,9 +162,9 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
 export function handleSqueezedDrips(event: SqueezedDrips): void {
 
     let squeezedDripsEvent = new SqueezedDripsEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-    squeezedDripsEvent.userId = event.params.userId
+    squeezedDripsEvent.userId = event.params.userId.toString()
     squeezedDripsEvent.assetId = event.params.assetId
-    squeezedDripsEvent.senderId = event.params.senderId
+    squeezedDripsEvent.senderId = event.params.senderId.toString()
     squeezedDripsEvent.amt = event.params.amt
     squeezedDripsEvent.blockTimestamp = event.block.timestamp
     squeezedDripsEvent.save()
@@ -173,7 +173,7 @@ export function handleSqueezedDrips(event: SqueezedDrips): void {
 export function handleReceivedDrips(event: ReceivedDrips): void {
 
   let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  receivedDripsEvent.userId = event.params.userId
+  receivedDripsEvent.userId = event.params.userId.toString()
   receivedDripsEvent.assetId = event.params.assetId
   receivedDripsEvent.amt = event.params.amt
   receivedDripsEvent.receivableCycles = event.params.receivableCycles
@@ -211,7 +211,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   // Add the SplitsSetEvent
   let splitsSetEventId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let splitsSetEvent = new SplitsSetEvent(splitsSetEventId)
-  splitsSetEvent.userId = event.params.userId
+  splitsSetEvent.userId = event.params.userId.toString()
   splitsSetEvent.receiversHash = event.params.receiversHash
   splitsSetEvent.blockTimestamp = event.block.timestamp
   splitsSetEvent.save()
@@ -223,7 +223,7 @@ export function handleSplitsSet(event: SplitsSet): void {
     lastSplitsSetUserMapping = new LastSetSplitsUserMapping(lastSplitsSetUserMappingId)
   }
   lastSplitsSetUserMapping.splitsSetEventId = splitsSetEventId
-  lastSplitsSetUserMapping.userId = event.params.userId
+  lastSplitsSetUserMapping.userId = event.params.userId.toString()
   lastSplitsSetUserMapping.save()
 
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
@@ -254,7 +254,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
       splitsEntry = new SplitsEntry(splitsEntryId)
     }
     splitsEntry.sender = lastSplitsSetUserMapping.userId.toString()
-    splitsEntry.userId = event.params.userId
+    splitsEntry.userId = event.params.userId.toString()
     splitsEntry.weight = event.params.weight
     splitsEntry.save()
     
@@ -274,7 +274,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   if (lastSplitsSetUserMapping) {
     splitsReceiverSeenEvent.senderUserId = lastSplitsSetUserMapping.userId
   }
-  splitsReceiverSeenEvent.receiverUserId = event.params.userId
+  splitsReceiverSeenEvent.receiverUserId = event.params.userId.toString()
   splitsReceiverSeenEvent.weight = event.params.weight
   splitsReceiverSeenEvent.blockTimestamp = event.block.timestamp
   splitsReceiverSeenEvent.save()
@@ -285,8 +285,8 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
 export function handleSplit(event: Split): void {
 
   let splitEvent = new SplitEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  splitEvent.userId = event.params.userId
-  splitEvent.receiverId = event.params.receiver
+  splitEvent.userId = event.params.userId.toString()
+  splitEvent.receiverId = event.params.receiver.toString()
   splitEvent.assetId = event.params.assetId
   splitEvent.amt = event.params.amt
   splitEvent.blockTimestamp = event.block.timestamp
@@ -298,8 +298,8 @@ export function handleGiven(event: Given): void {
   let assetId = event.params.assetId.toString()
 
   let givenEvent = new GivenEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  givenEvent.userId = event.params.userId
-  givenEvent.receiverUserId = event.params.receiver
+  givenEvent.userId = event.params.userId.toString()
+  givenEvent.receiverUserId = event.params.receiver.toString()
   givenEvent.assetId = event.params.assetId
   givenEvent.amt = event.params.amt
   givenEvent.blockTimestamp = event.block.timestamp
