@@ -34,7 +34,7 @@ export function handleCollected(event: Collected): void {
     userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
     userAssetConfig.save()
   
-    let collectedEvent = new CollectedEvent(event.transaction.hash.toString() + "-" + event.logIndex.toString())
+    let collectedEvent = new CollectedEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
     collectedEvent.user = userId
     collectedEvent.assetId = event.params.assetId
     collectedEvent.collected = event.params.collected
@@ -84,7 +84,7 @@ export function handleDripsSet(event: DripsSet): void {
   userAssetConfig.save()
 
   // Add the DripsSetEvent
-  let dripsSetEventId = event.transaction.hash.toString() + "-" + event.logIndex.toString()
+  let dripsSetEventId = event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
   let dripsSetEvent = new DripsSetEvent(dripsSetEventId)
   dripsSetEvent.userId = event.params.userId.toString()
   dripsSetEvent.assetId = event.params.assetId
@@ -98,7 +98,7 @@ export function handleDripsSet(event: DripsSet): void {
   // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
 
   // Create/update LastDripsSetUserMapping for this receiversHash
-  let lastDripsSetUserMappingId = event.params.receiversHash.toString()
+  let lastDripsSetUserMappingId = event.params.receiversHash.toHexString()
   let lastDripsSetUserMapping = LastSetDripsUserMapping.load(lastDripsSetUserMappingId)
   if (!lastDripsSetUserMapping) {
     lastDripsSetUserMapping = new LastSetDripsUserMapping(lastDripsSetUserMappingId)
@@ -112,7 +112,7 @@ export function handleDripsSet(event: DripsSet): void {
 export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
 
   let receiversHash = event.params.receiversHash
-  let lastSetDripsUserMapping = LastSetDripsUserMapping.load(receiversHash.toString())
+  let lastSetDripsUserMapping = LastSetDripsUserMapping.load(receiversHash.toHexString())
 
   // We need to use the LastSetDripsUserMapping to look up the userId and assetId associated with this receiverHash
   if (lastSetDripsUserMapping) {
@@ -142,7 +142,7 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
   }
 
   // Create the DripsReceiverSeenEvent entity
-  let dripsReceiverSeenEventId = event.transaction.hash.toString() + "-" + event.logIndex.toString()
+  let dripsReceiverSeenEventId = event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
   let dripsReceiverSeenEvent = new DripsReceiverSeenEvent(dripsReceiverSeenEventId)
   if (lastSetDripsUserMapping) {
     dripsReceiverSeenEvent.dripsSetEvent = lastSetDripsUserMapping.dripsSetEventId
@@ -161,7 +161,7 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
 
 export function handleSqueezedDrips(event: SqueezedDrips): void {
 
-    let squeezedDripsEvent = new SqueezedDripsEvent(event.transaction.hash.toString() + "-" + event.logIndex.toString())
+    let squeezedDripsEvent = new SqueezedDripsEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
     squeezedDripsEvent.userId = event.params.userId.toString()
     squeezedDripsEvent.assetId = event.params.assetId
     squeezedDripsEvent.senderId = event.params.senderId.toString()
@@ -172,7 +172,7 @@ export function handleSqueezedDrips(event: SqueezedDrips): void {
 
 export function handleReceivedDrips(event: ReceivedDrips): void {
 
-  let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toString() + "-" + event.logIndex.toString())
+  let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   receivedDripsEvent.userId = event.params.userId.toString()
   receivedDripsEvent.assetId = event.params.assetId
   receivedDripsEvent.amt = event.params.amt
@@ -209,7 +209,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   user.save()
 
   // Add the SplitsSetEvent
-  let splitsSetEventId = event.transaction.hash.toString() + "-" + event.logIndex.toString()
+  let splitsSetEventId = event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
   let splitsSetEvent = new SplitsSetEvent(splitsSetEventId)
   splitsSetEvent.userId = event.params.userId.toString()
   splitsSetEvent.receiversHash = event.params.receiversHash
@@ -217,7 +217,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   splitsSetEvent.save()
 
   // Create/update LastSplitsSetUserMapping for this receiversHash
-  let lastSplitsSetUserMappingId = event.params.receiversHash.toString()
+  let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
   let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
   if (!lastSplitsSetUserMapping) {
     lastSplitsSetUserMapping = new LastSetSplitsUserMapping(lastSplitsSetUserMappingId)
@@ -231,7 +231,7 @@ export function handleSplitsSet(event: SplitsSet): void {
 
 export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
 
-  let lastSplitsSetUserMappingId = event.params.receiversHash.toString()
+  let lastSplitsSetUserMappingId = event.params.receiversHash.toHexString()
   let lastSplitsSetUserMapping = LastSetSplitsUserMapping.load(lastSplitsSetUserMappingId)
   if (lastSplitsSetUserMapping) {
   // If the User doesn't exist, create it
@@ -265,7 +265,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   }
 
   // Create the SplitsReceiverSeenEvent entity
-  let splitsReceiverSeenEventId = event.transaction.hash.toString() + "-" + event.logIndex.toString()
+  let splitsReceiverSeenEventId = event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
   let splitsReceiverSeenEvent = new SplitsReceiverSeenEvent(splitsReceiverSeenEventId)
   splitsReceiverSeenEvent.receiversHash = event.params.receiversHash
   if (lastSplitsSetUserMapping) {
@@ -284,7 +284,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
 
 export function handleSplit(event: Split): void {
 
-  let splitEvent = new SplitEvent(event.transaction.hash.toString() + "-" + event.logIndex.toString())
+  let splitEvent = new SplitEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   splitEvent.userId = event.params.userId.toString()
   splitEvent.receiverId = event.params.receiver.toString()
   splitEvent.assetId = event.params.assetId
@@ -297,7 +297,7 @@ export function handleGiven(event: Given): void {
 
   let assetId = event.params.assetId.toString()
 
-  let givenEvent = new GivenEvent(event.transaction.hash.toString() + "-" + event.logIndex.toString())
+  let givenEvent = new GivenEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   givenEvent.userId = event.params.userId.toString()
   givenEvent.receiverUserId = event.params.receiver.toString()
   givenEvent.assetId = event.params.assetId
