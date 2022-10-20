@@ -1,11 +1,12 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import { MultiHash } from "../generated/MetaData/MetaData"
 import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadata} from "../generated/DripsHub/DripsHub"
+import { Transfer } from "../generated/NFTDriver/NFTDriver"
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
 import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
-  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, UserMetadataEvent, GivenEvent, App} from "../generated/schema"
+  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, UserMetadataEvent, GivenEvent, App, NFTSubAccount } from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
 export function handleUserMetadata(event: UserMetadata): void {
@@ -327,4 +328,15 @@ export function handleAppAddressUpdated(event: DriverAddressUpdated): void {
     app.lastUpdatedBlockTimestamp = event.block.timestamp
     app.save()
   }
+}
+
+export function handleNFTSubAccountTransfer(event: Transfer): void {
+
+  let id = event.params.tokenId.toString()
+  let nftSubAccount = NFTSubAccount.load(id)
+  if (!nftSubAccount) {
+    nftSubAccount = new NFTSubAccount(id)
+  }
+  nftSubAccount.ownerAddress = event.params.from
+  nftSubAccount.save()
 }

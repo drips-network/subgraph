@@ -4,6 +4,10 @@
     "address": "0x4Cf1B4B46840CdCE2198D5404f17A3b967dcDca8",
     "block": 7178551
   },
+  "nftDriver": {
+    "address": "0xa12A25C4dda78B2e5a110017a8c82a3d30929115",
+    "block": 7178551
+  },
   "metaData": {
     "address": "0xC58cEa5a448A761d2dE80DFa8BfE298780e9dd66",
     "block": 7178551

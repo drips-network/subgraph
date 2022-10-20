@@ -144,3 +144,8 @@ type App @entity {
   appAddress: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
 }
+
+type NFTSubAccount @entity {
+  id: ID! # the NFT token ID
+  ownerAddress: Bytes!
+}

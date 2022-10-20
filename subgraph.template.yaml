@@ -64,3 +64,23 @@ dataSources:
         - event: ReceivedDrips(indexed uint256,indexed uint256,uint128,uint32)
           handler: handleReceivedDrips
       file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: NFTDriver
+    network: {{network}}
+    source:
+      address: "{{nftDriver.address}}"
+      abi: NFTDriver
+      startBlock: {{nftDriver.block}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - NFTDriver
+      abis:
+        - name: NFTDriver
+          file: ./abis/NFTDriver.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleNFTSubAccountTransfer
+      file: ./src/mapping.ts

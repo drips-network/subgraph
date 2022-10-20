@@ -1399,3 +1399,47 @@ export class App extends Entity {
     this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(value));
   }
 }
+
+export class NFTSubAccount extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("ownerAddress", Value.fromBytes(Bytes.empty()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save NFTSubAccount entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save NFTSubAccount entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("NFTSubAccount", id.toString(), this);
+    }
+  }
+
+  static load(id: string): NFTSubAccount | null {
+    return changetype<NFTSubAccount | null>(store.get("NFTSubAccount", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get ownerAddress(): Bytes {
+    let value = this.get("ownerAddress");
+    return value!.toBytes();
+  }
+
+  set ownerAddress(value: Bytes) {
+    this.set("ownerAddress", Value.fromBytes(value));
+  }
+}
