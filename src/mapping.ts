@@ -337,6 +337,6 @@ export function handleNFTSubAccountTransfer(event: Transfer): void {
   if (!nftSubAccount) {
     nftSubAccount = new NFTSubAccount(id)
   }
-  nftSubAccount.ownerAddress = event.params.from
+  nftSubAccount.ownerAddress = event.params.to
   nftSubAccount.save()
 }
