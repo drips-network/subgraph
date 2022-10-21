@@ -67,7 +67,7 @@ export function handleDripsSet(event: DripsSet): void {
   } else {
     // If this is an update, we need to delete the old DripsEntry values and clear the
     // dripsEntryIds field
-    if (!(event.params.receiversHash.toString() === userAssetConfig.assetConfigHash.toString())) {
+    if (!(event.params.receiversHash.toHexString() == userAssetConfig.assetConfigHash.toHexString())) {
       let newDripsEntryIds: string[] = []
       for (let i = 0; i<userAssetConfig.dripsEntryIds.length; i++) {
         let dripsEntryId = userAssetConfig.dripsEntryIds[i]
@@ -193,7 +193,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   } else {
     // If this is an update, we need to delete the old SplitsEntry values and clear the
     // splitsEntryIds field
-    if (!(event.params.receiversHash.toString() === user.splitsReceiversHash.toString())) {
+    if (!(event.params.receiversHash.toHexString() == user.splitsReceiversHash.toHexString())) {
       let newSplitsEntryIds: string[] = []
       for (let i = 0; i<user.splitsEntryIds.length; i++) {
         let splitsEntryId = user.splitsEntryIds[i]
