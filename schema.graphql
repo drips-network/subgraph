@@ -1,5 +1,14 @@
+type UserMetadataByKey @entity {
+  id: ID! # userId + "-" + key
+  userId: String!
+  key: BigInt!
+  value: Bytes!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
 type UserMetadataEvent @entity {
-  id: ID! # the userId
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  userId: String!
   key: BigInt!
   value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!

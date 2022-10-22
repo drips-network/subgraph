@@ -6,20 +6,28 @@ import {
   Collected
 } from "../generated/DripsHub/DripsHub"
 import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
-  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, UserMetadataEvent, GivenEvent, App, NFTSubAccount } from "../generated/schema"
+  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, UserMetadataByKey, UserMetadataEvent, GivenEvent, App, NFTSubAccount } from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
 export function handleUserMetadata(event: UserMetadata): void {
 
-  let id = event.params.userId.toString()
-  let userMetadata = UserMetadataEvent.load(id)
-  if (!userMetadata) {
-    userMetadata = new UserMetadataEvent(id)
+  let userMetadataByKeyId = event.params.userId.toString() + "-" + event.params.key.toString()
+  let userMetadataByKey = UserMetadataByKey.load(userMetadataByKeyId)
+  if (!userMetadataByKey) {
+    userMetadataByKey = new UserMetadataByKey(userMetadataByKeyId)
   }
-  userMetadata.key = event.params.key
-  userMetadata.value = event.params.value
-  userMetadata.lastUpdatedBlockTimestamp = event.block.timestamp
-  userMetadata.save()
+  userMetadataByKey.userId = event.params.userId.toString()
+  userMetadataByKey.key = event.params.key
+  userMetadataByKey.value = event.params.value
+  userMetadataByKey.lastUpdatedBlockTimestamp = event.block.timestamp
+  userMetadataByKey.save()
+
+  let userMetadataEvent = new UserMetadataEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
+  userMetadataEvent.userId = event.params.userId.toString()
+  userMetadataEvent.key = event.params.key
+  userMetadataEvent.value = event.params.value
+  userMetadataEvent.lastUpdatedBlockTimestamp = event.block.timestamp
+  userMetadataEvent.save()
 }
 
 export function handleCollected(event: Collected): void {
