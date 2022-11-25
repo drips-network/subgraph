@@ -8,8 +8,8 @@
     "address": "0xa12A25C4dda78B2e5a110017a8c82a3d30929115",
     "block": 7178551
   },
-  "metaData": {
-    "address": "0xC58cEa5a448A761d2dE80DFa8BfE298780e9dd66",
+  "immutableSplitsDriver": {
+    "address": "0x1d953Da768D442c367584c45210012Afc1206eFa",
     "block": 7178551
   }
 }

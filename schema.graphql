@@ -158,3 +158,9 @@ type NFTSubAccount @entity {
   id: ID! # the NFT token ID
   ownerAddress: Bytes!
 }
+
+type ImmutableSplitsCreated @entity {
+  id: ID! # userId + "-" + receiversHash
+  userId: String!
+  receiversHash: Bytes!
+}

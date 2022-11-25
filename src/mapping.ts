@@ -1,12 +1,14 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
-import { MultiHash } from "../generated/MetaData/MetaData"
 import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadata} from "../generated/DripsHub/DripsHub"
 import { Transfer } from "../generated/NFTDriver/NFTDriver"
+import { CreatedSplits } from "../generated/ImmutableSplitsDriver/ImmutableSplitsDriver"
 import {
   Collected
 } from "../generated/DripsHub/DripsHub"
-import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry,
-  SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, SplitEvent, CollectedEvent, UserMetadataByKey, UserMetadataEvent, GivenEvent, App, NFTSubAccount } from "../generated/schema"
+import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, 
+  ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry, SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, 
+  SplitEvent, CollectedEvent, UserMetadataByKey, UserMetadataEvent, GivenEvent, App, NFTSubAccount, 
+  ImmutableSplitsCreated} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
 export function handleUserMetadata(event: UserMetadata): void {
@@ -347,4 +349,12 @@ export function handleNFTSubAccountTransfer(event: Transfer): void {
   }
   nftSubAccount.ownerAddress = event.params.to
   nftSubAccount.save()
+}
+
+export function handleImmutableSplitsCreated(event: CreatedSplits): void {
+
+  let immutableSplitsCreated = new ImmutableSplitsCreated(event.params.userId.toString() + "-" + event.params.receiversHash.toHexString())
+  immutableSplitsCreated.userId = event.params.userId.toString()
+  immutableSplitsCreated.receiversHash = event.params.receiversHash
+  immutableSplitsCreated.save()
 }

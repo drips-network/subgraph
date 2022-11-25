@@ -3,26 +3,6 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: MetaData
-    network: {{network}}
-    source:
-      address: "{{metaData.address}}"
-      abi: MetaData
-      startBlock: {{metaData.block}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - IdentityMetaData
-      abis:
-        - name: MetaData
-          file: ./abis/MetaData.json
-      eventHandlers:
-        - event: MultiHash(indexed address,indexed bytes32,bytes)
-          handler: handleIdentityMetaData
-      file: ./src/mapping.ts
-  - kind: ethereum/contract
     name: DripsHub
     network: {{network}}
     source:
@@ -83,4 +63,24 @@ dataSources:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleNFTSubAccountTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: ImmutableSplitsDriver
+    network: {{network}}
+    source:
+      address: "{{immutableSplitsDriver.address}}"
+      abi: ImmutableSplitsDriver
+      startBlock: {{immutableSplitsDriver.block}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ImmutableSplitsDriver
+      abis:
+        - name: ImmutableSplitsDriver
+          file: ./abis/ImmutableSplitsDriver.json
+      eventHandlers:
+        - event: CreatedSplits(indexed uint256,indexed bytes32)
+          handler: handleImmutableSplitsCreated
       file: ./src/mapping.ts

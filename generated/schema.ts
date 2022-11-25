@@ -1529,3 +1529,62 @@ export class NFTSubAccount extends Entity {
     this.set("ownerAddress", Value.fromBytes(value));
   }
 }
+
+export class ImmutableSplitsCreated extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("userId", Value.fromString(""));
+    this.set("receiversHash", Value.fromBytes(Bytes.empty()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ImmutableSplitsCreated entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ImmutableSplitsCreated entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ImmutableSplitsCreated", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ImmutableSplitsCreated | null {
+    return changetype<ImmutableSplitsCreated | null>(
+      store.get("ImmutableSplitsCreated", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get userId(): string {
+    let value = this.get("userId");
+    return value!.toString();
+  }
+
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
+  }
+
+  get receiversHash(): Bytes {
+    let value = this.get("receiversHash");
+    return value!.toBytes();
+  }
+
+  set receiversHash(value: Bytes) {
+    this.set("receiversHash", Value.fromBytes(value));
+  }
+}
