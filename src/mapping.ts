@@ -1,5 +1,5 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
-import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadata} from "../generated/DripsHub/DripsHub"
+import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadataEmitted} from "../generated/DripsHub/DripsHub"
 import { Transfer } from "../generated/NFTDriver/NFTDriver"
 import { CreatedSplits } from "../generated/ImmutableSplitsDriver/ImmutableSplitsDriver"
 import {
@@ -11,7 +11,7 @@ import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMappi
   ImmutableSplitsCreated} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
-export function handleUserMetadata(event: UserMetadata): void {
+export function handleUserMetadata(event: UserMetadataEmitted): void {
 
   let userMetadataByKeyId = event.params.userId.toString() + "-" + event.params.key.toString()
   let userMetadataByKey = UserMetadataByKey.load(userMetadataByKeyId)
@@ -19,14 +19,14 @@ export function handleUserMetadata(event: UserMetadata): void {
     userMetadataByKey = new UserMetadataByKey(userMetadataByKeyId)
   }
   userMetadataByKey.userId = event.params.userId.toString()
-  userMetadataByKey.key = event.params.key
+  userMetadataByKey.key = event.params.key.toString()
   userMetadataByKey.value = event.params.value
   userMetadataByKey.lastUpdatedBlockTimestamp = event.block.timestamp
   userMetadataByKey.save()
 
   let userMetadataEvent = new UserMetadataEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   userMetadataEvent.userId = event.params.userId.toString()
-  userMetadataEvent.key = event.params.key
+  userMetadataEvent.key = event.params.key.toString()
   userMetadataEvent.value = event.params.value
   userMetadataEvent.lastUpdatedBlockTimestamp = event.block.timestamp
   userMetadataEvent.save()

@@ -427,9 +427,9 @@
             },
             {
                 "indexed": true,
-                "internalType": "uint256",
+                "internalType": "bytes32",
                 "name": "key",
-                "type": "uint256"
+                "type": "bytes32"
             },
             {
                 "indexed": false,
@@ -438,7 +438,7 @@
                 "type": "bytes"
             }
         ],
-        "name": "UserMetadata",
+        "name": "UserMetadataEmitted",
         "type": "event"
     },
     {
@@ -736,14 +736,21 @@
                 "type": "uint256"
             },
             {
-                "internalType": "uint256",
-                "name": "key",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bytes",
-                "name": "value",
-                "type": "bytes"
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "key",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "value",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct UserMetadata[]",
+                "name": "userMetadata",
+                "type": "tuple[]"
             }
         ],
         "name": "emitUserMetadata",
@@ -969,11 +976,6 @@
                 "internalType": "uint128",
                 "name": "receivedAmt",
                 "type": "uint128"
-            },
-            {
-                "internalType": "uint32",
-                "name": "receivableCycles",
-                "type": "uint32"
             }
         ],
         "stateMutability": "nonpayable",
@@ -1003,11 +1005,6 @@
                 "internalType": "uint128",
                 "name": "receivableAmt",
                 "type": "uint128"
-            },
-            {
-                "internalType": "uint32",
-                "name": "receivableCycles",
-                "type": "uint32"
             }
         ],
         "stateMutability": "view",
@@ -1095,15 +1092,20 @@
                 "internalType": "struct DripsReceiver[]",
                 "name": "newReceivers",
                 "type": "tuple[]"
+            },
+            {
+                "internalType": "uint32",
+                "name": "maxEndTip1",
+                "type": "uint32"
+            },
+            {
+                "internalType": "uint32",
+                "name": "maxEndTip2",
+                "type": "uint32"
             }
         ],
         "name": "setDrips",
         "outputs": [
-            {
-                "internalType": "uint128",
-                "name": "newBalance",
-                "type": "uint128"
-            },
             {
                 "internalType": "int128",
                 "name": "realBalanceDelta",
@@ -1224,6 +1226,11 @@
             {
                 "internalType": "uint128",
                 "name": "collectableAmt",
+                "type": "uint128"
+            },
+            {
+                "internalType": "uint128",
+                "name": "splitAmt",
                 "type": "uint128"
             }
         ],

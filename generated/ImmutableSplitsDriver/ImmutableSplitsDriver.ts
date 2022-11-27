@@ -100,9 +100,9 @@ export class ImmutableSplitsDriver__createSplitsInputReceiversStruct extends eth
   }
 }
 
-export class ImmutableSplitsDriver__createSplitsInputMetadataStruct extends ethereum.Tuple {
-  get key(): BigInt {
-    return this[0].toBigInt();
+export class ImmutableSplitsDriver__createSplitsInputUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
   }
 
   get value(): Bytes {
@@ -132,14 +132,16 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
 
   createSplits(
     receivers: Array<ImmutableSplitsDriver__createSplitsInputReceiversStruct>,
-    metadata: Array<ImmutableSplitsDriver__createSplitsInputMetadataStruct>
+    userMetadata: Array<
+      ImmutableSplitsDriver__createSplitsInputUserMetadataStruct
+    >
   ): BigInt {
     let result = super.call(
       "createSplits",
-      "createSplits((uint256,uint32)[],(uint256,bytes)[]):(uint256)",
+      "createSplits((uint256,uint32)[],(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromTupleArray(receivers),
-        ethereum.Value.fromTupleArray(metadata)
+        ethereum.Value.fromTupleArray(userMetadata)
       ]
     );
 
@@ -148,14 +150,16 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
 
   try_createSplits(
     receivers: Array<ImmutableSplitsDriver__createSplitsInputReceiversStruct>,
-    metadata: Array<ImmutableSplitsDriver__createSplitsInputMetadataStruct>
+    userMetadata: Array<
+      ImmutableSplitsDriver__createSplitsInputUserMetadataStruct
+    >
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createSplits",
-      "createSplits((uint256,uint32)[],(uint256,bytes)[]):(uint256)",
+      "createSplits((uint256,uint32)[],(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromTupleArray(receivers),
-        ethereum.Value.fromTupleArray(metadata)
+        ethereum.Value.fromTupleArray(userMetadata)
       ]
     );
     if (result.reverted) {
@@ -340,9 +344,9 @@ export class CreateSplitsCall__Inputs {
     >();
   }
 
-  get metadata(): Array<CreateSplitsCallMetadataStruct> {
+  get userMetadata(): Array<CreateSplitsCallUserMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      CreateSplitsCallMetadataStruct
+      CreateSplitsCallUserMetadataStruct
     >();
   }
 }
@@ -369,9 +373,9 @@ export class CreateSplitsCallReceiversStruct extends ethereum.Tuple {
   }
 }
 
-export class CreateSplitsCallMetadataStruct extends ethereum.Tuple {
-  get key(): BigInt {
-    return this[0].toBigInt();
+export class CreateSplitsCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
   }
 
   get value(): Bytes {

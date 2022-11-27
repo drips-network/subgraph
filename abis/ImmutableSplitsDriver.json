@@ -127,9 +127,9 @@
             {
                 "components": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "bytes32",
                         "name": "key",
-                        "type": "uint256"
+                        "type": "bytes32"
                     },
                     {
                         "internalType": "bytes",
@@ -138,7 +138,7 @@
                     }
                 ],
                 "internalType": "struct UserMetadata[]",
-                "name": "metadata",
+                "name": "userMetadata",
                 "type": "tuple[]"
             }
         ],

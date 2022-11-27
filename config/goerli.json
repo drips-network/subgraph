@@ -1,15 +1,15 @@
 {
   "network": "goerli",
   "dripsHub": {
-    "address": "0x4Cf1B4B46840CdCE2198D5404f17A3b967dcDca8",
+    "address": "0xca643F9d363964cE9BCaaEce47De7b05c98F4800",
     "block": 7178551
   },
   "nftDriver": {
-    "address": "0xa12A25C4dda78B2e5a110017a8c82a3d30929115",
+    "address": "0x05bb04E7634A47100BE8A1690Ac417045b7f6640",
     "block": 7178551
   },
   "immutableSplitsDriver": {
-    "address": "0x1d953Da768D442c367584c45210012Afc1206eFa",
+    "address": "0xE8e2E86e9AD4857E148eD95e8883fC1A5178D52C",
     "block": 7178551
   }
 }

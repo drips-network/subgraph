@@ -146,20 +146,23 @@ export class Upgraded__Params {
   }
 }
 
-export class NFTDriver__setDripsResult {
-  value0: BigInt;
-  value1: BigInt;
-
-  constructor(value0: BigInt, value1: BigInt) {
-    this.value0 = value0;
-    this.value1 = value1;
+export class NFTDriver__mintInputUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
   }
 
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromSignedBigInt(this.value1));
-    return map;
+  get value(): Bytes {
+    return this[1].toBytes();
+  }
+}
+
+export class NFTDriver__safeMintInputUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
   }
 }
 
@@ -357,18 +360,34 @@ export class NFTDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  mint(to: Address): BigInt {
-    let result = super.call("mint", "mint(address):(uint256)", [
-      ethereum.Value.fromAddress(to)
-    ]);
+  mint(
+    to: Address,
+    userMetadata: Array<NFTDriver__mintInputUserMetadataStruct>
+  ): BigInt {
+    let result = super.call(
+      "mint",
+      "mint(address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
 
     return result[0].toBigInt();
   }
 
-  try_mint(to: Address): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("mint", "mint(address):(uint256)", [
-      ethereum.Value.fromAddress(to)
-    ]);
+  try_mint(
+    to: Address,
+    userMetadata: Array<NFTDriver__mintInputUserMetadataStruct>
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "mint",
+      "mint(address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -444,18 +463,34 @@ export class NFTDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  safeMint(to: Address): BigInt {
-    let result = super.call("safeMint", "safeMint(address):(uint256)", [
-      ethereum.Value.fromAddress(to)
-    ]);
+  safeMint(
+    to: Address,
+    userMetadata: Array<NFTDriver__safeMintInputUserMetadataStruct>
+  ): BigInt {
+    let result = super.call(
+      "safeMint",
+      "safeMint(address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
 
     return result[0].toBigInt();
   }
 
-  try_safeMint(to: Address): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("safeMint", "safeMint(address):(uint256)", [
-      ethereum.Value.fromAddress(to)
-    ]);
+  try_safeMint(
+    to: Address,
+    userMetadata: Array<NFTDriver__safeMintInputUserMetadataStruct>
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "safeMint",
+      "safeMint(address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -469,25 +504,26 @@ export class NFTDriver extends ethereum.SmartContract {
     currReceivers: Array<NFTDriver__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
     newReceivers: Array<NFTDriver__setDripsInputNewReceiversStruct>,
+    maxEndTip1: BigInt,
+    maxEndTip2: BigInt,
     transferTo: Address
-  ): NFTDriver__setDripsResult {
+  ): BigInt {
     let result = super.call(
       "setDrips",
-      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],address):(uint128,int128)",
+      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
         ethereum.Value.fromTupleArray(newReceivers),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip2),
         ethereum.Value.fromAddress(transferTo)
       ]
     );
 
-    return new NFTDriver__setDripsResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
-    );
+    return result[0].toBigInt();
   }
 
   try_setDrips(
@@ -496,17 +532,21 @@ export class NFTDriver extends ethereum.SmartContract {
     currReceivers: Array<NFTDriver__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
     newReceivers: Array<NFTDriver__setDripsInputNewReceiversStruct>,
+    maxEndTip1: BigInt,
+    maxEndTip2: BigInt,
     transferTo: Address
-  ): ethereum.CallResult<NFTDriver__setDripsResult> {
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "setDrips",
-      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],address):(uint128,int128)",
+      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
         ethereum.Value.fromTupleArray(newReceivers),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip2),
         ethereum.Value.fromAddress(transferTo)
       ]
     );
@@ -514,9 +554,7 @@ export class NFTDriver extends ethereum.SmartContract {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new NFTDriver__setDripsResult(value[0].toBigInt(), value[1].toBigInt())
-    );
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   supportsInterface(interfaceId: Bytes): boolean {
@@ -772,12 +810,10 @@ export class EmitUserMetadataCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get key(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get value(): Bytes {
-    return this._call.inputValues[2].value.toBytes();
+  get userMetadata(): Array<EmitUserMetadataCallUserMetadataStruct> {
+    return this._call.inputValues[1].value.toTupleArray<
+      EmitUserMetadataCallUserMetadataStruct
+    >();
   }
 }
 
@@ -786,6 +822,16 @@ export class EmitUserMetadataCall__Outputs {
 
   constructor(call: EmitUserMetadataCall) {
     this._call = call;
+  }
+}
+
+export class EmitUserMetadataCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
   }
 }
 
@@ -851,6 +897,12 @@ export class MintCall__Inputs {
   get to(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
+
+  get userMetadata(): Array<MintCallUserMetadataStruct> {
+    return this._call.inputValues[1].value.toTupleArray<
+      MintCallUserMetadataStruct
+    >();
+  }
 }
 
 export class MintCall__Outputs {
@@ -862,6 +914,16 @@ export class MintCall__Outputs {
 
   get tokenId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class MintCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
   }
 }
 
@@ -885,6 +947,12 @@ export class SafeMintCall__Inputs {
   get to(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
+
+  get userMetadata(): Array<SafeMintCallUserMetadataStruct> {
+    return this._call.inputValues[1].value.toTupleArray<
+      SafeMintCallUserMetadataStruct
+    >();
+  }
 }
 
 export class SafeMintCall__Outputs {
@@ -896,6 +964,16 @@ export class SafeMintCall__Outputs {
 
   get tokenId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class SafeMintCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
   }
 }
 
@@ -1054,8 +1132,16 @@ export class SetDripsCall__Inputs {
     >();
   }
 
+  get maxEndTip1(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get maxEndTip2(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+
   get transferTo(): Address {
-    return this._call.inputValues[5].value.toAddress();
+    return this._call.inputValues[7].value.toAddress();
   }
 }
 
@@ -1066,12 +1152,8 @@ export class SetDripsCall__Outputs {
     this._call = call;
   }
 
-  get newBalance(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-
   get realBalanceDelta(): BigInt {
-    return this._call.outputValues[1].value.toBigInt();
+    return this._call.outputValues[0].value.toBigInt();
   }
 }
 

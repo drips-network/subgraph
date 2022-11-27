@@ -279,14 +279,21 @@
                 "type": "uint256"
             },
             {
-                "internalType": "uint256",
-                "name": "key",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bytes",
-                "name": "value",
-                "type": "bytes"
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "key",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "value",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct UserMetadata[]",
+                "name": "userMetadata",
+                "type": "tuple[]"
             }
         ],
         "name": "emitUserMetadata",
@@ -390,6 +397,23 @@
                 "internalType": "address",
                 "name": "to",
                 "type": "address"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "key",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "value",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct UserMetadata[]",
+                "name": "userMetadata",
+                "type": "tuple[]"
             }
         ],
         "name": "mint",
@@ -467,6 +491,23 @@
                 "internalType": "address",
                 "name": "to",
                 "type": "address"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "key",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "value",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct UserMetadata[]",
+                "name": "userMetadata",
+                "type": "tuple[]"
             }
         ],
         "name": "safeMint",
@@ -601,6 +642,16 @@
                 "type": "tuple[]"
             },
             {
+                "internalType": "uint32",
+                "name": "maxEndTip1",
+                "type": "uint32"
+            },
+            {
+                "internalType": "uint32",
+                "name": "maxEndTip2",
+                "type": "uint32"
+            },
+            {
                 "internalType": "address",
                 "name": "transferTo",
                 "type": "address"
@@ -608,11 +659,6 @@
         ],
         "name": "setDrips",
         "outputs": [
-            {
-                "internalType": "uint128",
-                "name": "newBalance",
-                "type": "uint128"
-            },
             {
                 "internalType": "int128",
                 "name": "realBalanceDelta",

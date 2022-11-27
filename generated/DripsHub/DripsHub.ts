@@ -436,16 +436,16 @@ export class Upgraded__Params {
   }
 }
 
-export class UserMetadata extends ethereum.Event {
-  get params(): UserMetadata__Params {
-    return new UserMetadata__Params(this);
+export class UserMetadataEmitted extends ethereum.Event {
+  get params(): UserMetadataEmitted__Params {
+    return new UserMetadataEmitted__Params(this);
   }
 }
 
-export class UserMetadata__Params {
-  _event: UserMetadata;
+export class UserMetadataEmitted__Params {
+  _event: UserMetadataEmitted;
 
-  constructor(event: UserMetadata) {
+  constructor(event: UserMetadataEmitted) {
     this._event = event;
   }
 
@@ -453,8 +453,8 @@ export class UserMetadata__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get key(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get key(): Bytes {
+    return this._event.parameters[1].value.toBytes();
   }
 
   get value(): Bytes {
@@ -524,57 +524,6 @@ export class DripsHub__hashSplitsInputReceiversStruct extends ethereum.Tuple {
   }
 }
 
-export class DripsHub__receiveDripsResult {
-  value0: BigInt;
-  value1: BigInt;
-
-  constructor(value0: BigInt, value1: BigInt) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    return map;
-  }
-}
-
-export class DripsHub__receiveDripsResultResult {
-  value0: BigInt;
-  value1: BigInt;
-
-  constructor(value0: BigInt, value1: BigInt) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    return map;
-  }
-}
-
-export class DripsHub__setDripsResult {
-  value0: BigInt;
-  value1: BigInt;
-
-  constructor(value0: BigInt, value1: BigInt) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromSignedBigInt(this.value1));
-    return map;
-  }
-}
-
 export class DripsHub__setDripsInputCurrReceiversStruct extends ethereum.Tuple {
   get userId(): BigInt {
     return this[0].toBigInt();
@@ -619,6 +568,23 @@ export class DripsHub__splitInputCurrReceiversStruct extends ethereum.Tuple {
 
   get weight(): BigInt {
     return this[1].toBigInt();
+  }
+}
+
+export class DripsHub__splitResultResult {
+  value0: BigInt;
+  value1: BigInt;
+
+  constructor(value0: BigInt, value1: BigInt) {
+    this.value0 = value0;
+    this.value1 = value1;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    return map;
   }
 }
 
@@ -1234,14 +1200,10 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  receiveDrips(
-    userId: BigInt,
-    erc20: Address,
-    maxCycles: BigInt
-  ): DripsHub__receiveDripsResult {
+  receiveDrips(userId: BigInt, erc20: Address, maxCycles: BigInt): BigInt {
     let result = super.call(
       "receiveDrips",
-      "receiveDrips(uint256,address,uint32):(uint128,uint32)",
+      "receiveDrips(uint256,address,uint32):(uint128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
@@ -1249,20 +1211,17 @@ export class DripsHub extends ethereum.SmartContract {
       ]
     );
 
-    return new DripsHub__receiveDripsResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
-    );
+    return result[0].toBigInt();
   }
 
   try_receiveDrips(
     userId: BigInt,
     erc20: Address,
     maxCycles: BigInt
-  ): ethereum.CallResult<DripsHub__receiveDripsResult> {
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "receiveDrips",
-      "receiveDrips(uint256,address,uint32):(uint128,uint32)",
+      "receiveDrips(uint256,address,uint32):(uint128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
@@ -1273,19 +1232,17 @@ export class DripsHub extends ethereum.SmartContract {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new DripsHub__receiveDripsResult(value[0].toBigInt(), value[1].toBigInt())
-    );
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   receiveDripsResult(
     userId: BigInt,
     erc20: Address,
     maxCycles: BigInt
-  ): DripsHub__receiveDripsResultResult {
+  ): BigInt {
     let result = super.call(
       "receiveDripsResult",
-      "receiveDripsResult(uint256,address,uint32):(uint128,uint32)",
+      "receiveDripsResult(uint256,address,uint32):(uint128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
@@ -1293,20 +1250,17 @@ export class DripsHub extends ethereum.SmartContract {
       ]
     );
 
-    return new DripsHub__receiveDripsResultResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
-    );
+    return result[0].toBigInt();
   }
 
   try_receiveDripsResult(
     userId: BigInt,
     erc20: Address,
     maxCycles: BigInt
-  ): ethereum.CallResult<DripsHub__receiveDripsResultResult> {
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "receiveDripsResult",
-      "receiveDripsResult(uint256,address,uint32):(uint128,uint32)",
+      "receiveDripsResult(uint256,address,uint32):(uint128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
@@ -1317,12 +1271,7 @@ export class DripsHub extends ethereum.SmartContract {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new DripsHub__receiveDripsResultResult(
-        value[0].toBigInt(),
-        value[1].toBigInt()
-      )
-    );
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   registerDriver(driverAddr: Address): BigInt {
@@ -1368,24 +1317,25 @@ export class DripsHub extends ethereum.SmartContract {
     erc20: Address,
     currReceivers: Array<DripsHub__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
-    newReceivers: Array<DripsHub__setDripsInputNewReceiversStruct>
-  ): DripsHub__setDripsResult {
+    newReceivers: Array<DripsHub__setDripsInputNewReceiversStruct>,
+    maxEndTip1: BigInt,
+    maxEndTip2: BigInt
+  ): BigInt {
     let result = super.call(
       "setDrips",
-      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[]):(uint128,int128)",
+      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32):(int128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
-        ethereum.Value.fromTupleArray(newReceivers)
+        ethereum.Value.fromTupleArray(newReceivers),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip2)
       ]
     );
 
-    return new DripsHub__setDripsResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
-    );
+    return result[0].toBigInt();
   }
 
   try_setDrips(
@@ -1393,26 +1343,28 @@ export class DripsHub extends ethereum.SmartContract {
     erc20: Address,
     currReceivers: Array<DripsHub__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
-    newReceivers: Array<DripsHub__setDripsInputNewReceiversStruct>
-  ): ethereum.CallResult<DripsHub__setDripsResult> {
+    newReceivers: Array<DripsHub__setDripsInputNewReceiversStruct>,
+    maxEndTip1: BigInt,
+    maxEndTip2: BigInt
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "setDrips",
-      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[]):(uint128,int128)",
+      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32):(int128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
-        ethereum.Value.fromTupleArray(newReceivers)
+        ethereum.Value.fromTupleArray(newReceivers),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
+        ethereum.Value.fromUnsignedBigInt(maxEndTip2)
       ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new DripsHub__setDripsResult(value[0].toBigInt(), value[1].toBigInt())
-    );
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   split(
@@ -1463,10 +1415,10 @@ export class DripsHub extends ethereum.SmartContract {
     userId: BigInt,
     currReceivers: Array<DripsHub__splitResultInputCurrReceiversStruct>,
     amount: BigInt
-  ): BigInt {
+  ): DripsHub__splitResultResult {
     let result = super.call(
       "splitResult",
-      "splitResult(uint256,(uint256,uint32)[],uint128):(uint128)",
+      "splitResult(uint256,(uint256,uint32)[],uint128):(uint128,uint128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromTupleArray(currReceivers),
@@ -1474,17 +1426,20 @@ export class DripsHub extends ethereum.SmartContract {
       ]
     );
 
-    return result[0].toBigInt();
+    return new DripsHub__splitResultResult(
+      result[0].toBigInt(),
+      result[1].toBigInt()
+    );
   }
 
   try_splitResult(
     userId: BigInt,
     currReceivers: Array<DripsHub__splitResultInputCurrReceiversStruct>,
     amount: BigInt
-  ): ethereum.CallResult<BigInt> {
+  ): ethereum.CallResult<DripsHub__splitResultResult> {
     let result = super.tryCall(
       "splitResult",
-      "splitResult(uint256,(uint256,uint32)[],uint128):(uint128)",
+      "splitResult(uint256,(uint256,uint32)[],uint128):(uint128,uint128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromTupleArray(currReceivers),
@@ -1495,7 +1450,9 @@ export class DripsHub extends ethereum.SmartContract {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
+    return ethereum.CallResult.fromValue(
+      new DripsHub__splitResultResult(value[0].toBigInt(), value[1].toBigInt())
+    );
   }
 
   splitsHash(userId: BigInt): Bytes {
@@ -1785,12 +1742,10 @@ export class EmitUserMetadataCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get key(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get value(): Bytes {
-    return this._call.inputValues[2].value.toBytes();
+  get userMetadata(): Array<EmitUserMetadataCallUserMetadataStruct> {
+    return this._call.inputValues[1].value.toTupleArray<
+      EmitUserMetadataCallUserMetadataStruct
+    >();
   }
 }
 
@@ -1799,6 +1754,16 @@ export class EmitUserMetadataCall__Outputs {
 
   constructor(call: EmitUserMetadataCall) {
     this._call = call;
+  }
+}
+
+export class EmitUserMetadataCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
   }
 }
 
@@ -1910,10 +1875,6 @@ export class ReceiveDripsCall__Outputs {
   get receivedAmt(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
-
-  get receivableCycles(): BigInt {
-    return this._call.outputValues[1].value.toBigInt();
-  }
 }
 
 export class RegisterDriverCall extends ethereum.Call {
@@ -1990,6 +1951,14 @@ export class SetDripsCall__Inputs {
       SetDripsCallNewReceiversStruct
     >();
   }
+
+  get maxEndTip1(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get maxEndTip2(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
 }
 
 export class SetDripsCall__Outputs {
@@ -1999,12 +1968,8 @@ export class SetDripsCall__Outputs {
     this._call = call;
   }
 
-  get newBalance(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-
   get realBalanceDelta(): BigInt {
-    return this._call.outputValues[1].value.toBigInt();
+    return this._call.outputValues[0].value.toBigInt();
   }
 }
 
