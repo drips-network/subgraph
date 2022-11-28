@@ -17,7 +17,7 @@ export class UserMetadataByKey extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("userId", Value.fromString(""));
-    this.set("key", Value.fromString(""));
+    this.set("key", Value.fromBytes(Bytes.empty()));
     this.set("value", Value.fromBytes(Bytes.empty()));
     this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -59,13 +59,13 @@ export class UserMetadataByKey extends Entity {
     this.set("userId", Value.fromString(value));
   }
 
-  get key(): string {
+  get key(): Bytes {
     let value = this.get("key");
-    return value!.toString();
+    return value!.toBytes();
   }
 
-  set key(value: string) {
-    this.set("key", Value.fromString(value));
+  set key(value: Bytes) {
+    this.set("key", Value.fromBytes(value));
   }
 
   get value(): Bytes {
@@ -93,7 +93,7 @@ export class UserMetadataEvent extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("userId", Value.fromString(""));
-    this.set("key", Value.fromString(""));
+    this.set("key", Value.fromBytes(Bytes.empty()));
     this.set("value", Value.fromBytes(Bytes.empty()));
     this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -135,13 +135,13 @@ export class UserMetadataEvent extends Entity {
     this.set("userId", Value.fromString(value));
   }
 
-  get key(): string {
+  get key(): Bytes {
     let value = this.get("key");
-    return value!.toString();
+    return value!.toBytes();
   }
 
-  set key(value: string) {
-    this.set("key", Value.fromString(value));
+  set key(value: Bytes) {
+    this.set("key", Value.fromBytes(value));
   }
 
   get value(): Bytes {

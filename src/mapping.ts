@@ -19,14 +19,14 @@ export function handleUserMetadata(event: UserMetadataEmitted): void {
     userMetadataByKey = new UserMetadataByKey(userMetadataByKeyId)
   }
   userMetadataByKey.userId = event.params.userId.toString()
-  userMetadataByKey.key = event.params.key.toString()
+  userMetadataByKey.key = event.params.key
   userMetadataByKey.value = event.params.value
   userMetadataByKey.lastUpdatedBlockTimestamp = event.block.timestamp
   userMetadataByKey.save()
 
   let userMetadataEvent = new UserMetadataEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   userMetadataEvent.userId = event.params.userId.toString()
-  userMetadataEvent.key = event.params.key.toString()
+  userMetadataEvent.key = event.params.key
   userMetadataEvent.value = event.params.value
   userMetadataEvent.lastUpdatedBlockTimestamp = event.block.timestamp
   userMetadataEvent.save()

@@ -1,7 +1,7 @@
 type UserMetadataByKey @entity {
   id: ID! # userId + "-" + key
   userId: String!
-  key: String!
+  key: Bytes!
   value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
 }
@@ -9,7 +9,7 @@ type UserMetadataByKey @entity {
 type UserMetadataEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   userId: String!
-  key: String!
+  key: Bytes!
   value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
 }
