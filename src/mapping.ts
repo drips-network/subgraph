@@ -36,22 +36,25 @@ export function handleCollected(event: Collected): void {
 
   let userId = event.params.userId.toString()
   let assetId = event.params.assetId.toString()
+
+  let collectedEvent = new CollectedEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
+  collectedEvent.user = userId
+  collectedEvent.assetId = event.params.assetId
+  collectedEvent.collected = event.params.collected
+  collectedEvent.blockTimestamp = event.block.timestamp
+  collectedEvent.save()
+
   let userAssetConfigId = userId + "-" + assetId
-
   let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
-
-  if (userAssetConfig) {
-    userAssetConfig.amountCollected = userAssetConfig.amountCollected.plus(event.params.collected)
-    userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
-    userAssetConfig.save()
-  
-    let collectedEvent = new CollectedEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
-    collectedEvent.user = userId
-    collectedEvent.assetId = event.params.assetId
-    collectedEvent.collected = event.params.collected
-    collectedEvent.blockTimestamp = event.block.timestamp
-    collectedEvent.save()
+  if (!userAssetConfig) {
+    userAssetConfig = new UserAssetConfig(userAssetConfigId)
+    userAssetConfig.user = userId
+    userAssetConfig.assetId = event.params.assetId
+    userAssetConfig.dripsEntryIds = []
   }
+  userAssetConfig.amountCollected = userAssetConfig.amountCollected.plus(event.params.collected)
+  userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  userAssetConfig.save()
 }
 
 export function handleDripsSet(event: DripsSet): void {
