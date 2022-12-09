@@ -808,7 +808,6 @@ export class SqueezedDripsEvent extends Entity {
     this.set("assetId", Value.fromBigInt(BigInt.zero()));
     this.set("senderId", Value.fromString(""));
     this.set("amt", Value.fromBigInt(BigInt.zero()));
-    this.set("nextSqueezed", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -874,15 +873,6 @@ export class SqueezedDripsEvent extends Entity {
 
   set amt(value: BigInt) {
     this.set("amt", Value.fromBigInt(value));
-  }
-
-  get nextSqueezed(): BigInt {
-    let value = this.get("nextSqueezed");
-    return value!.toBigInt();
-  }
-
-  set nextSqueezed(value: BigInt) {
-    this.set("nextSqueezed", Value.fromBigInt(value));
   }
 
   get blockTimestamp(): BigInt {

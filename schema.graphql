@@ -87,7 +87,6 @@ type SqueezedDripsEvent @entity {
   assetId: BigInt!
   senderId: String!
   amt: BigInt!
-  nextSqueezed: BigInt!
   blockTimestamp: BigInt!
 }
 
