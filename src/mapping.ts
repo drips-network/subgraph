@@ -1,13 +1,10 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
-import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadataEmitted} from "../generated/DripsHub/DripsHub"
+import { DripsSet, DripsReceiverSeen, ReceivedDrips, SqueezedDrips, SplitsSet, SplitsReceiverSeen, Split, Given, DriverRegistered, DriverAddressUpdated, UserMetadataEmitted, Collected, Collectable} from "../generated/DripsHub/DripsHub"
 import { Transfer } from "../generated/NFTDriver/NFTDriver"
 import { CreatedSplits } from "../generated/ImmutableSplitsDriver/ImmutableSplitsDriver"
-import {
-  Collected
-} from "../generated/DripsHub/DripsHub"
 import { User, DripsEntry, UserAssetConfig, DripsSetEvent, LastSetDripsUserMapping, DripsReceiverSeenEvent, 
   ReceivedDripsEvent, SqueezedDripsEvent, SplitsEntry, SplitsSetEvent, LastSetSplitsUserMapping, SplitsReceiverSeenEvent, 
-  SplitEvent, CollectedEvent, UserMetadataByKey, UserMetadataEvent, GivenEvent, App, NFTSubAccount, 
+  SplitEvent, CollectedEvent, CollectableEvent, UserMetadataByKey, UserMetadataEvent, GivenEvent, App, NFTSubAccount, 
   ImmutableSplitsCreated} from "../generated/schema"
 import { store,ethereum,log } from '@graphprotocol/graph-ts'
 
@@ -32,9 +29,38 @@ export function handleUserMetadata(event: UserMetadataEmitted): void {
   userMetadataEvent.save()
 }
 
+export function handleCollectable(event: Collectable): void {
+
+  let userId = event.params.userId.toString()
+  let user = User.load(userId)
+  if (!user) {
+    user = new User(userId)
+    user.splitsEntryIds = []
+    user.lastUpdatedBlockTimestamp = event.block.timestamp
+    user.save()
+  }
+
+  let assetId = event.params.assetId.toString()
+
+  let collectableEvent = new CollectableEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
+  collectableEvent.user = userId
+  collectableEvent.assetId = event.params.assetId
+  collectableEvent.amt = event.params.amt
+  collectableEvent.blockTimestamp = event.block.timestamp
+  collectableEvent.save()
+}
+
 export function handleCollected(event: Collected): void {
 
   let userId = event.params.userId.toString()
+  let user = User.load(userId)
+  if (!user) {
+    user = new User(userId)
+    user.splitsEntryIds = []
+    user.lastUpdatedBlockTimestamp = event.block.timestamp
+    user.save()
+  }
+
   let assetId = event.params.assetId.toString()
 
   let collectedEvent = new CollectedEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())

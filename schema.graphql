@@ -130,6 +130,14 @@ type SplitEvent @entity {
   blockTimestamp: BigInt!
 }
 
+type CollectableEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  user: User!
+  assetId: BigInt!
+  amt: BigInt!
+  blockTimestamp: BigInt!
+}
+
 type CollectedEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   user: User!

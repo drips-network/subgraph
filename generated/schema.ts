@@ -1264,6 +1264,82 @@ export class SplitEvent extends Entity {
   }
 }
 
+export class CollectableEvent extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("user", Value.fromString(""));
+    this.set("assetId", Value.fromBigInt(BigInt.zero()));
+    this.set("amt", Value.fromBigInt(BigInt.zero()));
+    this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CollectableEvent entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save CollectableEvent entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("CollectableEvent", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CollectableEvent | null {
+    return changetype<CollectableEvent | null>(
+      store.get("CollectableEvent", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get user(): string {
+    let value = this.get("user");
+    return value!.toString();
+  }
+
+  set user(value: string) {
+    this.set("user", Value.fromString(value));
+  }
+
+  get assetId(): BigInt {
+    let value = this.get("assetId");
+    return value!.toBigInt();
+  }
+
+  set assetId(value: BigInt) {
+    this.set("assetId", Value.fromBigInt(value));
+  }
+
+  get amt(): BigInt {
+    let value = this.get("amt");
+    return value!.toBigInt();
+  }
+
+  set amt(value: BigInt) {
+    this.set("amt", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+}
+
 export class CollectedEvent extends Entity {
   constructor(id: string) {
     super();
