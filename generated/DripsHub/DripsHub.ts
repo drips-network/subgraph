@@ -398,6 +398,10 @@ export class SqueezedDrips__Params {
   get amt(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
+
+  get dripsHistoryHashes(): Array<Bytes> {
+    return this._event.parameters[4].value.toBytesArray();
+  }
 }
 
 export class Unpaused extends ethereum.Event {

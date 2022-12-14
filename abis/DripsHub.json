@@ -385,6 +385,12 @@
                 "internalType": "uint128",
                 "name": "amt",
                 "type": "uint128"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32[]",
+                "name": "dripsHistoryHashes",
+                "type": "bytes32[]"
             }
         ],
         "name": "SqueezedDrips",
