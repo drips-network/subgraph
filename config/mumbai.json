@@ -1,15 +1,15 @@
 {
   "network": "mumbai",
-  "radicleRegistry": {
-    "address": "0x4e31F3538c9BE4Cf1E0911D08290f5DDF4E57747",
-    "block": 23998110
+  "dripsHub": {
+    "address": "0xA94B5a04A511937973F30A14F4dA9f30E8E35EB6",
+    "block": 29651991
   },
-  "daiDripsHub": {
-    "address": "0xC3f15dA8F5B77F514eE84B34007108623f7a828D",
-    "block": 23998110
+  "nftDriver": {
+    "address": "0x68401644F791293AA46DF37D70a6b4F1A7e88Ab7",
+    "block": 29651991
   },
-  "metaData": {
-    "address": "0x1C465B0249Fb7c92896709768b9d4aBD0135DBc9",
-    "block": 23998110
+  "immutableSplitsDriver": {
+    "address": "0xDfB1364ec55cA15E1cc286933776e70252EC1e39",
+    "block": 29651991
   }
 }
