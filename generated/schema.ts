@@ -809,6 +809,7 @@ export class SqueezedDripsEvent extends Entity {
     this.set("senderId", Value.fromString(""));
     this.set("amt", Value.fromBigInt(BigInt.zero()));
     this.set("blockTimestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("dripsHistoryHashes", Value.fromBytesArray(new Array(0)));
   }
 
   save(): void {
@@ -882,6 +883,15 @@ export class SqueezedDripsEvent extends Entity {
 
   set blockTimestamp(value: BigInt) {
     this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get dripsHistoryHashes(): Array<Bytes> {
+    let value = this.get("dripsHistoryHashes");
+    return value!.toBytesArray();
+  }
+
+  set dripsHistoryHashes(value: Array<Bytes>) {
+    this.set("dripsHistoryHashes", Value.fromBytesArray(value));
   }
 }
 

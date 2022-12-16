@@ -206,6 +206,7 @@ export function handleSqueezedDrips(event: SqueezedDrips): void {
     squeezedDripsEvent.assetId = event.params.assetId
     squeezedDripsEvent.senderId = event.params.senderId.toString()
     squeezedDripsEvent.amt = event.params.amt
+    squeezedDripsEvent.dripsHistoryHashes = event.params.dripsHistoryHashes
     squeezedDripsEvent.blockTimestamp = event.block.timestamp
     squeezedDripsEvent.save()
 }
