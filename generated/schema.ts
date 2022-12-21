@@ -255,6 +255,8 @@ export class UserAssetConfig extends Entity {
     this.set("dripsEntryIds", Value.fromStringArray(new Array(0)));
     this.set("balance", Value.fromBigInt(BigInt.zero()));
     this.set("assetConfigHash", Value.fromBytes(Bytes.empty()));
+    this.set("amountSplittable", Value.fromBigInt(BigInt.zero()));
+    this.set("amountPostSplitCollectable", Value.fromBigInt(BigInt.zero()));
     this.set("amountCollected", Value.fromBigInt(BigInt.zero()));
     this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(BigInt.zero()));
   }
@@ -337,6 +339,24 @@ export class UserAssetConfig extends Entity {
 
   set assetConfigHash(value: Bytes) {
     this.set("assetConfigHash", Value.fromBytes(value));
+  }
+
+  get amountSplittable(): BigInt {
+    let value = this.get("amountSplittable");
+    return value!.toBigInt();
+  }
+
+  set amountSplittable(value: BigInt) {
+    this.set("amountSplittable", Value.fromBigInt(value));
+  }
+
+  get amountPostSplitCollectable(): BigInt {
+    let value = this.get("amountPostSplitCollectable");
+    return value!.toBigInt();
+  }
+
+  set amountPostSplitCollectable(value: BigInt) {
+    this.set("amountPostSplitCollectable", Value.fromBigInt(value));
   }
 
   get amountCollected(): BigInt {

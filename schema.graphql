@@ -31,6 +31,8 @@ type UserAssetConfig @entity {
   dripsEntries: [DripsEntry!]! @derivedFrom(field: "senderAssetConfig")
   balance: BigInt! # the user's balance for the asset at last top-up
   assetConfigHash: Bytes!
+  amountSplittable: BigInt!
+  amountPostSplitCollectable: BigInt!
   amountCollected: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
 }

@@ -32,15 +32,9 @@ export function handleUserMetadata(event: UserMetadataEmitted): void {
 export function handleCollectable(event: Collectable): void {
 
   let userId = event.params.userId.toString()
-  let user = User.load(userId)
-  if (!user) {
-    user = new User(userId)
-    user.splitsEntryIds = []
-    user.lastUpdatedBlockTimestamp = event.block.timestamp
-    user.save()
-  }
+  let user = getOrCreateUser(userId, event.block.timestamp)
 
-  let assetId = event.params.assetId.toString()
+  let assetId = event.params.assetId
 
   let collectableEvent = new CollectableEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   collectableEvent.user = userId
@@ -53,16 +47,11 @@ export function handleCollectable(event: Collectable): void {
 export function handleCollected(event: Collected): void {
 
   let userId = event.params.userId.toString()
-  let user = User.load(userId)
-  if (!user) {
-    user = new User(userId)
-    user.splitsEntryIds = []
-    user.lastUpdatedBlockTimestamp = event.block.timestamp
-    user.save()
-  }
+  let user = getOrCreateUser(userId, event.block.timestamp)
 
-  let assetId = event.params.assetId.toString()
+  let assetId = event.params.assetId
 
+  // Log the raw event
   let collectedEvent = new CollectedEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   collectedEvent.user = userId
   collectedEvent.assetId = event.params.assetId
@@ -70,14 +59,8 @@ export function handleCollected(event: Collected): void {
   collectedEvent.blockTimestamp = event.block.timestamp
   collectedEvent.save()
 
-  let userAssetConfigId = userId + "-" + assetId
-  let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
-  if (!userAssetConfig) {
-    userAssetConfig = new UserAssetConfig(userAssetConfigId)
-    userAssetConfig.user = userId
-    userAssetConfig.assetId = event.params.assetId
-    userAssetConfig.dripsEntryIds = []
-  }
+  // Add the collected amount to the UserAssetConfig for the receving user
+  let userAssetConfig = getOrCreateUserAssetConfig(userId, assetId, event.block.timestamp)
   userAssetConfig.amountCollected = userAssetConfig.amountCollected.plus(event.params.collected)
   userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
   userAssetConfig.save()
@@ -87,22 +70,13 @@ export function handleDripsSet(event: DripsSet): void {
 
   // If the User doesn't exist, create it
   let userId = event.params.userId.toString()
-  let user = User.load(userId)
-  if (!user) {
-    user = new User(userId)
-    user.splitsEntryIds = []
-    user.lastUpdatedBlockTimestamp = event.block.timestamp
-    user.save()
-  }
+  let user = getOrCreateUser(userId, event.block.timestamp)
 
   // Next create or update the UserAssetConfig and clear any old DripsEntries if needed
   let userAssetConfigId = event.params.userId.toString() + "-" + event.params.assetId.toString()
   let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
   if (!userAssetConfig) {
-    userAssetConfig = new UserAssetConfig(userAssetConfigId)
-    userAssetConfig.user = userId
-    userAssetConfig.assetId = event.params.assetId
-    userAssetConfig.dripsEntryIds = []
+    userAssetConfig = getOrCreateUserAssetConfig(userId, event.params.assetId, event.block.timestamp)
   } else {
     // If this is an update, we need to delete the old DripsEntry values and clear the
     // dripsEntryIds field
@@ -156,29 +130,28 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
 
   // We need to use the LastSetDripsUserMapping to look up the userId and assetId associated with this receiverHash
   if (lastSetDripsUserMapping) {
-    let userAssetConfigId = lastSetDripsUserMapping.userId.toString() + "-" + lastSetDripsUserMapping.assetId.toString()
-    let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
-    if (userAssetConfig) {
-      
-      // Now we can create the DripsEntry
-      if (!userAssetConfig.dripsEntryIds) userAssetConfig.dripsEntryIds = []
-      let newDripsEntryIds = userAssetConfig.dripsEntryIds
-      let dripsEntryId = lastSetDripsUserMapping.userId.toString() + "-" + event.params.userId.toString() + "-" + lastSetDripsUserMapping.assetId.toString()
-      let dripsEntry = DripsEntry.load(dripsEntryId)
-      if (!dripsEntry) {
-        dripsEntry = new DripsEntry(dripsEntryId)
-      }
-      dripsEntry.sender = lastSetDripsUserMapping.userId.toString()
-      dripsEntry.senderAssetConfig = userAssetConfigId
-      dripsEntry.userId = event.params.userId.toString()
-      dripsEntry.config = event.params.config
-      dripsEntry.save()
+    let userId = lastSetDripsUserMapping.userId.toString()
+    let userAssetConfigId = userId + "-" + lastSetDripsUserMapping.assetId.toString()
+    let userAssetConfig = getOrCreateUserAssetConfig(userId, lastSetDripsUserMapping.assetId, event.block.timestamp)
 
-      newDripsEntryIds.push(dripsEntryId)
-      userAssetConfig.dripsEntryIds = newDripsEntryIds
-      userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
-      userAssetConfig.save()
+    // Now we can create the DripsEntry
+    if (!userAssetConfig.dripsEntryIds) userAssetConfig.dripsEntryIds = []
+    let newDripsEntryIds = userAssetConfig.dripsEntryIds
+    let dripsEntryId = lastSetDripsUserMapping.userId.toString() + "-" + event.params.userId.toString() + "-" + lastSetDripsUserMapping.assetId.toString()
+    let dripsEntry = DripsEntry.load(dripsEntryId)
+    if (!dripsEntry) {
+      dripsEntry = new DripsEntry(dripsEntryId)
     }
+    dripsEntry.sender = lastSetDripsUserMapping.userId.toString()
+    dripsEntry.senderAssetConfig = userAssetConfigId
+    dripsEntry.userId = event.params.userId.toString()
+    dripsEntry.config = event.params.config
+    dripsEntry.save()
+
+    newDripsEntryIds.push(dripsEntryId)
+    userAssetConfig.dripsEntryIds = newDripsEntryIds
+    userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+    userAssetConfig.save()
   }
 
   // Create the DripsReceiverSeenEvent entity
@@ -201,18 +174,25 @@ export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
 
 export function handleSqueezedDrips(event: SqueezedDrips): void {
 
-    let squeezedDripsEvent = new SqueezedDripsEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
-    squeezedDripsEvent.userId = event.params.userId.toString()
-    squeezedDripsEvent.assetId = event.params.assetId
-    squeezedDripsEvent.senderId = event.params.senderId.toString()
-    squeezedDripsEvent.amt = event.params.amt
-    squeezedDripsEvent.dripsHistoryHashes = event.params.dripsHistoryHashes
-    squeezedDripsEvent.blockTimestamp = event.block.timestamp
-    squeezedDripsEvent.save()
+  let squeezedDripsEvent = new SqueezedDripsEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
+  squeezedDripsEvent.userId = event.params.userId.toString()
+  squeezedDripsEvent.assetId = event.params.assetId
+  squeezedDripsEvent.senderId = event.params.senderId.toString()
+  squeezedDripsEvent.amt = event.params.amt
+  squeezedDripsEvent.dripsHistoryHashes = event.params.dripsHistoryHashes
+  squeezedDripsEvent.blockTimestamp = event.block.timestamp
+  squeezedDripsEvent.save()
+
+  // Note the tokens received on the UserAssetConfig of the receiving user
+  let userAssetConfig = getOrCreateUserAssetConfig(squeezedDripsEvent.userId, squeezedDripsEvent.assetId, event.block.timestamp)
+  userAssetConfig.amountSplittable = userAssetConfig.amountSplittable.plus(event.params.amt)
+  userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  userAssetConfig.save()
 }
 
 export function handleReceivedDrips(event: ReceivedDrips): void {
 
+  // Store the raw event
   let receivedDripsEvent = new ReceivedDripsEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   receivedDripsEvent.userId = event.params.userId.toString()
   receivedDripsEvent.assetId = event.params.assetId
@@ -220,6 +200,12 @@ export function handleReceivedDrips(event: ReceivedDrips): void {
   receivedDripsEvent.receivableCycles = event.params.receivableCycles
   receivedDripsEvent.blockTimestamp = event.block.timestamp
   receivedDripsEvent.save()
+
+  // Note the tokens received on the UserAssetConfig of the receiving user
+  let userAssetConfig = getOrCreateUserAssetConfig(receivedDripsEvent.userId, receivedDripsEvent.assetId, event.block.timestamp)
+  userAssetConfig.amountSplittable = userAssetConfig.amountSplittable.plus(event.params.amt)
+  userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  userAssetConfig.save()
 }
 
 export function handleSplitsSet(event: SplitsSet): void {
@@ -228,8 +214,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   let userId = event.params.userId.toString()
   let user = User.load(userId)
   if (!user) {
-    user = new User(userId)
-    user.splitsEntryIds = []
+    user = getOrCreateUser(userId, event.block.timestamp)
   } else {
     // If this is an update, we need to delete the old SplitsEntry values and clear the
     // splitsEntryIds field
@@ -277,13 +262,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   if (lastSplitsSetUserMapping) {
   // If the User doesn't exist, create it
     let userId = lastSplitsSetUserMapping.userId.toString()
-    let user = User.load(userId)
-    if (!user) {
-      user = new User(userId)
-      user.splitsEntryIds = []
-      user.lastUpdatedBlockTimestamp = event.block.timestamp
-      user.save()
-    }
+    let user = getOrCreateUser(userId, event.block.timestamp)
 
     // Now we can create the SplitsEntry
     if (!user.splitsEntryIds) user.splitsEntryIds = []
@@ -332,12 +311,23 @@ export function handleSplit(event: Split): void {
   splitEvent.amt = event.params.amt
   splitEvent.blockTimestamp = event.block.timestamp
   splitEvent.save()
+
+  // When a user calls split() we need to zero-out their splittable balance
+  let splittingUserAssetConfig = getOrCreateUserAssetConfig(splitEvent.userId, event.params.assetId, event.block.timestamp)
+  splittingUserAssetConfig.amountSplittable = new BigInt(0)
+  splittingUserAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  splittingUserAssetConfig.save()
+
+  // Note the tokens received on the UserAssetConfig of the receiving user
+  let receivingUserAssetConfig = getOrCreateUserAssetConfig(splitEvent.receiverId, event.params.assetId, event.block.timestamp)
+  receivingUserAssetConfig.amountSplittable = receivingUserAssetConfig.amountSplittable.plus(event.params.amt)
+  receivingUserAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  receivingUserAssetConfig.save()
 }
 
 export function handleGiven(event: Given): void {
 
-  let assetId = event.params.assetId.toString()
-
+  // Log the raw event
   let givenEvent = new GivenEvent(event.transaction.hash.toHexString() + "-" + event.logIndex.toString())
   givenEvent.userId = event.params.userId.toString()
   givenEvent.receiverUserId = event.params.receiver.toString()
@@ -345,6 +335,12 @@ export function handleGiven(event: Given): void {
   givenEvent.amt = event.params.amt
   givenEvent.blockTimestamp = event.block.timestamp
   givenEvent.save()
+
+  // Note the tokens received on the UserAssetConfig of the receiving user
+  let userAssetConfig = getOrCreateUserAssetConfig(givenEvent.userId, event.params.assetId, event.block.timestamp)
+  userAssetConfig.amountSplittable = userAssetConfig.amountSplittable.plus(event.params.amt)
+  userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  userAssetConfig.save()
 }
 
 export function handleAppRegistered(event: DriverRegistered): void {
@@ -387,4 +383,34 @@ export function handleImmutableSplitsCreated(event: CreatedSplits): void {
   immutableSplitsCreated.userId = event.params.userId.toString()
   immutableSplitsCreated.receiversHash = event.params.receiversHash
   immutableSplitsCreated.save()
+}
+
+function getOrCreateUser(userId: string, blockTimestamp: BigInt): User {
+  let user = User.load(userId)
+  if (!user) {
+    user = new User(userId)
+    user.splitsEntryIds = []
+    user.lastUpdatedBlockTimestamp = blockTimestamp
+    user.save()
+  }
+  return user
+}
+
+function getOrCreateUserAssetConfig(userId: string, assetId: BigInt, blockTimestamp: BigInt): UserAssetConfig {
+  
+  // First make sure the User exists
+  getOrCreateUser(userId, blockTimestamp)
+
+  // Now get or create the UserAssetConfig
+  let userAssetConfigId = userId + "-" + assetId.toString()
+  let userAssetConfig = UserAssetConfig.load(userAssetConfigId)
+  if (!userAssetConfig) {
+    userAssetConfig = new UserAssetConfig(userAssetConfigId)
+    userAssetConfig.user = userId
+    userAssetConfig.assetId = assetId
+    userAssetConfig.dripsEntryIds = []
+  }
+  userAssetConfig.lastUpdatedBlockTimestamp = blockTimestamp
+  userAssetConfig.save()
+  return userAssetConfig
 }
