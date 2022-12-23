@@ -42,6 +42,12 @@ export function handleCollectable(event: Collectable): void {
   collectableEvent.amt = event.params.amt
   collectableEvent.blockTimestamp = event.block.timestamp
   collectableEvent.save()
+
+  // Update amountPostSplitsCollectable on the UserAssetConfig of the receving user
+  let userAssetConfig = getOrCreateUserAssetConfig(userId, assetId, event.block.timestamp)
+  userAssetConfig.amountPostSplitCollectable = userAssetConfig.amountPostSplitCollectable.plus(event.params.amt)
+  userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
+  userAssetConfig.save()
 }
 
 export function handleCollected(event: Collected): void {
@@ -59,9 +65,10 @@ export function handleCollected(event: Collected): void {
   collectedEvent.blockTimestamp = event.block.timestamp
   collectedEvent.save()
 
-  // Add the collected amount to the UserAssetConfig for the receving user
+  // Update amountCollected and amountPostSplitsCollectable on the UserAssetConfig of the receving user
   let userAssetConfig = getOrCreateUserAssetConfig(userId, assetId, event.block.timestamp)
   userAssetConfig.amountCollected = userAssetConfig.amountCollected.plus(event.params.collected)
+  userAssetConfig.amountPostSplitCollectable = new BigInt(0)
   userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp
   userAssetConfig.save()
 }
