@@ -257,8 +257,52 @@ export class Paused__Params {
     this._event = event;
   }
 
-  get caller(): Address {
+  get pauser(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class PauserGranted extends ethereum.Event {
+  get params(): PauserGranted__Params {
+    return new PauserGranted__Params(this);
+  }
+}
+
+export class PauserGranted__Params {
+  _event: PauserGranted;
+
+  constructor(event: PauserGranted) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get admin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class PauserRevoked extends ethereum.Event {
+  get params(): PauserRevoked__Params {
+    return new PauserRevoked__Params(this);
+  }
+}
+
+export class PauserRevoked__Params {
+  _event: PauserRevoked;
+
+  constructor(event: PauserRevoked) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get admin(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 }
 
@@ -417,7 +461,7 @@ export class Unpaused__Params {
     this._event = event;
   }
 
-  get caller(): Address {
+  get pauser(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 }
@@ -847,6 +891,21 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  allPausers(): Array<Address> {
+    let result = super.call("allPausers", "allPausers():(address[])", []);
+
+    return result[0].toAddressArray();
+  }
+
+  try_allPausers(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall("allPausers", "allPausers():(address[])", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
   balanceAt(
     userId: BigInt,
     erc20: Address,
@@ -1123,6 +1182,25 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
+  isPauser(pauser: Address): boolean {
+    let result = super.call("isPauser", "isPauser(address):(bool)", [
+      ethereum.Value.fromAddress(pauser)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPauser(pauser: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPauser", "isPauser(address):(bool)", [
+      ethereum.Value.fromAddress(pauser)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   nextDriverId(): BigInt {
     let result = super.call("nextDriverId", "nextDriverId():(uint32)", []);
 
@@ -1301,29 +1379,14 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  reserve(): Address {
-    let result = super.call("reserve", "reserve():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_reserve(): ethereum.CallResult<Address> {
-    let result = super.tryCall("reserve", "reserve():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   setDrips(
     userId: BigInt,
     erc20: Address,
     currReceivers: Array<DripsHub__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
     newReceivers: Array<DripsHub__setDripsInputNewReceiversStruct>,
-    maxEndTip1: BigInt,
-    maxEndTip2: BigInt
+    maxEndHint1: BigInt,
+    maxEndHint2: BigInt
   ): BigInt {
     let result = super.call(
       "setDrips",
@@ -1334,8 +1397,8 @@ export class DripsHub extends ethereum.SmartContract {
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
         ethereum.Value.fromTupleArray(newReceivers),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip2)
+        ethereum.Value.fromUnsignedBigInt(maxEndHint1),
+        ethereum.Value.fromUnsignedBigInt(maxEndHint2)
       ]
     );
 
@@ -1348,8 +1411,8 @@ export class DripsHub extends ethereum.SmartContract {
     currReceivers: Array<DripsHub__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
     newReceivers: Array<DripsHub__setDripsInputNewReceiversStruct>,
-    maxEndTip1: BigInt,
-    maxEndTip2: BigInt
+    maxEndHint1: BigInt,
+    maxEndHint2: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "setDrips",
@@ -1360,8 +1423,8 @@ export class DripsHub extends ethereum.SmartContract {
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
         ethereum.Value.fromTupleArray(newReceivers),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip2)
+        ethereum.Value.fromUnsignedBigInt(maxEndHint1),
+        ethereum.Value.fromUnsignedBigInt(maxEndHint2)
       ]
     );
     if (result.reverted) {
@@ -1643,10 +1706,6 @@ export class ConstructorCall__Inputs {
   get cycleSecs_(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
-
-  get reserve_(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
 }
 
 export class ConstructorCall__Outputs {
@@ -1813,6 +1872,36 @@ export class GiveCall__Outputs {
   }
 }
 
+export class GrantPauserCall extends ethereum.Call {
+  get inputs(): GrantPauserCall__Inputs {
+    return new GrantPauserCall__Inputs(this);
+  }
+
+  get outputs(): GrantPauserCall__Outputs {
+    return new GrantPauserCall__Outputs(this);
+  }
+}
+
+export class GrantPauserCall__Inputs {
+  _call: GrantPauserCall;
+
+  constructor(call: GrantPauserCall) {
+    this._call = call;
+  }
+
+  get pauser(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class GrantPauserCall__Outputs {
+  _call: GrantPauserCall;
+
+  constructor(call: GrantPauserCall) {
+    this._call = call;
+  }
+}
+
 export class PauseCall extends ethereum.Call {
   get inputs(): PauseCall__Inputs {
     return new PauseCall__Inputs(this);
@@ -1915,6 +2004,36 @@ export class RegisterDriverCall__Outputs {
   }
 }
 
+export class RevokePauserCall extends ethereum.Call {
+  get inputs(): RevokePauserCall__Inputs {
+    return new RevokePauserCall__Inputs(this);
+  }
+
+  get outputs(): RevokePauserCall__Outputs {
+    return new RevokePauserCall__Outputs(this);
+  }
+}
+
+export class RevokePauserCall__Inputs {
+  _call: RevokePauserCall;
+
+  constructor(call: RevokePauserCall) {
+    this._call = call;
+  }
+
+  get pauser(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class RevokePauserCall__Outputs {
+  _call: RevokePauserCall;
+
+  constructor(call: RevokePauserCall) {
+    this._call = call;
+  }
+}
+
 export class SetDripsCall extends ethereum.Call {
   get inputs(): SetDripsCall__Inputs {
     return new SetDripsCall__Inputs(this);
@@ -1956,11 +2075,11 @@ export class SetDripsCall__Inputs {
     >();
   }
 
-  get maxEndTip1(): BigInt {
+  get maxEndHint1(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
   }
 
-  get maxEndTip2(): BigInt {
+  get maxEndHint2(): BigInt {
     return this._call.inputValues[6].value.toBigInt();
   }
 }

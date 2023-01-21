@@ -5,11 +5,6 @@
                 "internalType": "uint32",
                 "name": "cycleSecs_",
                 "type": "uint32"
-            },
-            {
-                "internalType": "contract IReserve",
-                "name": "reserve_",
-                "type": "address"
             }
         ],
         "stateMutability": "nonpayable",
@@ -246,11 +241,49 @@
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "caller",
+                "name": "pauser",
                 "type": "address"
             }
         ],
         "name": "Paused",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "pauser",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "admin",
+                "type": "address"
+            }
+        ],
+        "name": "PauserGranted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "pauser",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "admin",
+                "type": "address"
+            }
+        ],
+        "name": "PauserRevoked",
         "type": "event"
     },
     {
@@ -402,7 +435,7 @@
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "caller",
+                "name": "pauser",
                 "type": "address"
             }
         ],
@@ -546,6 +579,19 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "allPausers",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "pausersList",
+                "type": "address[]"
             }
         ],
         "stateMutability": "view",
@@ -795,6 +841,19 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "pauser",
+                "type": "address"
+            }
+        ],
+        "name": "grantPauser",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "components": [
                     {
                         "internalType": "uint256",
@@ -886,6 +945,25 @@
             }
         ],
         "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "pauser",
+                "type": "address"
+            }
+        ],
+        "name": "isPauser",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "isAddrPauser",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -1036,16 +1114,16 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "reserve",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "contract IReserve",
-                "name": "",
+                "internalType": "address",
+                "name": "pauser",
                 "type": "address"
             }
         ],
-        "stateMutability": "view",
+        "name": "revokePauser",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -1101,12 +1179,12 @@
             },
             {
                 "internalType": "uint32",
-                "name": "maxEndTip1",
+                "name": "maxEndHint1",
                 "type": "uint32"
             },
             {
                 "internalType": "uint32",
-                "name": "maxEndTip2",
+                "name": "maxEndHint2",
                 "type": "uint32"
             }
         ],
