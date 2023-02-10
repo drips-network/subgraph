@@ -1,176 +1,176 @@
 type UserMetadataByKey @entity {
-  id: ID! # userId + "-" + key
-  userId: String!
-  key: Bytes!
-  value: Bytes!
-  lastUpdatedBlockTimestamp: BigInt!
+	id: ID! # userId + "-" + key
+	userId: String!
+	key: Bytes!
+	value: Bytes!
+	lastUpdatedBlockTimestamp: BigInt!
 }
 
 type UserMetadataEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String!
-  key: Bytes!
-  value: Bytes!
-  lastUpdatedBlockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String!
+	key: Bytes!
+	value: Bytes!
+	lastUpdatedBlockTimestamp: BigInt!
 }
 
 type User @entity {
-  id: ID! # the userId
-  assetConfigs: [UserAssetConfig!]! @derivedFrom(field: "user")
-  splitsEntryIds: [String!]!
-  splitsEntries: [SplitsEntry!]! @derivedFrom(field: "sender")
-  splitsReceiversHash: Bytes!
-  lastUpdatedBlockTimestamp: BigInt!
+	id: ID! # the userId
+	assetConfigs: [UserAssetConfig!]! @derivedFrom(field: "user")
+	splitsEntryIds: [String!]!
+	splitsEntries: [SplitsEntry!]! @derivedFrom(field: "sender")
+	splitsReceiversHash: Bytes!
+	lastUpdatedBlockTimestamp: BigInt!
 }
 
 type UserAssetConfig @entity {
-  id: ID! # the userId + "-" + assetId
-  user: User!
-  assetId: BigInt!
-  dripsEntryIds: [String!]!
-  dripsEntries: [DripsEntry!]! @derivedFrom(field: "senderAssetConfig")
-  balance: BigInt! # the user's balance for the asset at last top-up
-  assetConfigHash: Bytes!
-  amountSplittable: BigInt!
-  amountPostSplitCollectable: BigInt!
-  amountCollected: BigInt!
-  lastUpdatedBlockTimestamp: BigInt!
+	id: ID! # the userId + "-" + assetId
+	user: User!
+	assetId: BigInt!
+	dripsEntryIds: [String!]!
+	dripsEntries: [DripsEntry!]! @derivedFrom(field: "senderAssetConfig")
+	balance: BigInt! # the user's balance for the asset at last top-up
+	assetConfigHash: Bytes!
+	amountSplittable: BigInt!
+	amountPostSplitCollectable: BigInt!
+	amountCollected: BigInt!
+	lastUpdatedBlockTimestamp: BigInt!
 }
 
 type DripsSetEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the userId of the sender
-  assetId: BigInt!
-  receiversHash: Bytes! # the hash of the receivers list
-  dripsReceiverSeenEvents: [DripsReceiverSeenEvent!]! @derivedFrom(field: "dripsSetEvent")
-  dripsHistoryHash: Bytes! # the history hash of this drips-set for squeezing
-  balance: BigInt!
-  blockTimestamp: BigInt!
-  maxEnd: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String! # the userId of the sender
+	assetId: BigInt!
+	receiversHash: Bytes! # the hash of the receivers list
+	dripsReceiverSeenEvents: [DripsReceiverSeenEvent!]! @derivedFrom(field: "dripsSetEvent")
+	dripsHistoryHash: Bytes! # the history hash of this drips-set for squeezing
+	balance: BigInt!
+	blockTimestamp: BigInt!
+	maxEnd: BigInt!
 }
 
 type LastSetDripsUserMapping @entity {
-  id: ID! # receiversHash
-  dripsSetEventId: String! # the ID of the last DripsSetEvent that was created with this receiversHash
-  userId: String! # the last userId that SetDrips was called for with this receiversHash
-  assetId: BigInt! # the last assetId that SetDrips was called for with this receiversHash
+	id: ID! # receiversHash
+	dripsSetEventId: String! # the ID of the last DripsSetEvent that was created with this receiversHash
+	userId: String! # the last userId that SetDrips was called for with this receiversHash
+	assetId: BigInt! # the last assetId that SetDrips was called for with this receiversHash
 }
 
 type DripsReceiverSeenEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  dripsSetEvent: DripsSetEvent!
-  receiversHash: Bytes!
-  senderUserId: String!
-  receiverUserId: String! # the receiver's userId
-  config: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	dripsSetEvent: DripsSetEvent!
+	receiversHash: Bytes!
+	senderUserId: String!
+	receiverUserId: String! # the receiver's userId
+	config: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type DripsEntry @entity {
-  id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
-  sender: User!
-  senderAssetConfig: UserAssetConfig!
-  userId: String! # the receiver's userId
-  config: BigInt!
+	id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
+	sender: User!
+	senderAssetConfig: UserAssetConfig!
+	userId: String! # the receiver's userId
+	config: BigInt!
 }
 
 type ReceivedDripsEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the sender's userId
-  assetId: BigInt!
-  amt: BigInt!
-  receivableCycles: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String! # the sender's userId
+	assetId: BigInt!
+	amt: BigInt!
+	receivableCycles: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type SqueezedDripsEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the sender's userId
-  assetId: BigInt!
-  senderId: String!
-  amt: BigInt!
-  blockTimestamp: BigInt!
-  dripsHistoryHashes: [Bytes!]!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String! # the sender's userId
+	assetId: BigInt!
+	senderId: String!
+	amt: BigInt!
+	blockTimestamp: BigInt!
+	dripsHistoryHashes: [Bytes!]!
 }
 
 type SplitsSetEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the userId of the sender
-  receiversHash: Bytes! # the hash of the receivers list
-  splitsReceiverSeenEvents: [SplitsReceiverSeenEvent!]! @derivedFrom(field: "splitsSetEvent")
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String! # the userId of the sender
+	receiversHash: Bytes! # the hash of the receivers list
+	splitsReceiverSeenEvents: [SplitsReceiverSeenEvent!]! @derivedFrom(field: "splitsSetEvent")
+	blockTimestamp: BigInt!
 }
 
 type LastSetSplitsUserMapping @entity {
-  id: ID! # receiversHash
-  splitsSetEventId: String! # the ID of the last SplitsSetEvent that was created with this receiversHash
-  userId: String! # the last userId that SetSplits was called for with this receiversHash
+	id: ID! # receiversHash
+	splitsSetEventId: String! # the ID of the last SplitsSetEvent that was created with this receiversHash
+	userId: String! # the last userId that SetSplits was called for with this receiversHash
 }
 
 type SplitsReceiverSeenEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  splitsSetEvent: SplitsSetEvent!
-  receiversHash: Bytes!
-  senderUserId: String! # the sender's userId
-  receiverUserId: String! # the receiver's userId
-  weight: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	splitsSetEvent: SplitsSetEvent!
+	receiversHash: Bytes!
+	senderUserId: String! # the sender's userId
+	receiverUserId: String! # the receiver's userId
+	weight: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type SplitsEntry @entity {
-  id: ID! # sender's userId + "-" + receiver's userId
-  sender: User!
-  userId: String! # the receiver's userId
-  weight: BigInt!
+	id: ID! # sender's userId + "-" + receiver's userId
+	sender: User!
+	userId: String! # the receiver's userId
+	weight: BigInt!
 }
 
 type SplitEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the sender's userId
-  receiverId: String! # the receiver's userId
-  assetId: BigInt!
-  amt: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String! # the sender's userId
+	receiverId: String! # the receiver's userId
+	assetId: BigInt!
+	amt: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type CollectableEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  user: User!
-  assetId: BigInt!
-  amt: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	user: User!
+	assetId: BigInt!
+	amt: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type CollectedEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  user: User!
-  assetId: BigInt!
-  collected: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	user: User!
+	assetId: BigInt!
+	collected: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type GivenEvent @entity {
-  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String!
-  receiverUserId: String! # the receiver's userId
-  assetId: BigInt!
-  amt: BigInt!
-  blockTimestamp: BigInt!
+	id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+	userId: String!
+	receiverUserId: String! # the receiver's userId
+	assetId: BigInt!
+	amt: BigInt!
+	blockTimestamp: BigInt!
 }
 
 type App @entity {
-  id: ID! # the appId
-  appAddress: Bytes!
-  lastUpdatedBlockTimestamp: BigInt!
+	id: ID! # the appId
+	appAddress: Bytes!
+	lastUpdatedBlockTimestamp: BigInt!
 }
 
 type NFTSubAccount @entity {
-  id: ID! # the NFT token ID
-  ownerAddress: Bytes!
+	id: ID! # the NFT token ID
+	ownerAddress: Bytes!
 }
 
 type ImmutableSplitsCreated @entity {
-  id: ID! # userId + "-" + receiversHash
-  userId: String!
-  receiversHash: Bytes!
+	id: ID! # userId + "-" + receiversHash
+	userId: String!
+	receiversHash: Bytes!
 }

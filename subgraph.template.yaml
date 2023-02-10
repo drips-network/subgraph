@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: DripsHub
-    network: {{network}}
+    network: { { network } }
     source:
-      address: "{{dripsHub.address}}"
+      address: '{{dripsHub.address}}'
       abi: DripsHub
-      startBlock: {{dripsHub.block}}
+      startBlock: { { dripsHub.block } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -46,11 +46,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: NFTDriver
-    network: {{network}}
+    network: { { network } }
     source:
-      address: "{{nftDriver.address}}"
+      address: '{{nftDriver.address}}'
       abi: NFTDriver
-      startBlock: {{nftDriver.block}}
+      startBlock: { { nftDriver.block } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -66,11 +66,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: ImmutableSplitsDriver
-    network: {{network}}
+    network: { { network } }
     source:
-      address: "{{immutableSplitsDriver.address}}"
+      address: '{{immutableSplitsDriver.address}}'
       abi: ImmutableSplitsDriver
-      startBlock: {{immutableSplitsDriver.block}}
+      startBlock: { { immutableSplitsDriver.block } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
