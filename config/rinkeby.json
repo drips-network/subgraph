@@ -1,15 +1,15 @@
 {
-	"network": "rinkeby",
-	"radicleRegistry": {
-		"address": "0xc2a8F699317795956bE5Cc4f9FF61FD4E7667670",
-		"block": 9801358
-	},
-	"daiDripsHub": {
-		"address": "0xfbcD6918907902c106A99058146CBdBb76a812f6",
-		"block": 9795857
-	},
-	"metaData": {
-		"address": "0x1C465B0249Fb7c92896709768b9d4aBD0135DBc9",
-		"block": 9795857
-	}
+  "network": "rinkeby",
+  "radicleRegistry": {
+    "address": "0xc2a8F699317795956bE5Cc4f9FF61FD4E7667670",
+    "block": 9801358
+  },
+  "daiDripsHub": {
+    "address": "0xfbcD6918907902c106A99058146CBdBb76a812f6",
+    "block": 9795857
+  },
+  "metaData": {
+    "address": "0x1C465B0249Fb7c92896709768b9d4aBD0135DBc9",
+    "block": 9795857
+  }
 }
