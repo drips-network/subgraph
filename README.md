@@ -6,7 +6,7 @@ Drips is an 💎 Ethereum protocol for creating continuous funding streams (Drip
 
 Drips is a part of the [Radicle](https://radicle.xyz/) ecosystem of projects. See the [Drips docs](https://v2.docs.drips.network/docs/whats-a-drip.html) for more details about the Drips protocol and how to use it.
 
-### How To Use This Repository
+## How To Use This Repository
 
 Most end users and developers building on Drips will not have a reason to clone or fork this repository. For details on how to access the public subgraph endpoints maintained by the Drips team, please see [here](https://v2.docs.drips.network/docs/for-developers/smart-contract-and-subgraph-details).
 

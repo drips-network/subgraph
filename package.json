@@ -14,7 +14,8 @@
     "prepare:goerli": "mustache config/goerli.json subgraph.template.yaml > subgraph.yaml",
     "prepare:mumbai": "mustache config/mumbai.json subgraph.template.yaml > subgraph.yaml",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
-    "format": "prettier --plugin-search-dir . --write ."
+    "format": "prettier --plugin-search-dir . --write .",
+    "test": "graph test"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.26.0",
@@ -27,6 +28,7 @@
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
+    "matchstick-as": "^0.5.1",
     "prettier": "^2.8.4"
   },
   "config": {
