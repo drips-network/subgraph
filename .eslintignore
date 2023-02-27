@@ -6,6 +6,8 @@ node_modules
 .env.*
 !.env.example
 generated
+subgraph.template.yaml
+subgraph.yaml
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml
