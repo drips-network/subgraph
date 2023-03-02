@@ -1,5 +1,5 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { afterEach, assert, clearStore, describe, test, log, logStore } from 'matchstick-as';
+import { afterEach, assert, clearStore, describe, test } from 'matchstick-as';
 import {
   DripsEntry,
   DripsSetEvent,
@@ -23,9 +23,7 @@ describe('handleDripsSet', () => {
       Bytes.fromUTF8('receiversHash'),
       Bytes.fromUTF8('dripsHistoryHash'),
       BigInt.fromI32(3),
-      BigInt.fromI32(4),
-      BigInt.fromI32(5),
-      Bytes.fromUTF8('transactionHash')
+      BigInt.fromI32(4)
     );
 
     // Act
@@ -88,9 +86,7 @@ describe('handleDripsSet', () => {
       Bytes.fromUTF8('receiversHash'),
       Bytes.fromUTF8('dripsHistoryHash'),
       BigInt.fromI32(3),
-      BigInt.fromI32(4),
-      BigInt.fromI32(5),
-      Bytes.fromUTF8('transactionHash')
+      BigInt.fromI32(4)
     );
 
     const dripsEntryId = '1';

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
-import { DripsSet } from '../../generated/DripsHub/DripsHub';
+import { DripsReceiverSeen, DripsSet } from '../../generated/DripsHub/DripsHub';
 
 export function createDripsSetEvent(
   userId: BigInt,
@@ -9,15 +9,13 @@ export function createDripsSetEvent(
   receiversHash: Bytes,
   dripsHistoryHash: Bytes,
   balance: BigInt,
-  maxEnd: BigInt,
-  blockTimestamp: BigInt,
-  transactionHash: Bytes
+  maxEnd: BigInt
 ): DripsSet {
   const dripsSetEvent = changetype<DripsSet>(newMockEvent());
 
   dripsSetEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(userId));
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
   const assetIdParam = new ethereum.EventParam(
     'assetId',
     ethereum.Value.fromUnsignedBigInt(assetId)
@@ -43,8 +41,31 @@ export function createDripsSetEvent(
   dripsSetEvent.parameters.push(balanceParam);
   dripsSetEvent.parameters.push(maxEndParam);
 
-  dripsSetEvent.block.timestamp = blockTimestamp;
-  dripsSetEvent.transaction.hash = transactionHash;
+  return dripsSetEvent;
+}
+
+export function createDripsReceiverSeen(
+  receiversHash: Bytes,
+  userId: BigInt,
+  config: BigInt
+): DripsReceiverSeen {
+  const dripsSetEvent = changetype<DripsReceiverSeen>(newMockEvent());
+
+  dripsSetEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam(
+    'userIdParam',
+    ethereum.Value.fromUnsignedBigInt(userId)
+  );
+  const configParam = new ethereum.EventParam('config', ethereum.Value.fromUnsignedBigInt(config));
+  const receiversHashParam = new ethereum.EventParam(
+    'receiversHash',
+    ethereum.Value.fromBytes(receiversHash)
+  );
+
+  dripsSetEvent.parameters.push(receiversHashParam);
+  dripsSetEvent.parameters.push(userIdParam);
+  dripsSetEvent.parameters.push(configParam);
 
   return dripsSetEvent;
 }
