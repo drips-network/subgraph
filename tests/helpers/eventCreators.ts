@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
-import { DripsReceiverSeen, DripsSet } from '../../generated/DripsHub/DripsHub';
+import {
+  DripsReceiverSeen,
+  DripsSet,
+  DriverAddressUpdated,
+  DriverRegistered
+} from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
 
@@ -13,7 +18,7 @@ export function createDripsSetEvent(
   balance: BigInt,
   maxEnd: BigInt
 ): DripsSet {
-  const dripsSetEvent = changetype<DripsSet>(newMockEvent());
+  const dripsSetEvent = changetype<DripsSet>(newMockEvent()) as DripsSet;
 
   dripsSetEvent.parameters = [];
 
@@ -43,7 +48,7 @@ export function createDripsSetEvent(
   dripsSetEvent.parameters.push(balanceParam);
   dripsSetEvent.parameters.push(maxEndParam);
 
-  return dripsSetEvent as DripsSet;
+  return dripsSetEvent;
 }
 
 export function createDripsReceiverSeen(
@@ -51,7 +56,7 @@ export function createDripsReceiverSeen(
   userId: BigInt,
   config: BigInt
 ): DripsReceiverSeen {
-  const dripsSetEvent = changetype<DripsReceiverSeen>(newMockEvent());
+  const dripsSetEvent = changetype<DripsReceiverSeen>(newMockEvent()) as DripsReceiverSeen;
 
   dripsSetEvent.parameters = [];
 
@@ -69,11 +74,11 @@ export function createDripsReceiverSeen(
   dripsSetEvent.parameters.push(userIdParam);
   dripsSetEvent.parameters.push(configParam);
 
-  return dripsSetEvent as DripsReceiverSeen;
+  return dripsSetEvent;
 }
 
 export function createCreatedSplits(userId: BigInt, receiversHash: string): CreatedSplits {
-  const createdSplitsEvent = changetype<CreatedSplits>(newMockEvent());
+  const createdSplitsEvent = changetype<CreatedSplits>(newMockEvent()) as CreatedSplits;
 
   createdSplitsEvent.parameters = [];
 
@@ -89,7 +94,7 @@ export function createCreatedSplits(userId: BigInt, receiversHash: string): Crea
   createdSplitsEvent.parameters.push(userIdParam);
   createdSplitsEvent.parameters.push(receiversHashParam);
 
-  return createdSplitsEvent as CreatedSplits;
+  return createdSplitsEvent;
 }
 
 export function createTransfer(from: Address, to: Address, tokenId: BigInt): Transfer {
@@ -107,6 +112,37 @@ export function createTransfer(from: Address, to: Address, tokenId: BigInt): Tra
   createdSplitsEvent.parameters.push(fromParam);
   createdSplitsEvent.parameters.push(toParam);
   createdSplitsEvent.parameters.push(tokenIdParam);
+
+  return createdSplitsEvent;
+}
+
+export function createDriverAddressUpdated(
+  driverId: BigInt,
+  oldDriverAddr: Address,
+  newDriverAddr: Address
+): DriverAddressUpdated {
+  const createdSplitsEvent = changetype<DriverAddressUpdated>(
+    newMockEvent()
+  ) as DriverAddressUpdated;
+
+  createdSplitsEvent.parameters = [];
+
+  const driverIdParam = new ethereum.EventParam(
+    'driverId',
+    ethereum.Value.fromUnsignedBigInt(driverId)
+  );
+  const oldDriverAddrParam = new ethereum.EventParam(
+    'oldDriverAddr',
+    ethereum.Value.fromAddress(oldDriverAddr)
+  );
+  const newDriverAddrParam = new ethereum.EventParam(
+    'newDriverAddrParam',
+    ethereum.Value.fromAddress(newDriverAddr)
+  );
+
+  createdSplitsEvent.parameters.push(driverIdParam);
+  createdSplitsEvent.parameters.push(oldDriverAddrParam);
+  createdSplitsEvent.parameters.push(newDriverAddrParam);
 
   return createdSplitsEvent;
 }
