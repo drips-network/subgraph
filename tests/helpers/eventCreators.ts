@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import { DripsReceiverSeen, DripsSet } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
+import { Transfer } from '../../generated/NFTDriver/NFTDriver';
 
 export function createDripsSetEvent(
   userId: BigInt,
@@ -42,7 +43,7 @@ export function createDripsSetEvent(
   dripsSetEvent.parameters.push(balanceParam);
   dripsSetEvent.parameters.push(maxEndParam);
 
-  return dripsSetEvent;
+  return dripsSetEvent as DripsSet;
 }
 
 export function createDripsReceiverSeen(
@@ -68,7 +69,7 @@ export function createDripsReceiverSeen(
   dripsSetEvent.parameters.push(userIdParam);
   dripsSetEvent.parameters.push(configParam);
 
-  return dripsSetEvent;
+  return dripsSetEvent as DripsReceiverSeen;
 }
 
 export function createCreatedSplits(userId: BigInt, receiversHash: string): CreatedSplits {
@@ -87,6 +88,25 @@ export function createCreatedSplits(userId: BigInt, receiversHash: string): Crea
 
   createdSplitsEvent.parameters.push(userIdParam);
   createdSplitsEvent.parameters.push(receiversHashParam);
+
+  return createdSplitsEvent as CreatedSplits;
+}
+
+export function createTransfer(from: Address, to: Address, tokenId: BigInt): Transfer {
+  const createdSplitsEvent = changetype<Transfer>(newMockEvent()) as Transfer;
+
+  createdSplitsEvent.parameters = [];
+
+  const fromParam = new ethereum.EventParam('from', ethereum.Value.fromAddress(from));
+  const toParam = new ethereum.EventParam('to', ethereum.Value.fromAddress(to));
+  const tokenIdParam = new ethereum.EventParam(
+    'tokenId',
+    ethereum.Value.fromUnsignedBigInt(tokenId)
+  );
+
+  createdSplitsEvent.parameters.push(fromParam);
+  createdSplitsEvent.parameters.push(toParam);
+  createdSplitsEvent.parameters.push(tokenIdParam);
 
   return createdSplitsEvent;
 }
