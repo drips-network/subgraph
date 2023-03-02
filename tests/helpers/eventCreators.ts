@@ -146,3 +146,23 @@ export function createDriverAddressUpdated(
 
   return createdSplitsEvent;
 }
+
+export function createDriverRegistered(driverId: BigInt, driverAddr: Address): DriverRegistered {
+  const createdSplitsEvent = changetype<DriverRegistered>(newMockEvent()) as DriverRegistered;
+
+  createdSplitsEvent.parameters = [];
+
+  const driverIdParam = new ethereum.EventParam(
+    'driverId',
+    ethereum.Value.fromUnsignedBigInt(driverId)
+  );
+  const driverAddrParam = new ethereum.EventParam(
+    'driverAddr',
+    ethereum.Value.fromAddress(driverAddr)
+  );
+
+  createdSplitsEvent.parameters.push(driverIdParam);
+  createdSplitsEvent.parameters.push(driverAddrParam);
+
+  return createdSplitsEvent;
+}
