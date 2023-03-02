@@ -1,5 +1,5 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { afterEach, assert, clearStore, describe, test, log, logStore } from 'matchstick-as';
+import { beforeEach, assert, clearStore, describe, test, log, logStore } from 'matchstick-as';
 import {
   DripsEntry,
   DripsReceiverSeenEvent,
@@ -10,12 +10,12 @@ import { handleDripsReceiverSeen } from '../src/mapping';
 import { createDripsReceiverSeen } from './helpers/eventCreators';
 
 describe('handleDripsReceiverSeen', () => {
-  afterEach(() => {
+  beforeEach(() => {
     clearStore();
   });
 
   test('should update entities as expected when mapping', () => {
-    // Arrange'
+    // Arrange
     const receiversHash = Bytes.fromUTF8('receiversHash');
     const userId = BigInt.fromI32(1);
     const lastSetDripsUserMapping = new LastSetDripsUserMapping(receiversHash.toHexString());

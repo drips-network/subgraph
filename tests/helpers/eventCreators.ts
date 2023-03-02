@@ -2,6 +2,7 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import { DripsReceiverSeen, DripsSet } from '../../generated/DripsHub/DripsHub';
+import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 
 export function createDripsSetEvent(
   userId: BigInt,
@@ -68,4 +69,24 @@ export function createDripsReceiverSeen(
   dripsSetEvent.parameters.push(configParam);
 
   return dripsSetEvent;
+}
+
+export function createCreatedSplits(userId: BigInt, receiversHash: string): CreatedSplits {
+  const createdSplitsEvent = changetype<CreatedSplits>(newMockEvent());
+
+  createdSplitsEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam(
+    'userIdParam',
+    ethereum.Value.fromUnsignedBigInt(userId)
+  );
+  const receiversHashParam = new ethereum.EventParam(
+    'receiversHash',
+    ethereum.Value.fromBytes(Bytes.fromUTF8(receiversHash))
+  );
+
+  createdSplitsEvent.parameters.push(userIdParam);
+  createdSplitsEvent.parameters.push(receiversHashParam);
+
+  return createdSplitsEvent;
 }

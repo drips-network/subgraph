@@ -1,5 +1,5 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { afterEach, assert, clearStore, describe, test } from 'matchstick-as';
+import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as';
 import {
   DripsEntry,
   DripsSetEvent,
@@ -11,7 +11,7 @@ import { handleDripsSet } from '../src/mapping';
 import { createDripsSetEvent } from './helpers/eventCreators';
 
 describe('handleDripsSet', () => {
-  afterEach(() => {
+  beforeEach(() => {
     clearStore();
   });
 
