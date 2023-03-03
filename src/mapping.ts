@@ -489,7 +489,7 @@ function getOrCreateUserAssetConfig(
   getOrCreateUser(userId, blockTimestamp);
 
   // Now get or create the UserAssetConfig
-  const userAssetConfigId = userId + '-' + assetId.toString();
+  const userAssetConfigId = userId.toString() + '-' + assetId.toString();
   let userAssetConfig = UserAssetConfig.load(userAssetConfigId);
   if (!userAssetConfig) {
     userAssetConfig = new UserAssetConfig(userAssetConfigId);
