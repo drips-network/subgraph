@@ -1,5 +1,5 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
-import { assert, clearStore, describe, test, log, logStore, beforeEach } from 'matchstick-as';
+import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { App } from '../generated/schema';
 import { handleAppRegistered } from '../src/mapping';
 import { createDriverRegistered } from './helpers/eventCreators';

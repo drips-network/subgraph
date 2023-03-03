@@ -1,5 +1,5 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { beforeEach, assert, clearStore, describe, test, log, logStore } from 'matchstick-as';
+import { beforeEach, assert, clearStore, describe, test } from 'matchstick-as';
 import {
   DripsEntry,
   DripsReceiverSeenEvent,

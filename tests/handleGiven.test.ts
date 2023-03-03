@@ -1,5 +1,5 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts';
-import { assert, clearStore, describe, test, log, logStore, beforeEach } from 'matchstick-as';
+import { BigInt } from '@graphprotocol/graph-ts';
+import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { GivenEvent, UserAssetConfig } from '../generated/schema';
 import { handleGiven } from '../src/mapping';
 import { createGiven } from './helpers/eventCreators';
@@ -23,6 +23,7 @@ describe('handleGiven', () => {
       incomingGiven.transaction.hash.toHexString() + '-' + incomingGiven.logIndex.toString();
 
     const userAssetConfigBefore = new UserAssetConfig(userId.toString() + '-' + assetId.toString());
+    userAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(200);
     userAssetConfigBefore.save();
 
     // Act
@@ -37,11 +38,15 @@ describe('handleGiven', () => {
     assert.bigIntEquals(given.blockTimestamp, incomingGiven.block.timestamp);
 
     const userAssetConfigAfter = UserAssetConfig.load(
-      userId.toString() + '-' + assetId.toString()
+      incomingGiven.params.userId.toString() + '-' + assetId.toString()
     ) as UserAssetConfig;
     assert.bigIntEquals(
       userAssetConfigAfter.amountSplittable,
       userAssetConfigBefore.amountSplittable.plus(incomingGiven.params.amt)
+    );
+    assert.bigIntEquals(
+      userAssetConfigAfter.lastUpdatedBlockTimestamp,
+      incomingGiven.block.timestamp
     );
   });
 });

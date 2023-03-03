@@ -6,7 +6,8 @@ import {
   DripsSet,
   DriverAddressUpdated,
   DriverRegistered,
-  Given
+  Given,
+  Split
 } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
@@ -170,6 +171,33 @@ export function createDriverRegistered(driverId: BigInt, driverAddr: Address): D
 
 export function createGiven(userId: BigInt, receiver: BigInt, assetId: BigInt, amt: BigInt): Given {
   const givenEvent = changetype<Given>(newMockEvent()) as Given;
+
+  givenEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam(
+    'driverId',
+    ethereum.Value.fromUnsignedBigInt(userId)
+  );
+  const receiverParam = new ethereum.EventParam(
+    'receiver',
+    ethereum.Value.fromUnsignedBigInt(receiver)
+  );
+  const assetIdParam = new ethereum.EventParam(
+    'assetId',
+    ethereum.Value.fromUnsignedBigInt(assetId)
+  );
+  const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
+
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(receiverParam);
+  givenEvent.parameters.push(assetIdParam);
+  givenEvent.parameters.push(amtParam);
+
+  return givenEvent;
+}
+
+export function createSplit(userId: BigInt, receiver: BigInt, assetId: BigInt, amt: BigInt): Split {
+  const givenEvent = changetype<Split>(newMockEvent()) as Split;
 
   givenEvent.parameters = [];
 
