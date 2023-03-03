@@ -7,6 +7,7 @@ import {
   DriverAddressUpdated,
   DriverRegistered,
   Given,
+  ReceivedDrips,
   Split,
   SplitsReceiverSeen,
   SplitsSet
@@ -176,10 +177,7 @@ export function createGiven(userId: BigInt, receiver: BigInt, assetId: BigInt, a
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam(
-    'driverId',
-    ethereum.Value.fromUnsignedBigInt(userId)
-  );
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
   const receiverParam = new ethereum.EventParam(
     'receiver',
     ethereum.Value.fromUnsignedBigInt(receiver)
@@ -203,10 +201,7 @@ export function createSplit(userId: BigInt, receiver: BigInt, assetId: BigInt, a
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam(
-    'driverId',
-    ethereum.Value.fromUnsignedBigInt(userId)
-  );
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
   const receiverParam = new ethereum.EventParam(
     'receiver',
     ethereum.Value.fromUnsignedBigInt(receiver)
@@ -238,10 +233,7 @@ export function createSplitsReceiverSeen(
     'receiversHash',
     ethereum.Value.fromBytes(receiversHash)
   );
-  const userIdParam = new ethereum.EventParam(
-    'driverId',
-    ethereum.Value.fromUnsignedBigInt(userId)
-  );
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
   const weightParam = new ethereum.EventParam('weight', ethereum.Value.fromUnsignedBigInt(weight));
 
   givenEvent.parameters.push(receiversHashParam);
@@ -256,10 +248,7 @@ export function createSplitsSet(userId: BigInt, receiversHash: Bytes): SplitsSet
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam(
-    'driverId',
-    ethereum.Value.fromUnsignedBigInt(userId)
-  );
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
   const receiversHashParam = new ethereum.EventParam(
     'receiversHash',
     ethereum.Value.fromBytes(receiversHash)
@@ -267,6 +256,35 @@ export function createSplitsSet(userId: BigInt, receiversHash: Bytes): SplitsSet
 
   givenEvent.parameters.push(userIdParam);
   givenEvent.parameters.push(receiversHashParam);
+
+  return givenEvent;
+}
+
+export function createReceivedDrips(
+  userId: BigInt,
+  assetId: BigInt,
+  amt: BigInt,
+  receivableCycles: BigInt
+): ReceivedDrips {
+  const givenEvent = changetype<ReceivedDrips>(newMockEvent()) as ReceivedDrips;
+
+  givenEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const assetIdParam = new ethereum.EventParam(
+    'assetId',
+    ethereum.Value.fromUnsignedBigInt(assetId)
+  );
+  const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
+  const receivableCyclesParam = new ethereum.EventParam(
+    'receivableCycles',
+    ethereum.Value.fromUnsignedBigInt(receivableCycles)
+  );
+
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(assetIdParam);
+  givenEvent.parameters.push(amtParam);
+  givenEvent.parameters.push(receivableCyclesParam);
 
   return givenEvent;
 }
