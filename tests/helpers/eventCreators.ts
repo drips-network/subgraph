@@ -7,7 +7,8 @@ import {
   DriverAddressUpdated,
   DriverRegistered,
   Given,
-  Split
+  Split,
+  SplitsReceiverSeen
 } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
@@ -219,6 +220,32 @@ export function createSplit(userId: BigInt, receiver: BigInt, assetId: BigInt, a
   givenEvent.parameters.push(receiverParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
+
+  return givenEvent;
+}
+
+export function createSplitsReceiverSeen(
+  receiversHash: Bytes,
+  userId: BigInt,
+  weight: BigInt
+): SplitsReceiverSeen {
+  const givenEvent = changetype<SplitsReceiverSeen>(newMockEvent()) as SplitsReceiverSeen;
+
+  givenEvent.parameters = [];
+
+  const receiversHashParam = new ethereum.EventParam(
+    'receiversHash',
+    ethereum.Value.fromBytes(receiversHash)
+  );
+  const userIdParam = new ethereum.EventParam(
+    'driverId',
+    ethereum.Value.fromUnsignedBigInt(userId)
+  );
+  const weightParam = new ethereum.EventParam('weight', ethereum.Value.fromUnsignedBigInt(weight));
+
+  givenEvent.parameters.push(receiversHashParam);
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(weightParam);
 
   return givenEvent;
 }
