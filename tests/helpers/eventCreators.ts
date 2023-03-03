@@ -10,7 +10,8 @@ import {
   ReceivedDrips,
   Split,
   SplitsReceiverSeen,
-  SplitsSet
+  SplitsSet,
+  SqueezedDrips
 } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
@@ -285,6 +286,41 @@ export function createReceivedDrips(
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
   givenEvent.parameters.push(receivableCyclesParam);
+
+  return givenEvent;
+}
+
+export function createSqueezedDrips(
+  userId: BigInt,
+  assetId: BigInt,
+  senderId: BigInt,
+  amt: BigInt,
+  dripsHistoryHashes: Array<Bytes>
+): SqueezedDrips {
+  const givenEvent = changetype<SqueezedDrips>(newMockEvent()) as SqueezedDrips;
+
+  givenEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const assetIdParam = new ethereum.EventParam(
+    'assetId',
+    ethereum.Value.fromUnsignedBigInt(assetId)
+  );
+  const senderIdParam = new ethereum.EventParam(
+    'senderId',
+    ethereum.Value.fromUnsignedBigInt(senderId)
+  );
+  const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
+  const dripsHistoryHashesParam = new ethereum.EventParam(
+    'dripsHistoryHashes',
+    ethereum.Value.fromBytesArray(dripsHistoryHashes)
+  );
+
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(assetIdParam);
+  givenEvent.parameters.push(senderIdParam);
+  givenEvent.parameters.push(amtParam);
+  givenEvent.parameters.push(dripsHistoryHashesParam);
 
   return givenEvent;
 }
