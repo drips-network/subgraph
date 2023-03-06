@@ -13,7 +13,8 @@ import {
   Split,
   SplitsReceiverSeen,
   SplitsSet,
-  SqueezedDrips
+  SqueezedDrips,
+  UserMetadataEmitted
 } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
@@ -364,6 +365,26 @@ export function createCollectable(userId: BigInt, assetId: BigInt, amt: BigInt):
   givenEvent.parameters.push(userIdParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
+
+  return givenEvent;
+}
+
+export function createUserMetadataEmitted(
+  userId: BigInt,
+  key: Bytes,
+  value: Bytes
+): UserMetadataEmitted {
+  const givenEvent = changetype<UserMetadataEmitted>(newMockEvent()) as UserMetadataEmitted;
+
+  givenEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const keyParam = new ethereum.EventParam('key', ethereum.Value.fromBytes(key));
+  const valueParam = new ethereum.EventParam('value', ethereum.Value.fromBytes(value));
+
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(keyParam);
+  givenEvent.parameters.push(valueParam);
 
   return givenEvent;
 }

@@ -15,7 +15,8 @@
     "prepare:mumbai": "mustache config/mumbai.json subgraph.template.yaml > subgraph.yaml",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "test": "graph test"
+    "test": "graph test",
+    "test:coverage": "graph test -- -c"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.26.0",
