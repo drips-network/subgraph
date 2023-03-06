@@ -1,12 +1,12 @@
 # Development 🤓
 
-## Linting 🔎
+## 🔎 Linting
 
 You may encounter linting messages like `Cannot find name 'changetype'`.
 This is because the linting is set up against TypeScript, but we are working with AssemblyScript.
 You can safely ignore those messages. 🤠
 
-## Running The Tests
+## 🛡️ Unit testing
 
 To run the tests, install the project dependencies:
 
