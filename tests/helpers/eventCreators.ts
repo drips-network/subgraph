@@ -2,6 +2,8 @@
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import {
+  Collectable,
+  Collected,
   DripsReceiverSeen,
   DripsSet,
   DriverAddressUpdated,
@@ -321,6 +323,47 @@ export function createSqueezedDrips(
   givenEvent.parameters.push(senderIdParam);
   givenEvent.parameters.push(amtParam);
   givenEvent.parameters.push(dripsHistoryHashesParam);
+
+  return givenEvent;
+}
+
+export function createCollected(userId: BigInt, assetId: BigInt, collected: BigInt): Collected {
+  const givenEvent = changetype<Collected>(newMockEvent()) as Collected;
+
+  givenEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const assetIdParam = new ethereum.EventParam(
+    'assetId',
+    ethereum.Value.fromUnsignedBigInt(assetId)
+  );
+  const collectedParam = new ethereum.EventParam(
+    'collected',
+    ethereum.Value.fromUnsignedBigInt(collected)
+  );
+
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(assetIdParam);
+  givenEvent.parameters.push(collectedParam);
+
+  return givenEvent;
+}
+
+export function createCollectable(userId: BigInt, assetId: BigInt, amt: BigInt): Collectable {
+  const givenEvent = changetype<Collectable>(newMockEvent()) as Collectable;
+
+  givenEvent.parameters = [];
+
+  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const assetIdParam = new ethereum.EventParam(
+    'assetId',
+    ethereum.Value.fromUnsignedBigInt(assetId)
+  );
+  const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
+
+  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(assetIdParam);
+  givenEvent.parameters.push(amtParam);
 
   return givenEvent;
 }
