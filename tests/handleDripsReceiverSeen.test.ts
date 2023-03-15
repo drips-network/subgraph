@@ -7,6 +7,7 @@ import {
   UserAssetConfig
 } from '../generated/schema';
 import { handleDripsReceiverSeen } from '../src/mapping';
+import { defaultLastSetDripsUserMapping } from './helpers/defaultEntityCreators';
 import { createDripsReceiverSeen } from './helpers/eventCreators';
 
 describe('handleDripsReceiverSeen', () => {
@@ -18,7 +19,7 @@ describe('handleDripsReceiverSeen', () => {
     // Arrange
     const receiversHash = Bytes.fromUTF8('receiversHash');
     const userId = BigInt.fromI32(1);
-    const lastSetDripsUserMapping = new LastSetDripsUserMapping(receiversHash.toHexString());
+    const lastSetDripsUserMapping = defaultLastSetDripsUserMapping(receiversHash.toHexString());
     lastSetDripsUserMapping.userId = userId.toString();
     lastSetDripsUserMapping.assetId = BigInt.fromI32(2);
     lastSetDripsUserMapping.save();

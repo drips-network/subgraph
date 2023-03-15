@@ -2,6 +2,7 @@ import { BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { SplitEvent, UserAssetConfig } from '../generated/schema';
 import { handleSplit } from '../src/mapping';
+import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
 import { createSplit } from './helpers/eventCreators';
 
 describe('handleSplit', () => {
@@ -22,14 +23,14 @@ describe('handleSplit', () => {
     const id =
       incomingSplit.transaction.hash.toHexString() + '-' + incomingSplit.logIndex.toString();
 
-    const splittingUserAssetConfigBefore = new UserAssetConfig(
+    const splittingUserAssetConfigBefore = defaultUserAssetConfig(
       incomingSplit.params.userId.toString() + '-' + assetId.toString()
     );
     splittingUserAssetConfigBefore.amountSplittable = BigInt.fromI32(1000);
     splittingUserAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(200);
     splittingUserAssetConfigBefore.save();
 
-    const receivingUserAssetConfigBefore = new UserAssetConfig(
+    const receivingUserAssetConfigBefore = defaultUserAssetConfig(
       incomingSplit.params.receiver.toString() + '-' + assetId.toString()
     );
     receivingUserAssetConfigBefore.amountSplittable = BigInt.fromI32(2000);

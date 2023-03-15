@@ -1,15 +1,15 @@
 {
-  "network": "mumbai",
+  "network": "polygon-mumbai",
   "dripsHub": {
-    "address": "0xA94B5a04A511937973F30A14F4dA9f30E8E35EB6",
+    "address": "0x6e335Eb7a4ABcdf17a507F423eF61150e758f85b",
     "block": 29651991
   },
   "nftDriver": {
-    "address": "0x68401644F791293AA46DF37D70a6b4F1A7e88Ab7",
+    "address": "0xf070fc0DB76B1ee70237b71587cf36C37D2EB745",
     "block": 29651991
   },
   "immutableSplitsDriver": {
-    "address": "0xDfB1364ec55cA15E1cc286933776e70252EC1e39",
+    "address": "0xc6996db7F1772f17Ab99b5919b2e1354d4847535",
     "block": 29651991
   }
 }

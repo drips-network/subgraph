@@ -102,6 +102,90 @@ export class BeaconUpgraded__Params {
   }
 }
 
+export class NewAdminProposed extends ethereum.Event {
+  get params(): NewAdminProposed__Params {
+    return new NewAdminProposed__Params(this);
+  }
+}
+
+export class NewAdminProposed__Params {
+  _event: NewAdminProposed;
+
+  constructor(event: NewAdminProposed) {
+    this._event = event;
+  }
+
+  get currentAdmin(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newAdmin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class Paused extends ethereum.Event {
+  get params(): Paused__Params {
+    return new Paused__Params(this);
+  }
+}
+
+export class Paused__Params {
+  _event: Paused;
+
+  constructor(event: Paused) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class PauserGranted extends ethereum.Event {
+  get params(): PauserGranted__Params {
+    return new PauserGranted__Params(this);
+  }
+}
+
+export class PauserGranted__Params {
+  _event: PauserGranted;
+
+  constructor(event: PauserGranted) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get admin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class PauserRevoked extends ethereum.Event {
+  get params(): PauserRevoked__Params {
+    return new PauserRevoked__Params(this);
+  }
+}
+
+export class PauserRevoked__Params {
+  _event: PauserRevoked;
+
+  constructor(event: PauserRevoked) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get admin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -125,6 +209,24 @@ export class Transfer__Params {
 
   get tokenId(): BigInt {
     return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class Unpaused extends ethereum.Event {
+  get params(): Unpaused__Params {
+    return new Unpaused__Params(this);
+  }
+}
+
+export class Unpaused__Params {
+  _event: Unpaused;
+
+  constructor(event: Unpaused) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -156,7 +258,27 @@ export class NFTDriver__mintInputUserMetadataStruct extends ethereum.Tuple {
   }
 }
 
+export class NFTDriver__mintWithSaltInputUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
+  }
+}
+
 export class NFTDriver__safeMintInputUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
+  }
+}
+
+export class NFTDriver__safeMintWithSaltInputUserMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -206,6 +328,21 @@ export class NFTDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  allPausers(): Array<Address> {
+    let result = super.call("allPausers", "allPausers():(address[])", []);
+
+    return result[0].toAddressArray();
+  }
+
+  try_allPausers(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall("allPausers", "allPausers():(address[])", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
   balanceOf(owner: Address): BigInt {
     let result = super.call("balanceOf", "balanceOf(address):(uint256)", [
       ethereum.Value.fromAddress(owner)
@@ -218,6 +355,38 @@ export class NFTDriver extends ethereum.SmartContract {
     let result = super.tryCall("balanceOf", "balanceOf(address):(uint256)", [
       ethereum.Value.fromAddress(owner)
     ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  calcTokenIdWithSalt(minter: Address, salt: BigInt): BigInt {
+    let result = super.call(
+      "calcTokenIdWithSalt",
+      "calcTokenIdWithSalt(address,uint64):(uint256)",
+      [
+        ethereum.Value.fromAddress(minter),
+        ethereum.Value.fromUnsignedBigInt(salt)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_calcTokenIdWithSalt(
+    minter: Address,
+    salt: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "calcTokenIdWithSalt",
+      "calcTokenIdWithSalt(address,uint64):(uint256)",
+      [
+        ethereum.Value.fromAddress(minter),
+        ethereum.Value.fromUnsignedBigInt(salt)
+      ]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -311,6 +480,25 @@ export class NFTDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  implementation(): Address {
+    let result = super.call("implementation", "implementation():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_implementation(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "implementation",
+      "implementation():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   isApprovedForAll(owner: Address, operator: Address): boolean {
     let result = super.call(
       "isApprovedForAll",
@@ -329,6 +517,65 @@ export class NFTDriver extends ethereum.SmartContract {
       "isApprovedForAll",
       "isApprovedForAll(address,address):(bool)",
       [ethereum.Value.fromAddress(owner), ethereum.Value.fromAddress(operator)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isPaused(): boolean {
+    let result = super.call("isPaused", "isPaused():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPaused(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPaused", "isPaused():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isPauser(pauser: Address): boolean {
+    let result = super.call("isPauser", "isPauser(address):(bool)", [
+      ethereum.Value.fromAddress(pauser)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPauser(pauser: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPauser", "isPauser(address):(bool)", [
+      ethereum.Value.fromAddress(pauser)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isSaltUsed(minter: Address, salt: BigInt): boolean {
+    let result = super.call("isSaltUsed", "isSaltUsed(address,uint64):(bool)", [
+      ethereum.Value.fromAddress(minter),
+      ethereum.Value.fromUnsignedBigInt(salt)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isSaltUsed(minter: Address, salt: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isSaltUsed",
+      "isSaltUsed(address,uint64):(bool)",
+      [
+        ethereum.Value.fromAddress(minter),
+        ethereum.Value.fromUnsignedBigInt(salt)
+      ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -395,6 +642,45 @@ export class NFTDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  mintWithSalt(
+    salt: BigInt,
+    to: Address,
+    userMetadata: Array<NFTDriver__mintWithSaltInputUserMetadataStruct>
+  ): BigInt {
+    let result = super.call(
+      "mintWithSalt",
+      "mintWithSalt(uint64,address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(salt),
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_mintWithSalt(
+    salt: BigInt,
+    to: Address,
+    userMetadata: Array<NFTDriver__mintWithSaltInputUserMetadataStruct>
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "mintWithSalt",
+      "mintWithSalt(uint64,address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(salt),
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   name(): string {
     let result = super.call("name", "name():(string)", []);
 
@@ -437,6 +723,25 @@ export class NFTDriver extends ethereum.SmartContract {
     let result = super.tryCall("ownerOf", "ownerOf(uint256):(address)", [
       ethereum.Value.fromUnsignedBigInt(tokenId)
     ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  proposedAdmin(): Address {
+    let result = super.call("proposedAdmin", "proposedAdmin():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_proposedAdmin(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "proposedAdmin",
+      "proposedAdmin():(address)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -498,14 +803,53 @@ export class NFTDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  safeMintWithSalt(
+    salt: BigInt,
+    to: Address,
+    userMetadata: Array<NFTDriver__safeMintWithSaltInputUserMetadataStruct>
+  ): BigInt {
+    let result = super.call(
+      "safeMintWithSalt",
+      "safeMintWithSalt(uint64,address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(salt),
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_safeMintWithSalt(
+    salt: BigInt,
+    to: Address,
+    userMetadata: Array<NFTDriver__safeMintWithSaltInputUserMetadataStruct>
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "safeMintWithSalt",
+      "safeMintWithSalt(uint64,address,(bytes32,bytes)[]):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(salt),
+        ethereum.Value.fromAddress(to),
+        ethereum.Value.fromTupleArray(userMetadata)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   setDrips(
     tokenId: BigInt,
     erc20: Address,
     currReceivers: Array<NFTDriver__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
     newReceivers: Array<NFTDriver__setDripsInputNewReceiversStruct>,
-    maxEndTip1: BigInt,
-    maxEndTip2: BigInt,
+    maxEndHint1: BigInt,
+    maxEndHint2: BigInt,
     transferTo: Address
   ): BigInt {
     let result = super.call(
@@ -517,8 +861,8 @@ export class NFTDriver extends ethereum.SmartContract {
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
         ethereum.Value.fromTupleArray(newReceivers),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip2),
+        ethereum.Value.fromUnsignedBigInt(maxEndHint1),
+        ethereum.Value.fromUnsignedBigInt(maxEndHint2),
         ethereum.Value.fromAddress(transferTo)
       ]
     );
@@ -532,8 +876,8 @@ export class NFTDriver extends ethereum.SmartContract {
     currReceivers: Array<NFTDriver__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
     newReceivers: Array<NFTDriver__setDripsInputNewReceiversStruct>,
-    maxEndTip1: BigInt,
-    maxEndTip2: BigInt,
+    maxEndHint1: BigInt,
+    maxEndHint2: BigInt,
     transferTo: Address
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
@@ -545,8 +889,8 @@ export class NFTDriver extends ethereum.SmartContract {
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
         ethereum.Value.fromTupleArray(newReceivers),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip1),
-        ethereum.Value.fromUnsignedBigInt(maxEndTip2),
+        ethereum.Value.fromUnsignedBigInt(maxEndHint1),
+        ethereum.Value.fromUnsignedBigInt(maxEndHint2),
         ethereum.Value.fromAddress(transferTo)
       ]
     );
@@ -653,6 +997,32 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class AcceptAdminCall extends ethereum.Call {
+  get inputs(): AcceptAdminCall__Inputs {
+    return new AcceptAdminCall__Inputs(this);
+  }
+
+  get outputs(): AcceptAdminCall__Outputs {
+    return new AcceptAdminCall__Outputs(this);
+  }
+}
+
+export class AcceptAdminCall__Inputs {
+  _call: AcceptAdminCall;
+
+  constructor(call: AcceptAdminCall) {
+    this._call = call;
+  }
+}
+
+export class AcceptAdminCall__Outputs {
+  _call: AcceptAdminCall;
+
+  constructor(call: AcceptAdminCall) {
+    this._call = call;
+  }
+}
+
 export class ApproveCall extends ethereum.Call {
   get inputs(): ApproveCall__Inputs {
     return new ApproveCall__Inputs(this);
@@ -713,36 +1083,6 @@ export class BurnCall__Outputs {
   _call: BurnCall;
 
   constructor(call: BurnCall) {
-    this._call = call;
-  }
-}
-
-export class ChangeAdminCall extends ethereum.Call {
-  get inputs(): ChangeAdminCall__Inputs {
-    return new ChangeAdminCall__Inputs(this);
-  }
-
-  get outputs(): ChangeAdminCall__Outputs {
-    return new ChangeAdminCall__Outputs(this);
-  }
-}
-
-export class ChangeAdminCall__Inputs {
-  _call: ChangeAdminCall;
-
-  constructor(call: ChangeAdminCall) {
-    this._call = call;
-  }
-
-  get newAdmin(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class ChangeAdminCall__Outputs {
-  _call: ChangeAdminCall;
-
-  constructor(call: ChangeAdminCall) {
     this._call = call;
   }
 }
@@ -877,6 +1217,36 @@ export class GiveCall__Outputs {
   }
 }
 
+export class GrantPauserCall extends ethereum.Call {
+  get inputs(): GrantPauserCall__Inputs {
+    return new GrantPauserCall__Inputs(this);
+  }
+
+  get outputs(): GrantPauserCall__Outputs {
+    return new GrantPauserCall__Outputs(this);
+  }
+}
+
+export class GrantPauserCall__Inputs {
+  _call: GrantPauserCall;
+
+  constructor(call: GrantPauserCall) {
+    this._call = call;
+  }
+
+  get pauser(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class GrantPauserCall__Outputs {
+  _call: GrantPauserCall;
+
+  constructor(call: GrantPauserCall) {
+    this._call = call;
+  }
+}
+
 export class MintCall extends ethereum.Call {
   get inputs(): MintCall__Inputs {
     return new MintCall__Inputs(this);
@@ -927,6 +1297,172 @@ export class MintCallUserMetadataStruct extends ethereum.Tuple {
   }
 }
 
+export class MintWithSaltCall extends ethereum.Call {
+  get inputs(): MintWithSaltCall__Inputs {
+    return new MintWithSaltCall__Inputs(this);
+  }
+
+  get outputs(): MintWithSaltCall__Outputs {
+    return new MintWithSaltCall__Outputs(this);
+  }
+}
+
+export class MintWithSaltCall__Inputs {
+  _call: MintWithSaltCall;
+
+  constructor(call: MintWithSaltCall) {
+    this._call = call;
+  }
+
+  get salt(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get userMetadata(): Array<MintWithSaltCallUserMetadataStruct> {
+    return this._call.inputValues[2].value.toTupleArray<
+      MintWithSaltCallUserMetadataStruct
+    >();
+  }
+}
+
+export class MintWithSaltCall__Outputs {
+  _call: MintWithSaltCall;
+
+  constructor(call: MintWithSaltCall) {
+    this._call = call;
+  }
+
+  get tokenId(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class MintWithSaltCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
+  }
+}
+
+export class PauseCall extends ethereum.Call {
+  get inputs(): PauseCall__Inputs {
+    return new PauseCall__Inputs(this);
+  }
+
+  get outputs(): PauseCall__Outputs {
+    return new PauseCall__Outputs(this);
+  }
+}
+
+export class PauseCall__Inputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
+  }
+}
+
+export class PauseCall__Outputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
+  }
+}
+
+export class ProposeNewAdminCall extends ethereum.Call {
+  get inputs(): ProposeNewAdminCall__Inputs {
+    return new ProposeNewAdminCall__Inputs(this);
+  }
+
+  get outputs(): ProposeNewAdminCall__Outputs {
+    return new ProposeNewAdminCall__Outputs(this);
+  }
+}
+
+export class ProposeNewAdminCall__Inputs {
+  _call: ProposeNewAdminCall;
+
+  constructor(call: ProposeNewAdminCall) {
+    this._call = call;
+  }
+
+  get newAdmin(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class ProposeNewAdminCall__Outputs {
+  _call: ProposeNewAdminCall;
+
+  constructor(call: ProposeNewAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceAdminCall extends ethereum.Call {
+  get inputs(): RenounceAdminCall__Inputs {
+    return new RenounceAdminCall__Inputs(this);
+  }
+
+  get outputs(): RenounceAdminCall__Outputs {
+    return new RenounceAdminCall__Outputs(this);
+  }
+}
+
+export class RenounceAdminCall__Inputs {
+  _call: RenounceAdminCall;
+
+  constructor(call: RenounceAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceAdminCall__Outputs {
+  _call: RenounceAdminCall;
+
+  constructor(call: RenounceAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RevokePauserCall extends ethereum.Call {
+  get inputs(): RevokePauserCall__Inputs {
+    return new RevokePauserCall__Inputs(this);
+  }
+
+  get outputs(): RevokePauserCall__Outputs {
+    return new RevokePauserCall__Outputs(this);
+  }
+}
+
+export class RevokePauserCall__Inputs {
+  _call: RevokePauserCall;
+
+  constructor(call: RevokePauserCall) {
+    this._call = call;
+  }
+
+  get pauser(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class RevokePauserCall__Outputs {
+  _call: RevokePauserCall;
+
+  constructor(call: RevokePauserCall) {
+    this._call = call;
+  }
+}
+
 export class SafeMintCall extends ethereum.Call {
   get inputs(): SafeMintCall__Inputs {
     return new SafeMintCall__Inputs(this);
@@ -968,6 +1504,60 @@ export class SafeMintCall__Outputs {
 }
 
 export class SafeMintCallUserMetadataStruct extends ethereum.Tuple {
+  get key(): Bytes {
+    return this[0].toBytes();
+  }
+
+  get value(): Bytes {
+    return this[1].toBytes();
+  }
+}
+
+export class SafeMintWithSaltCall extends ethereum.Call {
+  get inputs(): SafeMintWithSaltCall__Inputs {
+    return new SafeMintWithSaltCall__Inputs(this);
+  }
+
+  get outputs(): SafeMintWithSaltCall__Outputs {
+    return new SafeMintWithSaltCall__Outputs(this);
+  }
+}
+
+export class SafeMintWithSaltCall__Inputs {
+  _call: SafeMintWithSaltCall;
+
+  constructor(call: SafeMintWithSaltCall) {
+    this._call = call;
+  }
+
+  get salt(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get userMetadata(): Array<SafeMintWithSaltCallUserMetadataStruct> {
+    return this._call.inputValues[2].value.toTupleArray<
+      SafeMintWithSaltCallUserMetadataStruct
+    >();
+  }
+}
+
+export class SafeMintWithSaltCall__Outputs {
+  _call: SafeMintWithSaltCall;
+
+  constructor(call: SafeMintWithSaltCall) {
+    this._call = call;
+  }
+
+  get tokenId(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class SafeMintWithSaltCallUserMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -1132,11 +1722,11 @@ export class SetDripsCall__Inputs {
     >();
   }
 
-  get maxEndTip1(): BigInt {
+  get maxEndHint1(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
   }
 
-  get maxEndTip2(): BigInt {
+  get maxEndHint2(): BigInt {
     return this._call.inputValues[6].value.toBigInt();
   }
 
@@ -1257,6 +1847,32 @@ export class TransferFromCall__Outputs {
   _call: TransferFromCall;
 
   constructor(call: TransferFromCall) {
+    this._call = call;
+  }
+}
+
+export class UnpauseCall extends ethereum.Call {
+  get inputs(): UnpauseCall__Inputs {
+    return new UnpauseCall__Inputs(this);
+  }
+
+  get outputs(): UnpauseCall__Outputs {
+    return new UnpauseCall__Outputs(this);
+  }
+}
+
+export class UnpauseCall__Inputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
+    this._call = call;
+  }
+}
+
+export class UnpauseCall__Outputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
     this._call = call;
   }
 }

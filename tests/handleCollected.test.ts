@@ -2,6 +2,7 @@ import { BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { CollectedEvent, User, UserAssetConfig } from '../generated/schema';
 import { handleCollected } from '../src/mapping';
+import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
 import { createCollected } from './helpers/eventCreators';
 
 describe('handleCollected', () => {
@@ -18,7 +19,7 @@ describe('handleCollected', () => {
     const incomingCollected = createCollected(userId, assetId, collected);
 
     const userAssetConfigId = `${incomingCollected.params.userId.toString()}-${incomingCollected.params.assetId.toString()}`;
-    const userAssetConfigBefore = new UserAssetConfig(userAssetConfigId);
+    const userAssetConfigBefore = defaultUserAssetConfig(userAssetConfigId);
     userAssetConfigBefore.amountCollected = BigInt.fromI32(10);
     userAssetConfigBefore.amountPostSplitCollectable = BigInt.fromI32(10);
     userAssetConfigBefore.save();

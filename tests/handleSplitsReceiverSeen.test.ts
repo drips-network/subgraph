@@ -1,7 +1,8 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { LastSetSplitsUserMapping, SplitsEntry, User } from '../generated/schema';
+import { SplitsEntry, User } from '../generated/schema';
 import { handleSplitsReceiverSeen } from '../src/mapping';
+import { defaultLastSetSplitsUserMapping } from './helpers/defaultEntityCreators';
 import { createSplitsReceiverSeen } from './helpers/eventCreators';
 
 describe('handleSplitsReceiverSeen', () => {
@@ -19,7 +20,7 @@ describe('handleSplitsReceiverSeen', () => {
 
     const lastSplitsSetUserMappingId =
       incomingSplitsReceiverSeen.params.receiversHash.toHexString();
-    const lastSplitsSetUserMapping = new LastSetSplitsUserMapping(lastSplitsSetUserMappingId);
+    const lastSplitsSetUserMapping = defaultLastSetSplitsUserMapping(lastSplitsSetUserMappingId);
     lastSplitsSetUserMapping.save();
 
     // Act

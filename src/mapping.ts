@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { BigInt } from '@graphprotocol/graph-ts';
+import { BigInt, Bytes } from '@graphprotocol/graph-ts';
 import {
   DripsSet,
   DripsReceiverSeen,
@@ -473,14 +473,19 @@ function getOrCreateUser(userId: string, blockTimestamp: BigInt): User {
   let user = User.load(userId);
   if (!user) {
     user = new User(userId);
+
+    user.assetConfigs = [];
     user.splitsEntryIds = [];
+    user.splitsEntries = [];
+    user.splitsReceiversHash = Bytes.fromUTF8('');
     user.lastUpdatedBlockTimestamp = blockTimestamp;
+
     user.save();
   }
   return user;
 }
 
-function getOrCreateUserAssetConfig(
+export function getOrCreateUserAssetConfig(
   userId: string,
   assetId: BigInt,
   blockTimestamp: BigInt
@@ -496,6 +501,13 @@ function getOrCreateUserAssetConfig(
     userAssetConfig.user = userId;
     userAssetConfig.assetId = assetId;
     userAssetConfig.dripsEntryIds = [];
+    userAssetConfig.dripsEntries = [];
+    userAssetConfig.balance = BigInt.fromI32(0);
+    userAssetConfig.assetConfigHash = Bytes.fromUTF8('');
+    userAssetConfig.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
+    userAssetConfig.amountSplittable = BigInt.fromI32(0);
+    userAssetConfig.amountPostSplitCollectable = BigInt.fromI32(0);
+    userAssetConfig.amountCollected = BigInt.fromI32(0);
   }
   userAssetConfig.lastUpdatedBlockTimestamp = blockTimestamp;
   userAssetConfig.save();
