@@ -485,7 +485,7 @@ function getOrCreateUser(userId: string, blockTimestamp: BigInt): User {
   return user;
 }
 
-export function getOrCreateUserAssetConfig(
+function getOrCreateUserAssetConfig(
   userId: string,
   assetId: BigInt,
   blockTimestamp: BigInt
