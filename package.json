@@ -6,7 +6,7 @@
     "build": "graph build",
     "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ drips-subgraph-mainnet-v2",
     "deploy:dev": "graph deploy --product hosted-service evvvritt/drips-dev",
-    "deploy:goerli": "yarn prepare:goerli && graph deploy --product hosted-service gh0stwheel/drips-v02-on-goerli",
+    "deploy:goerli": "yarn prepare:goerli && graph deploy --product hosted-service jtourkos/drips-v2-on-goerli",
     "deploy:mumbai": "yarn prepare:mumbai && graph deploy --product hosted-service gh0stwheel/drips-v2-on-mumbai",
     "create-local": "graph create drips-subgraph-local --node http://127.0.0.1:8020",
     "remove-local": "graph remove drips-subgraph-local --node http://127.0.0.1:8020",
