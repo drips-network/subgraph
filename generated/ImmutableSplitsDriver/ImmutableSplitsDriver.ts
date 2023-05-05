@@ -72,6 +72,108 @@ export class CreatedSplits__Params {
   }
 }
 
+export class NewAdminProposed extends ethereum.Event {
+  get params(): NewAdminProposed__Params {
+    return new NewAdminProposed__Params(this);
+  }
+}
+
+export class NewAdminProposed__Params {
+  _event: NewAdminProposed;
+
+  constructor(event: NewAdminProposed) {
+    this._event = event;
+  }
+
+  get currentAdmin(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newAdmin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class Paused extends ethereum.Event {
+  get params(): Paused__Params {
+    return new Paused__Params(this);
+  }
+}
+
+export class Paused__Params {
+  _event: Paused;
+
+  constructor(event: Paused) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class PauserGranted extends ethereum.Event {
+  get params(): PauserGranted__Params {
+    return new PauserGranted__Params(this);
+  }
+}
+
+export class PauserGranted__Params {
+  _event: PauserGranted;
+
+  constructor(event: PauserGranted) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get admin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class PauserRevoked extends ethereum.Event {
+  get params(): PauserRevoked__Params {
+    return new PauserRevoked__Params(this);
+  }
+}
+
+export class PauserRevoked__Params {
+  _event: PauserRevoked;
+
+  constructor(event: PauserRevoked) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get admin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class Unpaused extends ethereum.Event {
+  get params(): Unpaused__Params {
+    return new Unpaused__Params(this);
+  }
+}
+
+export class Unpaused__Params {
+  _event: Unpaused;
+
+  constructor(event: Unpaused) {
+    this._event = event;
+  }
+
+  get pauser(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class Upgraded extends ethereum.Event {
   get params(): Upgraded__Params {
     return new Upgraded__Params(this);
@@ -128,6 +230,21 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  allPausers(): Array<Address> {
+    let result = super.call("allPausers", "allPausers():(address[])", []);
+
+    return result[0].toAddressArray();
+  }
+
+  try_allPausers(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall("allPausers", "allPausers():(address[])", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
   }
 
   createSplits(
@@ -199,6 +316,59 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  implementation(): Address {
+    let result = super.call("implementation", "implementation():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_implementation(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "implementation",
+      "implementation():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  isPaused(): boolean {
+    let result = super.call("isPaused", "isPaused():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPaused(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPaused", "isPaused():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isPauser(pauser: Address): boolean {
+    let result = super.call("isPauser", "isPauser(address):(bool)", [
+      ethereum.Value.fromAddress(pauser)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPauser(pauser: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPauser", "isPauser(address):(bool)", [
+      ethereum.Value.fromAddress(pauser)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   nextUserId(): BigInt {
     let result = super.call("nextUserId", "nextUserId():(uint256)", []);
 
@@ -212,6 +382,25 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  proposedAdmin(): Address {
+    let result = super.call("proposedAdmin", "proposedAdmin():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_proposedAdmin(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "proposedAdmin",
+      "proposedAdmin():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   proxiableUUID(): Bytes {
@@ -291,32 +480,28 @@ export class ConstructorCall__Outputs {
   }
 }
 
-export class ChangeAdminCall extends ethereum.Call {
-  get inputs(): ChangeAdminCall__Inputs {
-    return new ChangeAdminCall__Inputs(this);
+export class AcceptAdminCall extends ethereum.Call {
+  get inputs(): AcceptAdminCall__Inputs {
+    return new AcceptAdminCall__Inputs(this);
   }
 
-  get outputs(): ChangeAdminCall__Outputs {
-    return new ChangeAdminCall__Outputs(this);
+  get outputs(): AcceptAdminCall__Outputs {
+    return new AcceptAdminCall__Outputs(this);
   }
 }
 
-export class ChangeAdminCall__Inputs {
-  _call: ChangeAdminCall;
+export class AcceptAdminCall__Inputs {
+  _call: AcceptAdminCall;
 
-  constructor(call: ChangeAdminCall) {
+  constructor(call: AcceptAdminCall) {
     this._call = call;
   }
-
-  get newAdmin(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
 }
 
-export class ChangeAdminCall__Outputs {
-  _call: ChangeAdminCall;
+export class AcceptAdminCall__Outputs {
+  _call: AcceptAdminCall;
 
-  constructor(call: ChangeAdminCall) {
+  constructor(call: AcceptAdminCall) {
     this._call = call;
   }
 }
@@ -380,6 +565,174 @@ export class CreateSplitsCallUserMetadataStruct extends ethereum.Tuple {
 
   get value(): Bytes {
     return this[1].toBytes();
+  }
+}
+
+export class GrantPauserCall extends ethereum.Call {
+  get inputs(): GrantPauserCall__Inputs {
+    return new GrantPauserCall__Inputs(this);
+  }
+
+  get outputs(): GrantPauserCall__Outputs {
+    return new GrantPauserCall__Outputs(this);
+  }
+}
+
+export class GrantPauserCall__Inputs {
+  _call: GrantPauserCall;
+
+  constructor(call: GrantPauserCall) {
+    this._call = call;
+  }
+
+  get pauser(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class GrantPauserCall__Outputs {
+  _call: GrantPauserCall;
+
+  constructor(call: GrantPauserCall) {
+    this._call = call;
+  }
+}
+
+export class PauseCall extends ethereum.Call {
+  get inputs(): PauseCall__Inputs {
+    return new PauseCall__Inputs(this);
+  }
+
+  get outputs(): PauseCall__Outputs {
+    return new PauseCall__Outputs(this);
+  }
+}
+
+export class PauseCall__Inputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
+  }
+}
+
+export class PauseCall__Outputs {
+  _call: PauseCall;
+
+  constructor(call: PauseCall) {
+    this._call = call;
+  }
+}
+
+export class ProposeNewAdminCall extends ethereum.Call {
+  get inputs(): ProposeNewAdminCall__Inputs {
+    return new ProposeNewAdminCall__Inputs(this);
+  }
+
+  get outputs(): ProposeNewAdminCall__Outputs {
+    return new ProposeNewAdminCall__Outputs(this);
+  }
+}
+
+export class ProposeNewAdminCall__Inputs {
+  _call: ProposeNewAdminCall;
+
+  constructor(call: ProposeNewAdminCall) {
+    this._call = call;
+  }
+
+  get newAdmin(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class ProposeNewAdminCall__Outputs {
+  _call: ProposeNewAdminCall;
+
+  constructor(call: ProposeNewAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceAdminCall extends ethereum.Call {
+  get inputs(): RenounceAdminCall__Inputs {
+    return new RenounceAdminCall__Inputs(this);
+  }
+
+  get outputs(): RenounceAdminCall__Outputs {
+    return new RenounceAdminCall__Outputs(this);
+  }
+}
+
+export class RenounceAdminCall__Inputs {
+  _call: RenounceAdminCall;
+
+  constructor(call: RenounceAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceAdminCall__Outputs {
+  _call: RenounceAdminCall;
+
+  constructor(call: RenounceAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RevokePauserCall extends ethereum.Call {
+  get inputs(): RevokePauserCall__Inputs {
+    return new RevokePauserCall__Inputs(this);
+  }
+
+  get outputs(): RevokePauserCall__Outputs {
+    return new RevokePauserCall__Outputs(this);
+  }
+}
+
+export class RevokePauserCall__Inputs {
+  _call: RevokePauserCall;
+
+  constructor(call: RevokePauserCall) {
+    this._call = call;
+  }
+
+  get pauser(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class RevokePauserCall__Outputs {
+  _call: RevokePauserCall;
+
+  constructor(call: RevokePauserCall) {
+    this._call = call;
+  }
+}
+
+export class UnpauseCall extends ethereum.Call {
+  get inputs(): UnpauseCall__Inputs {
+    return new UnpauseCall__Inputs(this);
+  }
+
+  get outputs(): UnpauseCall__Outputs {
+    return new UnpauseCall__Outputs(this);
+  }
+}
+
+export class UnpauseCall__Inputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
+    this._call = call;
+  }
+}
+
+export class UnpauseCall__Outputs {
+  _call: UnpauseCall;
+
+  constructor(call: UnpauseCall) {
+    this._call = call;
   }
 }
 

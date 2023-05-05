@@ -3,6 +3,7 @@ import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { App } from '../generated/schema';
 import { handleAppAddressUpdated } from '../src/mapping';
 import { createDriverAddressUpdated } from './helpers/eventCreators';
+import { defaultApp } from './helpers/defaultEntityCreators';
 
 describe('handleAppAddressUpdated', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('handleAppAddressUpdated', () => {
 
     const appId = incomingDriverAddressUpdated.params.driverId.toString();
 
-    let app = new App(appId);
+    let app = defaultApp(appId);
     app.save();
 
     // Act

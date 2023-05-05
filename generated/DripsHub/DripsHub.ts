@@ -244,6 +244,28 @@ export class Given__Params {
   }
 }
 
+export class NewAdminProposed extends ethereum.Event {
+  get params(): NewAdminProposed__Params {
+    return new NewAdminProposed__Params(this);
+  }
+}
+
+export class NewAdminProposed__Params {
+  _event: NewAdminProposed;
+
+  constructor(event: NewAdminProposed) {
+    this._event = event;
+  }
+
+  get currentAdmin(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newAdmin(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class Paused extends ethereum.Event {
   get params(): Paused__Params {
     return new Paused__Params(this);
@@ -510,7 +532,33 @@ export class UserMetadataEmitted__Params {
   }
 }
 
-export class DripsHub__balanceAtInputReceiversStruct extends ethereum.Tuple {
+export class Withdrawn extends ethereum.Event {
+  get params(): Withdrawn__Params {
+    return new Withdrawn__Params(this);
+  }
+}
+
+export class Withdrawn__Params {
+  _event: Withdrawn;
+
+  constructor(event: Withdrawn) {
+    this._event = event;
+  }
+
+  get erc20(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get receiver(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get amt(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class DripsHub__balanceAtInputCurrReceiversStruct extends ethereum.Tuple {
   get userId(): BigInt {
     return this[0].toBigInt();
   }
@@ -549,6 +597,26 @@ export class DripsHub__dripsStateResult {
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
     map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
     return map;
+  }
+
+  getDripsHash(): Bytes {
+    return this.value0;
+  }
+
+  getDripsHistoryHash(): Bytes {
+    return this.value1;
+  }
+
+  getUpdateTime(): BigInt {
+    return this.value2;
+  }
+
+  getBalance(): BigInt {
+    return this.value3;
+  }
+
+  getMaxEnd(): BigInt {
+    return this.value4;
   }
 }
 
@@ -607,6 +675,14 @@ export class DripsHub__splitResult {
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     return map;
   }
+
+  getCollectableAmt(): BigInt {
+    return this.value0;
+  }
+
+  getSplitAmt(): BigInt {
+    return this.value1;
+  }
 }
 
 export class DripsHub__splitInputCurrReceiversStruct extends ethereum.Tuple {
@@ -633,6 +709,14 @@ export class DripsHub__splitResultResult {
     map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     return map;
+  }
+
+  getCollectableAmt(): BigInt {
+    return this.value0;
+  }
+
+  getSplitAmt(): BigInt {
+    return this.value1;
   }
 }
 
@@ -741,7 +825,7 @@ export class DripsHub extends ethereum.SmartContract {
   AMT_PER_SEC_MULTIPLIER(): BigInt {
     let result = super.call(
       "AMT_PER_SEC_MULTIPLIER",
-      "AMT_PER_SEC_MULTIPLIER():(uint256)",
+      "AMT_PER_SEC_MULTIPLIER():(uint160)",
       []
     );
 
@@ -751,7 +835,7 @@ export class DripsHub extends ethereum.SmartContract {
   try_AMT_PER_SEC_MULTIPLIER(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "AMT_PER_SEC_MULTIPLIER",
-      "AMT_PER_SEC_MULTIPLIER():(uint256)",
+      "AMT_PER_SEC_MULTIPLIER():(uint160)",
       []
     );
     if (result.reverted) {
@@ -909,7 +993,7 @@ export class DripsHub extends ethereum.SmartContract {
   balanceAt(
     userId: BigInt,
     erc20: Address,
-    receivers: Array<DripsHub__balanceAtInputReceiversStruct>,
+    currReceivers: Array<DripsHub__balanceAtInputCurrReceiversStruct>,
     timestamp: BigInt
   ): BigInt {
     let result = super.call(
@@ -918,7 +1002,7 @@ export class DripsHub extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
-        ethereum.Value.fromTupleArray(receivers),
+        ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromUnsignedBigInt(timestamp)
       ]
     );
@@ -929,7 +1013,7 @@ export class DripsHub extends ethereum.SmartContract {
   try_balanceAt(
     userId: BigInt,
     erc20: Address,
-    receivers: Array<DripsHub__balanceAtInputReceiversStruct>,
+    currReceivers: Array<DripsHub__balanceAtInputCurrReceiversStruct>,
     timestamp: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
@@ -938,7 +1022,7 @@ export class DripsHub extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
-        ethereum.Value.fromTupleArray(receivers),
+        ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromUnsignedBigInt(timestamp)
       ]
     );
@@ -1182,6 +1266,40 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
+  implementation(): Address {
+    let result = super.call("implementation", "implementation():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_implementation(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "implementation",
+      "implementation():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  isPaused(): boolean {
+    let result = super.call("isPaused", "isPaused():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_isPaused(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isPaused", "isPaused():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   isPauser(pauser: Address): boolean {
     let result = super.call("isPauser", "isPauser(address):(bool)", [
       ethereum.Value.fromAddress(pauser)
@@ -1201,6 +1319,21 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  minAmtPerSec(): BigInt {
+    let result = super.call("minAmtPerSec", "minAmtPerSec():(uint160)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_minAmtPerSec(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("minAmtPerSec", "minAmtPerSec():(uint160)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   nextDriverId(): BigInt {
     let result = super.call("nextDriverId", "nextDriverId():(uint32)", []);
 
@@ -1216,19 +1349,23 @@ export class DripsHub extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  paused(): boolean {
-    let result = super.call("paused", "paused():(bool)", []);
+  proposedAdmin(): Address {
+    let result = super.call("proposedAdmin", "proposedAdmin():(address)", []);
 
-    return result[0].toBoolean();
+    return result[0].toAddress();
   }
 
-  try_paused(): ethereum.CallResult<boolean> {
-    let result = super.tryCall("paused", "paused():(bool)", []);
+  try_proposedAdmin(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "proposedAdmin",
+      "proposedAdmin():(address)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   proxiableUUID(): Bytes {
@@ -1716,32 +1853,28 @@ export class ConstructorCall__Outputs {
   }
 }
 
-export class ChangeAdminCall extends ethereum.Call {
-  get inputs(): ChangeAdminCall__Inputs {
-    return new ChangeAdminCall__Inputs(this);
+export class AcceptAdminCall extends ethereum.Call {
+  get inputs(): AcceptAdminCall__Inputs {
+    return new AcceptAdminCall__Inputs(this);
   }
 
-  get outputs(): ChangeAdminCall__Outputs {
-    return new ChangeAdminCall__Outputs(this);
+  get outputs(): AcceptAdminCall__Outputs {
+    return new AcceptAdminCall__Outputs(this);
   }
 }
 
-export class ChangeAdminCall__Inputs {
-  _call: ChangeAdminCall;
+export class AcceptAdminCall__Inputs {
+  _call: AcceptAdminCall;
 
-  constructor(call: ChangeAdminCall) {
+  constructor(call: AcceptAdminCall) {
     this._call = call;
   }
-
-  get newAdmin(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
 }
 
-export class ChangeAdminCall__Outputs {
-  _call: ChangeAdminCall;
+export class AcceptAdminCall__Outputs {
+  _call: AcceptAdminCall;
 
-  constructor(call: ChangeAdminCall) {
+  constructor(call: AcceptAdminCall) {
     this._call = call;
   }
 }
@@ -1928,6 +2061,36 @@ export class PauseCall__Outputs {
   }
 }
 
+export class ProposeNewAdminCall extends ethereum.Call {
+  get inputs(): ProposeNewAdminCall__Inputs {
+    return new ProposeNewAdminCall__Inputs(this);
+  }
+
+  get outputs(): ProposeNewAdminCall__Outputs {
+    return new ProposeNewAdminCall__Outputs(this);
+  }
+}
+
+export class ProposeNewAdminCall__Inputs {
+  _call: ProposeNewAdminCall;
+
+  constructor(call: ProposeNewAdminCall) {
+    this._call = call;
+  }
+
+  get newAdmin(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class ProposeNewAdminCall__Outputs {
+  _call: ProposeNewAdminCall;
+
+  constructor(call: ProposeNewAdminCall) {
+    this._call = call;
+  }
+}
+
 export class ReceiveDripsCall extends ethereum.Call {
   get inputs(): ReceiveDripsCall__Inputs {
     return new ReceiveDripsCall__Inputs(this);
@@ -2001,6 +2164,32 @@ export class RegisterDriverCall__Outputs {
 
   get driverId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class RenounceAdminCall extends ethereum.Call {
+  get inputs(): RenounceAdminCall__Inputs {
+    return new RenounceAdminCall__Inputs(this);
+  }
+
+  get outputs(): RenounceAdminCall__Outputs {
+    return new RenounceAdminCall__Outputs(this);
+  }
+}
+
+export class RenounceAdminCall__Inputs {
+  _call: RenounceAdminCall;
+
+  constructor(call: RenounceAdminCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceAdminCall__Outputs {
+  _call: RenounceAdminCall;
+
+  constructor(call: RenounceAdminCall) {
+    this._call = call;
   }
 }
 
@@ -2420,6 +2609,44 @@ export class UpgradeToAndCallCall__Outputs {
   _call: UpgradeToAndCallCall;
 
   constructor(call: UpgradeToAndCallCall) {
+    this._call = call;
+  }
+}
+
+export class WithdrawCall extends ethereum.Call {
+  get inputs(): WithdrawCall__Inputs {
+    return new WithdrawCall__Inputs(this);
+  }
+
+  get outputs(): WithdrawCall__Outputs {
+    return new WithdrawCall__Outputs(this);
+  }
+}
+
+export class WithdrawCall__Inputs {
+  _call: WithdrawCall;
+
+  constructor(call: WithdrawCall) {
+    this._call = call;
+  }
+
+  get erc20(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get receiver(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get amt(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class WithdrawCall__Outputs {
+  _call: WithdrawCall;
+
+  constructor(call: WithdrawCall) {
     this._call = call;
   }
 }

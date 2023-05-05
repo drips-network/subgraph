@@ -9,6 +9,11 @@ import {
 } from '../generated/schema';
 import { handleDripsSet } from '../src/mapping';
 import { createDripsSetEvent } from './helpers/eventCreators';
+import {
+  defaultDripsEntry,
+  defaultUser,
+  defaultUserAssetConfig
+} from './helpers/defaultEntityCreators';
 
 describe('handleDripsSet', () => {
   beforeEach(() => {
@@ -77,7 +82,7 @@ describe('handleDripsSet', () => {
   test('should update entities as expected when mapping', () => {
     // Arrange
     const userId = BigInt.fromI32(1);
-    const user = new User(userId.toString());
+    const user = defaultUser(userId.toString());
     user.save();
 
     const incomingDripsSetEvent = createDripsSetEvent(
@@ -90,11 +95,11 @@ describe('handleDripsSet', () => {
     );
 
     const dripsEntryId = '1';
-    const dripsEntry = new DripsEntry(dripsEntryId);
-    dripsEntry.save();
+    const dripEntry = defaultDripsEntry(dripsEntryId);
+    dripEntry.save();
 
     const userAssetConfigId = `${incomingDripsSetEvent.params.userId.toString()}-${incomingDripsSetEvent.params.assetId.toString()}`;
-    let userAssetConfig = new UserAssetConfig(userAssetConfigId);
+    let userAssetConfig = defaultUserAssetConfig(userAssetConfigId);
     userAssetConfig.dripsEntryIds = [dripsEntryId];
     userAssetConfig.save();
 

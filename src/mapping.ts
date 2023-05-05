@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { BigInt } from '@graphprotocol/graph-ts';
+import { BigInt, Bytes } from '@graphprotocol/graph-ts';
 import {
   DripsSet,
   DripsReceiverSeen,
@@ -281,6 +281,7 @@ export function handleReceivedDrips(event: ReceivedDrips): void {
 export function handleSplitsSet(event: SplitsSet): void {
   // If the User doesn't exist, create it
   const userId = event.params.userId.toString();
+
   let user = User.load(userId);
   if (!user) {
     user = getOrCreateUser(userId, event.block.timestamp);
@@ -471,12 +472,17 @@ export function handleImmutableSplitsCreated(event: CreatedSplits): void {
 
 function getOrCreateUser(userId: string, blockTimestamp: BigInt): User {
   let user = User.load(userId);
+
   if (!user) {
     user = new User(userId);
+
     user.splitsEntryIds = [];
     user.lastUpdatedBlockTimestamp = blockTimestamp;
+    user.splitsReceiversHash = Bytes.fromUTF8('');
+
     user.save();
   }
+
   return user;
 }
 
@@ -485,19 +491,30 @@ function getOrCreateUserAssetConfig(
   assetId: BigInt,
   blockTimestamp: BigInt
 ): UserAssetConfig {
-  // First make sure the User exists
+  // Make sure the User exists.
   getOrCreateUser(userId, blockTimestamp);
 
-  // Now get or create the UserAssetConfig
+  // Get or create the UserAssetConfig.
   const userAssetConfigId = userId.toString() + '-' + assetId.toString();
+
   let userAssetConfig = UserAssetConfig.load(userAssetConfigId);
+
   if (!userAssetConfig) {
     userAssetConfig = new UserAssetConfig(userAssetConfigId);
+
     userAssetConfig.user = userId;
     userAssetConfig.assetId = assetId;
     userAssetConfig.dripsEntryIds = [];
+    userAssetConfig.balance = BigInt.fromI32(0);
+    userAssetConfig.amountCollected = BigInt.fromI32(0);
+    userAssetConfig.amountSplittable = BigInt.fromI32(0);
+    userAssetConfig.assetConfigHash = Bytes.fromUTF8('');
+    userAssetConfig.lastUpdatedBlockTimestamp = blockTimestamp;
+    userAssetConfig.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
+    userAssetConfig.amountPostSplitCollectable = BigInt.fromI32(0);
+
+    userAssetConfig.save();
   }
-  userAssetConfig.lastUpdatedBlockTimestamp = blockTimestamp;
-  userAssetConfig.save();
+
   return userAssetConfig;
 }

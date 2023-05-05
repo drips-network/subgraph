@@ -1,6 +1,6 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { ReceivedDripsEvent, SqueezedDripsEvent, UserAssetConfig } from '../generated/schema';
+import { SqueezedDripsEvent } from '../generated/schema';
 import { handleSqueezedDrips } from '../src/mapping';
 import { createSqueezedDrips } from './helpers/eventCreators';
 

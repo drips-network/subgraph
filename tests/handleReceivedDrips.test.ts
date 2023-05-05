@@ -3,6 +3,7 @@ import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { ReceivedDripsEvent, UserAssetConfig } from '../generated/schema';
 import { handleReceivedDrips } from '../src/mapping';
 import { createReceivedDrips } from './helpers/eventCreators';
+import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
 
 describe('handleReceivedDrips', () => {
   beforeEach(() => {
@@ -19,7 +20,7 @@ describe('handleReceivedDrips', () => {
     const incomingReceivedDrips = createReceivedDrips(userId, assetId, amt, receivableCycles);
 
     const userAssetConfigId = userId.toString() + '-' + assetId.toString();
-    const userAssetConfigBefore = new UserAssetConfig(userAssetConfigId);
+    const userAssetConfigBefore = defaultUserAssetConfig(userAssetConfigId);
     userAssetConfigBefore.amountSplittable = BigInt.fromI32(10);
     userAssetConfigBefore.save();
 

@@ -3,6 +3,7 @@ import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { GivenEvent, UserAssetConfig } from '../generated/schema';
 import { handleGiven } from '../src/mapping';
 import { createGiven } from './helpers/eventCreators';
+import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
 
 describe('handleGiven', () => {
   beforeEach(() => {
@@ -22,7 +23,9 @@ describe('handleGiven', () => {
     const id =
       incomingGiven.transaction.hash.toHexString() + '-' + incomingGiven.logIndex.toString();
 
-    const userAssetConfigBefore = new UserAssetConfig(userId.toString() + '-' + assetId.toString());
+    const userAssetConfigBefore = defaultUserAssetConfig(
+      userId.toString() + '-' + assetId.toString()
+    );
     userAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(200);
     userAssetConfigBefore.save();
 
