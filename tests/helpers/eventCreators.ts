@@ -18,6 +18,8 @@ import {
 } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
+import { RepoOwnerUpdateRequested } from '../../generated/RepoDriver/RepoDriver';
+import { RepoOwnerUpdated } from '../../generated/RepoDriver/RepoDriver';
 
 export function createDripsSetEvent(
   userId: BigInt,
@@ -174,6 +176,45 @@ export function createDriverRegistered(driverId: BigInt, driverAddr: Address): D
   createdSplitsEvent.parameters.push(driverAddrParam);
 
   return createdSplitsEvent;
+}
+
+export function createRepoOwnerUpdateRequested(
+  repoId: BigInt,
+  forge: BigInt,
+  name: string
+): RepoOwnerUpdateRequested {
+  const repoOwnerUpdateRequestedEvent = changetype<RepoOwnerUpdateRequested>(
+    newMockEvent()
+  ) as RepoOwnerUpdateRequested;
+
+  repoOwnerUpdateRequestedEvent.parameters = [];
+
+  const repoIdParam = new ethereum.EventParam('repoId', ethereum.Value.fromUnsignedBigInt(repoId));
+  const forgeParam = new ethereum.EventParam('forge', ethereum.Value.fromUnsignedBigInt(forge));
+  const nameParam = new ethereum.EventParam(
+    'forge',
+    ethereum.Value.fromBytes(Bytes.fromUTF8(name))
+  );
+
+  repoOwnerUpdateRequestedEvent.parameters.push(repoIdParam);
+  repoOwnerUpdateRequestedEvent.parameters.push(forgeParam);
+  repoOwnerUpdateRequestedEvent.parameters.push(nameParam);
+
+  return repoOwnerUpdateRequestedEvent;
+}
+
+export function createRepoOwnerUpdated(repoId: BigInt, owner: Address): RepoOwnerUpdated {
+  const repoOwnerUpdatedEvent = changetype<RepoOwnerUpdated>(newMockEvent()) as RepoOwnerUpdated;
+
+  repoOwnerUpdatedEvent.parameters = [];
+
+  const ownerParam = new ethereum.EventParam('repoId', ethereum.Value.fromUnsignedBigInt(repoId));
+  const nameParam = new ethereum.EventParam('forge', ethereum.Value.fromAddress(owner));
+
+  repoOwnerUpdatedEvent.parameters.push(ownerParam);
+  repoOwnerUpdatedEvent.parameters.push(nameParam);
+
+  return repoOwnerUpdatedEvent;
 }
 
 export function createGiven(userId: BigInt, receiver: BigInt, assetId: BigInt, amt: BigInt): Given {

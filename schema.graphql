@@ -174,3 +174,12 @@ type ImmutableSplitsCreated @entity {
   userId: String!
   receiversHash: Bytes!
 }
+
+type RepoAccount @entity {
+  id: ID! # the repoId.
+  name: String!
+  forge: BigInt!
+  status: String!
+  ownerAddress: String!
+  lastUpdatedBlockTimestamp: BigInt!
+}

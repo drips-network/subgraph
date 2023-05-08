@@ -1,5 +1,5 @@
 import { BigInt, Bytes } from '@graphprotocol/graph-ts';
-import { assert, clearStore, describe, test, log, logStore, beforeEach } from 'matchstick-as';
+import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { ImmutableSplitsCreated } from '../generated/schema';
 import { handleImmutableSplitsCreated } from '../src/mapping';
 import { createCreatedSplits } from './helpers/eventCreators';

@@ -6,6 +6,7 @@
     "build": "graph build",
     "deploy:ethereum": "yarn prepare:ethereum && graph deploy --product hosted-service drips-network-dev/drips-v2-on-ethereum",
     "deploy:goerli": "yarn prepare:goerli && graph deploy --product hosted-service jtourkos/drips-v2-on-goerli",
+    "deploy:goerli-staging": "yarn prepare:goerli && graph deploy --product hosted-service jtourkos/drips-v2-on-goerli-staging",
     "deploy:mumbai": "yarn prepare:mumbai && graph deploy --product hosted-service jtourkos/drips-v2-on-mumbai",
     "create-local": "graph create drips-subgraph-local --node http://127.0.0.1:8020",
     "remove-local": "graph remove drips-subgraph-local --node http://127.0.0.1:8020",

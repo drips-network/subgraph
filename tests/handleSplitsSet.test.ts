@@ -1,6 +1,6 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { LastSetSplitsUserMapping, SplitsEntry, SplitsSetEvent, User } from '../generated/schema';
+import { LastSetSplitsUserMapping, SplitsSetEvent, User } from '../generated/schema';
 import { handleSplitsSet } from '../src/mapping';
 import { createSplitsSet } from './helpers/eventCreators';
 

@@ -1554,3 +1554,80 @@ export class ImmutableSplitsCreated extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 }
+
+export class RepoAccount extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save RepoAccount entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type RepoAccount must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("RepoAccount", id.toString(), this);
+    }
+  }
+
+  static load(id: string): RepoAccount | null {
+    return changetype<RepoAccount | null>(store.get("RepoAccount", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value!.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get forge(): BigInt {
+    let value = this.get("forge");
+    return value!.toBigInt();
+  }
+
+  set forge(value: BigInt) {
+    this.set("forge", Value.fromBigInt(value));
+  }
+
+  get status(): string {
+    let value = this.get("status");
+    return value!.toString();
+  }
+
+  set status(value: string) {
+    this.set("status", Value.fromString(value));
+  }
+
+  get ownerAddress(): string {
+    let value = this.get("ownerAddress");
+    return value!.toString();
+  }
+
+  set ownerAddress(value: string) {
+    this.set("ownerAddress", Value.fromString(value));
+  }
+
+  get lastUpdatedBlockTimestamp(): BigInt {
+    let value = this.get("lastUpdatedBlockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set lastUpdatedBlockTimestamp(value: BigInt) {
+    this.set("lastUpdatedBlockTimestamp", Value.fromBigInt(value));
+  }
+}

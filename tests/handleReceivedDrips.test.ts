@@ -1,4 +1,4 @@
-import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
+import { BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { ReceivedDripsEvent, UserAssetConfig } from '../generated/schema';
 import { handleReceivedDrips } from '../src/mapping';

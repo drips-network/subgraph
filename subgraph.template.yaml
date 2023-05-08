@@ -84,3 +84,25 @@ dataSources:
         - event: CreatedSplits(indexed uint256,indexed bytes32)
           handler: handleImmutableSplitsCreated
       file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: RepoDriver
+    network: {{ network }}
+    source:
+      address: '{{repoDriver.address}}'
+      abi: RepoDriver
+      startBlock: {{ repoDriver.block }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - RepoDriver
+      abis:
+        - name: RepoDriver
+          file: ./abis/RepoDriver.json
+      eventHandlers:
+        - event: RepoOwnerUpdateRequested(indexed uint224,uint8,bytes)
+          handler: handleRepoOwnerUpdateRequested
+        - event: RepoOwnerUpdated(indexed uint224,address)
+          handler: handleRepoOwnerUpdated
+      file: ./src/repoDriverHandlers.ts
