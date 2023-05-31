@@ -1604,22 +1604,38 @@ export class RepoAccount extends Entity {
     this.set("forge", Value.fromBigInt(value));
   }
 
-  get status(): string {
+  get status(): string | null {
     let value = this.get("status");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set status(value: string) {
-    this.set("status", Value.fromString(value));
+  set status(value: string | null) {
+    if (!value) {
+      this.unset("status");
+    } else {
+      this.set("status", Value.fromString(<string>value));
+    }
   }
 
-  get ownerAddress(): string {
+  get ownerAddress(): string | null {
     let value = this.get("ownerAddress");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set ownerAddress(value: string) {
-    this.set("ownerAddress", Value.fromString(value));
+  set ownerAddress(value: string | null) {
+    if (!value) {
+      this.unset("ownerAddress");
+    } else {
+      this.set("ownerAddress", Value.fromString(<string>value));
+    }
   }
 
   get lastUpdatedBlockTimestamp(): BigInt {

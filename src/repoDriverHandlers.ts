@@ -1,19 +1,18 @@
 import { BigInt } from '@graphprotocol/graph-ts';
-import { RepoOwnerUpdateRequested, RepoOwnerUpdated } from '../generated/RepoDriver/RepoDriver';
+import { OwnerUpdateRequested, OwnerUpdated } from '../generated/RepoDriver/RepoDriver';
 import { RepoAccount } from '../generated/schema';
 
-export function handleRepoOwnerUpdateRequested(event: RepoOwnerUpdateRequested): void {
+export function handleOwnerUpdateRequested(event: OwnerUpdateRequested): void {
   const forge = event.params.forge;
   const name = event.params.name.toString();
-  const repoId = event.params.repoId.toString();
+  const id = event.params.userId.toString();
 
-  let repoAccount = RepoAccount.load(repoId);
+  let repoAccount = RepoAccount.load(id);
   if (!repoAccount) {
-    repoAccount = new RepoAccount(repoId);
+    repoAccount = new RepoAccount(id);
   }
 
-  // ownerAddress is not updated in this event. It will be set in the related upcoming `RepoOwnerUpdated` event.
-  repoAccount.ownerAddress = '';
+  // ownerAddress is not updated in this event. It will be set in the related upcoming `OwnerUpdated` event.
 
   repoAccount.name = name;
   repoAccount.forge = BigInt.fromI32(forge);
@@ -23,18 +22,19 @@ export function handleRepoOwnerUpdateRequested(event: RepoOwnerUpdateRequested):
   repoAccount.save();
 }
 
-export function handleRepoOwnerUpdated(event: RepoOwnerUpdated): void {
+export function handleOwnerUpdated(event: OwnerUpdated): void {
   const owner = event.params.owner.toHexString();
-  const repoId = event.params.repoId.toString();
+  const id = event.params.userId.toString();
 
-  const repoAccount = RepoAccount.load(repoId);
+  const repoAccount = RepoAccount.load(id);
   if (!repoAccount) {
     throw new Error(
-      `RepoAccount with id ${repoId} does not exist. This should never happen, as a 'RepoOwnerUpdateRequested' event should always be emitted first.`
+      `RepoAccount with id ${id} does not exist. This should never happen, as a 'OwnerUpdateRequested' event should always be emitted first.`
     );
   }
 
-  // `name` and `forge` are not updated in this event. They are set in the preceding `RepoOwnerUpdateRequested` event.
+  // `name` and `forge` are not updated in this event. They are set in the preceding `OwnerUpdateRequested` event.
+
   repoAccount.ownerAddress = owner;
   repoAccount.status = 'CLAIMED';
   repoAccount.lastUpdatedBlockTimestamp = event.block.timestamp;

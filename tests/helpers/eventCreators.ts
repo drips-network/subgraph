@@ -18,8 +18,8 @@ import {
 } from '../../generated/DripsHub/DripsHub';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
-import { RepoOwnerUpdateRequested } from '../../generated/RepoDriver/RepoDriver';
-import { RepoOwnerUpdated } from '../../generated/RepoDriver/RepoDriver';
+import { OwnerUpdateRequested } from '../../generated/RepoDriver/RepoDriver';
+import { OwnerUpdated } from '../../generated/RepoDriver/RepoDriver';
 
 export function createDripsSetEvent(
   userId: BigInt,
@@ -178,16 +178,16 @@ export function createDriverRegistered(driverId: BigInt, driverAddr: Address): D
   return createdSplitsEvent;
 }
 
-export function createRepoOwnerUpdateRequested(
+export function createOwnerUpdateRequested(
   repoId: BigInt,
   forge: BigInt,
   name: string
-): RepoOwnerUpdateRequested {
-  const repoOwnerUpdateRequestedEvent = changetype<RepoOwnerUpdateRequested>(
+): OwnerUpdateRequested {
+  const OwnerUpdateRequestedEvent = changetype<OwnerUpdateRequested>(
     newMockEvent()
-  ) as RepoOwnerUpdateRequested;
+  ) as OwnerUpdateRequested;
 
-  repoOwnerUpdateRequestedEvent.parameters = [];
+  OwnerUpdateRequestedEvent.parameters = [];
 
   const repoIdParam = new ethereum.EventParam('repoId', ethereum.Value.fromUnsignedBigInt(repoId));
   const forgeParam = new ethereum.EventParam('forge', ethereum.Value.fromUnsignedBigInt(forge));
@@ -196,25 +196,25 @@ export function createRepoOwnerUpdateRequested(
     ethereum.Value.fromBytes(Bytes.fromUTF8(name))
   );
 
-  repoOwnerUpdateRequestedEvent.parameters.push(repoIdParam);
-  repoOwnerUpdateRequestedEvent.parameters.push(forgeParam);
-  repoOwnerUpdateRequestedEvent.parameters.push(nameParam);
+  OwnerUpdateRequestedEvent.parameters.push(repoIdParam);
+  OwnerUpdateRequestedEvent.parameters.push(forgeParam);
+  OwnerUpdateRequestedEvent.parameters.push(nameParam);
 
-  return repoOwnerUpdateRequestedEvent;
+  return OwnerUpdateRequestedEvent;
 }
 
-export function createRepoOwnerUpdated(repoId: BigInt, owner: Address): RepoOwnerUpdated {
-  const repoOwnerUpdatedEvent = changetype<RepoOwnerUpdated>(newMockEvent()) as RepoOwnerUpdated;
+export function createOwnerUpdated(repoId: BigInt, owner: Address): OwnerUpdated {
+  const OwnerUpdatedEvent = changetype<OwnerUpdated>(newMockEvent()) as OwnerUpdated;
 
-  repoOwnerUpdatedEvent.parameters = [];
+  OwnerUpdatedEvent.parameters = [];
 
   const ownerParam = new ethereum.EventParam('repoId', ethereum.Value.fromUnsignedBigInt(repoId));
   const nameParam = new ethereum.EventParam('forge', ethereum.Value.fromAddress(owner));
 
-  repoOwnerUpdatedEvent.parameters.push(ownerParam);
-  repoOwnerUpdatedEvent.parameters.push(nameParam);
+  OwnerUpdatedEvent.parameters.push(ownerParam);
+  OwnerUpdatedEvent.parameters.push(nameParam);
 
-  return repoOwnerUpdatedEvent;
+  return OwnerUpdatedEvent;
 }
 
 export function createGiven(userId: BigInt, receiver: BigInt, assetId: BigInt, amt: BigInt): Given {

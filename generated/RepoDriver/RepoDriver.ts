@@ -98,6 +98,54 @@ export class NewAdminProposed__Params {
   }
 }
 
+export class OwnerUpdateRequested extends ethereum.Event {
+  get params(): OwnerUpdateRequested__Params {
+    return new OwnerUpdateRequested__Params(this);
+  }
+}
+
+export class OwnerUpdateRequested__Params {
+  _event: OwnerUpdateRequested;
+
+  constructor(event: OwnerUpdateRequested) {
+    this._event = event;
+  }
+
+  get userId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get forge(): i32 {
+    return this._event.parameters[1].value.toI32();
+  }
+
+  get name(): Bytes {
+    return this._event.parameters[2].value.toBytes();
+  }
+}
+
+export class OwnerUpdated extends ethereum.Event {
+  get params(): OwnerUpdated__Params {
+    return new OwnerUpdated__Params(this);
+  }
+}
+
+export class OwnerUpdated__Params {
+  _event: OwnerUpdated;
+
+  constructor(event: OwnerUpdated) {
+    this._event = event;
+  }
+
+  get userId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get owner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class Paused extends ethereum.Event {
   get params(): Paused__Params {
     return new Paused__Params(this);
@@ -156,54 +204,6 @@ export class PauserRevoked__Params {
   }
 
   get admin(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
-export class RepoOwnerUpdateRequested extends ethereum.Event {
-  get params(): RepoOwnerUpdateRequested__Params {
-    return new RepoOwnerUpdateRequested__Params(this);
-  }
-}
-
-export class RepoOwnerUpdateRequested__Params {
-  _event: RepoOwnerUpdateRequested;
-
-  constructor(event: RepoOwnerUpdateRequested) {
-    this._event = event;
-  }
-
-  get repoId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get forge(): i32 {
-    return this._event.parameters[1].value.toI32();
-  }
-
-  get name(): Bytes {
-    return this._event.parameters[2].value.toBytes();
-  }
-}
-
-export class RepoOwnerUpdated extends ethereum.Event {
-  get params(): RepoOwnerUpdated__Params {
-    return new RepoOwnerUpdated__Params(this);
-  }
-}
-
-export class RepoOwnerUpdated__Params {
-  _event: RepoOwnerUpdated;
-
-  constructor(event: RepoOwnerUpdated) {
-    this._event = event;
-  }
-
-  get repoId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get owner(): Address {
     return this._event.parameters[1].value.toAddress();
   }
 }
@@ -364,8 +364,8 @@ export class RepoDriver extends ethereum.SmartContract {
     );
   }
 
-  calcRepoId(forge: i32, name: Bytes): BigInt {
-    let result = super.call("calcRepoId", "calcRepoId(uint8,bytes):(uint224)", [
+  calcUserId(forge: i32, name: Bytes): BigInt {
+    let result = super.call("calcUserId", "calcUserId(uint8,bytes):(uint256)", [
       ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
       ethereum.Value.fromBytes(name)
     ]);
@@ -373,10 +373,10 @@ export class RepoDriver extends ethereum.SmartContract {
     return result[0].toBigInt();
   }
 
-  try_calcRepoId(forge: i32, name: Bytes): ethereum.CallResult<BigInt> {
+  try_calcUserId(forge: i32, name: Bytes): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "calcRepoId",
-      "calcRepoId(uint8,bytes):(uint224)",
+      "calcUserId",
+      "calcUserId(uint8,bytes):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
         ethereum.Value.fromBytes(name)
@@ -389,31 +389,12 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  calcUserId(repoId: BigInt): BigInt {
-    let result = super.call("calcUserId", "calcUserId(uint224):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(repoId)
-    ]);
-
-    return result[0].toBigInt();
-  }
-
-  try_calcUserId(repoId: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("calcUserId", "calcUserId(uint224):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(repoId)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  collect(repoId: BigInt, erc20: Address, transferTo: Address): BigInt {
+  collect(userId: BigInt, erc20: Address, transferTo: Address): BigInt {
     let result = super.call(
       "collect",
-      "collect(uint216,address,address):(uint128)",
+      "collect(uint256,address,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(repoId),
+        ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromAddress(transferTo)
       ]
@@ -423,15 +404,15 @@ export class RepoDriver extends ethereum.SmartContract {
   }
 
   try_collect(
-    repoId: BigInt,
+    userId: BigInt,
     erc20: Address,
     transferTo: Address
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "collect",
-      "collect(uint216,address,address):(uint128)",
+      "collect(uint256,address,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(repoId),
+        ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromAddress(transferTo)
       ]
@@ -564,6 +545,25 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  ownerOf(userId: BigInt): Address {
+    let result = super.call("ownerOf", "ownerOf(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(userId)
+    ]);
+
+    return result[0].toAddress();
+  }
+
+  try_ownerOf(userId: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall("ownerOf", "ownerOf(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(userId)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   proposedAdmin(): Address {
     let result = super.call("proposedAdmin", "proposedAdmin():(address)", []);
 
@@ -602,27 +602,37 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  repoOwner(repoId: BigInt): Address {
-    let result = super.call("repoOwner", "repoOwner(uint224):(address)", [
-      ethereum.Value.fromUnsignedBigInt(repoId)
-    ]);
+  requestUpdateOwner(forge: i32, name: Bytes): BigInt {
+    let result = super.call(
+      "requestUpdateOwner",
+      "requestUpdateOwner(uint8,bytes):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
+        ethereum.Value.fromBytes(name)
+      ]
+    );
 
-    return result[0].toAddress();
+    return result[0].toBigInt();
   }
 
-  try_repoOwner(repoId: BigInt): ethereum.CallResult<Address> {
-    let result = super.tryCall("repoOwner", "repoOwner(uint224):(address)", [
-      ethereum.Value.fromUnsignedBigInt(repoId)
-    ]);
+  try_requestUpdateOwner(forge: i32, name: Bytes): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "requestUpdateOwner",
+      "requestUpdateOwner(uint8,bytes):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
+        ethereum.Value.fromBytes(name)
+      ]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   setDrips(
-    repoId: BigInt,
+    userId: BigInt,
     erc20: Address,
     currReceivers: Array<RepoDriver__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
@@ -633,9 +643,9 @@ export class RepoDriver extends ethereum.SmartContract {
   ): BigInt {
     let result = super.call(
       "setDrips",
-      "setDrips(uint216,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
+      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
-        ethereum.Value.fromUnsignedBigInt(repoId),
+        ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
@@ -650,7 +660,7 @@ export class RepoDriver extends ethereum.SmartContract {
   }
 
   try_setDrips(
-    repoId: BigInt,
+    userId: BigInt,
     erc20: Address,
     currReceivers: Array<RepoDriver__setDripsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
@@ -661,9 +671,9 @@ export class RepoDriver extends ethereum.SmartContract {
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "setDrips",
-      "setDrips(uint216,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
+      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
-        ethereum.Value.fromUnsignedBigInt(repoId),
+        ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
@@ -762,7 +772,7 @@ export class CollectCall__Inputs {
     this._call = call;
   }
 
-  get repoId(): BigInt {
+  get userId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -804,7 +814,7 @@ export class EmitUserMetadataCall__Inputs {
     this._call = call;
   }
 
-  get repoId(): BigInt {
+  get userId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -850,7 +860,7 @@ export class GiveCall__Inputs {
     this._call = call;
   }
 
-  get repoId(): BigInt {
+  get userId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1025,20 +1035,20 @@ export class RenounceAdminCall__Outputs {
   }
 }
 
-export class RequestUpdateRepoOwnerCall extends ethereum.Call {
-  get inputs(): RequestUpdateRepoOwnerCall__Inputs {
-    return new RequestUpdateRepoOwnerCall__Inputs(this);
+export class RequestUpdateOwnerCall extends ethereum.Call {
+  get inputs(): RequestUpdateOwnerCall__Inputs {
+    return new RequestUpdateOwnerCall__Inputs(this);
   }
 
-  get outputs(): RequestUpdateRepoOwnerCall__Outputs {
-    return new RequestUpdateRepoOwnerCall__Outputs(this);
+  get outputs(): RequestUpdateOwnerCall__Outputs {
+    return new RequestUpdateOwnerCall__Outputs(this);
   }
 }
 
-export class RequestUpdateRepoOwnerCall__Inputs {
-  _call: RequestUpdateRepoOwnerCall;
+export class RequestUpdateOwnerCall__Inputs {
+  _call: RequestUpdateOwnerCall;
 
-  constructor(call: RequestUpdateRepoOwnerCall) {
+  constructor(call: RequestUpdateOwnerCall) {
     this._call = call;
   }
 
@@ -1051,11 +1061,15 @@ export class RequestUpdateRepoOwnerCall__Inputs {
   }
 }
 
-export class RequestUpdateRepoOwnerCall__Outputs {
-  _call: RequestUpdateRepoOwnerCall;
+export class RequestUpdateOwnerCall__Outputs {
+  _call: RequestUpdateOwnerCall;
 
-  constructor(call: RequestUpdateRepoOwnerCall) {
+  constructor(call: RequestUpdateOwnerCall) {
     this._call = call;
+  }
+
+  get userId(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
   }
 }
 
@@ -1106,7 +1120,7 @@ export class SetDripsCall__Inputs {
     this._call = call;
   }
 
-  get repoId(): BigInt {
+  get userId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1192,7 +1206,7 @@ export class SetSplitsCall__Inputs {
     this._call = call;
   }
 
-  get repoId(): BigInt {
+  get userId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1285,20 +1299,20 @@ export class UpdateAnyApiOperatorCall__Outputs {
   }
 }
 
-export class UpdateRepoOwnerByAnyApiCall extends ethereum.Call {
-  get inputs(): UpdateRepoOwnerByAnyApiCall__Inputs {
-    return new UpdateRepoOwnerByAnyApiCall__Inputs(this);
+export class UpdateOwnerByAnyApiCall extends ethereum.Call {
+  get inputs(): UpdateOwnerByAnyApiCall__Inputs {
+    return new UpdateOwnerByAnyApiCall__Inputs(this);
   }
 
-  get outputs(): UpdateRepoOwnerByAnyApiCall__Outputs {
-    return new UpdateRepoOwnerByAnyApiCall__Outputs(this);
+  get outputs(): UpdateOwnerByAnyApiCall__Outputs {
+    return new UpdateOwnerByAnyApiCall__Outputs(this);
   }
 }
 
-export class UpdateRepoOwnerByAnyApiCall__Inputs {
-  _call: UpdateRepoOwnerByAnyApiCall;
+export class UpdateOwnerByAnyApiCall__Inputs {
+  _call: UpdateOwnerByAnyApiCall;
 
-  constructor(call: UpdateRepoOwnerByAnyApiCall) {
+  constructor(call: UpdateOwnerByAnyApiCall) {
     this._call = call;
   }
 
@@ -1311,10 +1325,10 @@ export class UpdateRepoOwnerByAnyApiCall__Inputs {
   }
 }
 
-export class UpdateRepoOwnerByAnyApiCall__Outputs {
-  _call: UpdateRepoOwnerByAnyApiCall;
+export class UpdateOwnerByAnyApiCall__Outputs {
+  _call: UpdateOwnerByAnyApiCall;
 
-  constructor(call: UpdateRepoOwnerByAnyApiCall) {
+  constructor(call: UpdateOwnerByAnyApiCall) {
     this._call = call;
   }
 }

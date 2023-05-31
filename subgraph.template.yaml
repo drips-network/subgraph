@@ -101,8 +101,8 @@ dataSources:
         - name: RepoDriver
           file: ./abis/RepoDriver.json
       eventHandlers:
-        - event: RepoOwnerUpdateRequested(indexed uint224,uint8,bytes)
-          handler: handleRepoOwnerUpdateRequested
-        - event: RepoOwnerUpdated(indexed uint224,address)
-          handler: handleRepoOwnerUpdated
+        - event: OwnerUpdateRequested(indexed uint256,uint8,bytes)
+          handler: handleOwnerUpdateRequested
+        - event: OwnerUpdated(indexed uint256,address)
+          handler: handleOwnerUpdated
       file: ./src/repoDriverHandlers.ts

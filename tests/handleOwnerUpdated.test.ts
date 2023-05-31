@@ -1,10 +1,10 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
 import { RepoAccount } from '../generated/schema';
-import { handleRepoOwnerUpdated } from '../src/repoDriverHandlers';
-import { createRepoOwnerUpdated } from './helpers/eventCreators';
+import { handleOwnerUpdated } from '../src/repoDriverHandlers';
+import { createOwnerUpdated } from './helpers/eventCreators';
 
-describe('handleRepoOwnerUpdated', () => {
+describe('handleOwnerUpdated', () => {
   beforeEach(() => {
     clearStore();
   });
@@ -15,12 +15,11 @@ describe('handleRepoOwnerUpdated', () => {
     const repoId = BigInt.fromI32(1);
     const owner = Address.fromString('0x0000000000000000000000000000000000000420');
 
-    const incomingRepoOwnerUpdated = createRepoOwnerUpdated(repoId, owner);
+    const incomingOwnerUpdated = createOwnerUpdated(repoId, owner);
 
-    const repoAccountId = incomingRepoOwnerUpdated.params.repoId.toString();
-    const repoAccountBefore = new RepoAccount(repoAccountId);
+    const id = incomingOwnerUpdated.params.userId.toString();
+    const repoAccountBefore = new RepoAccount(id);
     repoAccountBefore.name = 'test';
-    repoAccountBefore.ownerAddress = '';
     repoAccountBefore.forge = BigInt.fromI32(0);
     repoAccountBefore.status = 'OWNER_UPDATE_REQUESTED';
     repoAccountBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
@@ -28,16 +27,16 @@ describe('handleRepoOwnerUpdated', () => {
     repoAccountBefore.save();
 
     // Act
-    handleRepoOwnerUpdated(incomingRepoOwnerUpdated);
+    handleOwnerUpdated(incomingOwnerUpdated);
 
     // Assert
-    const repoAccountAfter = RepoAccount.load(repoAccountId) as RepoAccount;
+    const repoAccountAfter = RepoAccount.load(id) as RepoAccount;
 
-    assert.stringEquals(repoAccountAfter.ownerAddress, owner.toHexString());
-    assert.stringEquals(repoAccountAfter.status, 'CLAIMED');
+    assert.stringEquals(repoAccountAfter.ownerAddress as string, owner.toHexString());
+    assert.stringEquals(repoAccountAfter.status as string, 'CLAIMED');
     assert.bigIntEquals(
       repoAccountAfter.lastUpdatedBlockTimestamp,
-      incomingRepoOwnerUpdated.block.timestamp
+      incomingOwnerUpdated.block.timestamp
     );
     assert.stringEquals(repoAccountAfter.name, repoAccountBefore.name);
     assert.bigIntEquals(repoAccountAfter.forge, repoAccountBefore.forge);

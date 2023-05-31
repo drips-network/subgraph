@@ -176,10 +176,10 @@ type ImmutableSplitsCreated @entity {
 }
 
 type RepoAccount @entity {
-  id: ID! # the repoId.
-  name: String!
+  id: ID! # the userId
+  name: String! # The name of the repository.
   forge: BigInt!
-  status: String!
-  ownerAddress: String!
+  status: String # null, 'CLAIMED' or 'OWNER_UPDATE_REQUESTED'.
+  ownerAddress: String
   lastUpdatedBlockTimestamp: BigInt!
 }
