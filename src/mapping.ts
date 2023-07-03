@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { BigInt, Bytes } from '@graphprotocol/graph-ts';
 import {
-  DripsSet,
-  DripsReceiverSeen,
-  ReceivedDrips,
-  SqueezedDrips,
+  StreamsSet,
+  StreamReceiverSeen,
+  ReceivedStreams,
+  SqueezedStreams,
   SplitsSet,
   SplitsReceiverSeen,
   Split,
@@ -14,18 +14,18 @@ import {
   UserMetadataEmitted,
   Collected,
   Collectable
-} from '../generated/DripsHub/DripsHub';
+} from '../generated/Drips/Drips';
 import { Transfer } from '../generated/NFTDriver/NFTDriver';
 import { CreatedSplits } from '../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import {
   User,
-  DripsEntry,
+  StreamsEntry,
   UserAssetConfig,
-  DripsSetEvent,
-  LastSetDripsUserMapping,
-  DripsReceiverSeenEvent,
-  ReceivedDripsEvent,
-  SqueezedDripsEvent,
+  StreamsSetEvent,
+  LastSetStreamUserMapping,
+  StreamReceiverSeenEvent,
+  ReceivedStreamsEvent,
+  SqueezedStreamsEvent,
   SplitsEntry,
   SplitsSetEvent,
   LastSetSplitsUserMapping,
@@ -112,12 +112,12 @@ export function handleCollected(event: Collected): void {
   userAssetConfig.save();
 }
 
-export function handleDripsSet(event: DripsSet): void {
+export function handleStreamsSet(event: StreamsSet): void {
   // If the User doesn't exist, create it
   const userId = event.params.userId.toString();
   const user = getOrCreateUser(userId, event.block.timestamp);
 
-  // Next create or update the UserAssetConfig and clear any old DripsEntries if needed
+  // Next create or update the UserAssetConfig and clear any old StreamsEntries if needed
   const userAssetConfigId = event.params.userId.toString() + '-' + event.params.assetId.toString();
   let userAssetConfig = UserAssetConfig.load(userAssetConfigId);
   if (!userAssetConfig) {
@@ -127,20 +127,20 @@ export function handleDripsSet(event: DripsSet): void {
       event.block.timestamp
     );
   } else {
-    // If this is an update, we need to delete the old DripsEntry values and clear the
-    // dripsEntryIds field
+    // If this is an update, we need to delete the old StreamsEntry values and clear the
+    // streamsEntryIds field
     if (
       !(event.params.receiversHash.toHexString() == userAssetConfig.assetConfigHash.toHexString())
     ) {
-      const newDripsEntryIds: string[] = [];
-      for (let i = 0; i < userAssetConfig.dripsEntryIds.length; i++) {
-        const dripsEntryId = userAssetConfig.dripsEntryIds[i];
-        const dripsEntry = DripsEntry.load(dripsEntryId);
-        if (dripsEntry) {
-          store.remove('DripsEntry', dripsEntryId);
+      const newStreamsEntryIds: string[] = [];
+      for (let i = 0; i < userAssetConfig.streamsEntryIds.length; i++) {
+        const streamsEntryId = userAssetConfig.streamsEntryIds[i];
+        const streamsEntry = StreamsEntry.load(streamsEntryId);
+        if (streamsEntry) {
+          store.remove('StreamsEntry', streamsEntryId);
         }
       }
-      userAssetConfig.dripsEntryIds = newDripsEntryIds;
+      userAssetConfig.streamsEntryIds = newStreamsEntryIds;
     }
   }
   userAssetConfig.balance = event.params.balance;
@@ -148,106 +148,106 @@ export function handleDripsSet(event: DripsSet): void {
   userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp;
   userAssetConfig.save();
 
-  // Add the DripsSetEvent
-  const dripsSetEventId = event.transaction.hash.toHexString() + '-' + event.logIndex.toString();
-  const dripsSetEvent = new DripsSetEvent(dripsSetEventId);
-  dripsSetEvent.userId = event.params.userId.toString();
-  dripsSetEvent.assetId = event.params.assetId;
-  dripsSetEvent.receiversHash = event.params.receiversHash;
-  dripsSetEvent.dripsHistoryHash = event.params.dripsHistoryHash;
-  dripsSetEvent.balance = event.params.balance;
-  dripsSetEvent.maxEnd = event.params.maxEnd;
-  dripsSetEvent.blockTimestamp = event.block.timestamp;
-  dripsSetEvent.save();
+  // Add the StreamsSetEvent
+  const streamsSetEventId = event.transaction.hash.toHexString() + '-' + event.logIndex.toString();
+  const streamsSetEvent = new StreamsSetEvent(streamsSetEventId);
+  streamsSetEvent.userId = event.params.userId.toString();
+  streamsSetEvent.assetId = event.params.assetId;
+  streamsSetEvent.receiversHash = event.params.receiversHash;
+  streamsSetEvent.streamsHistoryHash = event.params.streamsHistoryHash;
+  streamsSetEvent.balance = event.params.balance;
+  streamsSetEvent.maxEnd = event.params.maxEnd;
+  streamsSetEvent.blockTimestamp = event.block.timestamp;
+  streamsSetEvent.save();
 
-  // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
+  // TODO -- we need to add some kind of sequence number so we can historically order StreamsSetEvents that occur within the same block
 
-  // Create/update LastDripsSetUserMapping for this receiversHash
-  const lastDripsSetUserMappingId = event.params.receiversHash.toHexString();
-  let lastDripsSetUserMapping = LastSetDripsUserMapping.load(lastDripsSetUserMappingId);
-  if (!lastDripsSetUserMapping) {
-    lastDripsSetUserMapping = new LastSetDripsUserMapping(lastDripsSetUserMappingId);
+  // Create/update LastStreamsSetUserMapping for this receiversHash
+  const lastStreamsSetUserMappingId = event.params.receiversHash.toHexString();
+  let lastStreamsSetUserMapping = LastSetStreamUserMapping.load(lastStreamsSetUserMappingId);
+  if (!lastStreamsSetUserMapping) {
+    lastStreamsSetUserMapping = new LastSetStreamUserMapping(lastStreamsSetUserMappingId);
   }
-  lastDripsSetUserMapping.dripsSetEventId = dripsSetEventId;
-  lastDripsSetUserMapping.userId = event.params.userId.toString();
-  lastDripsSetUserMapping.assetId = event.params.assetId;
-  lastDripsSetUserMapping.save();
+  lastStreamsSetUserMapping.streamsSetEventId = streamsSetEventId;
+  lastStreamsSetUserMapping.userId = event.params.userId.toString();
+  lastStreamsSetUserMapping.assetId = event.params.assetId;
+  lastStreamsSetUserMapping.save();
 }
 
-export function handleDripsReceiverSeen(event: DripsReceiverSeen): void {
+export function handleStreamReceiverSeen(event: StreamReceiverSeen): void {
   const receiversHash = event.params.receiversHash;
-  const lastSetDripsUserMapping = LastSetDripsUserMapping.load(receiversHash.toHexString());
+  const lastSetStreamsUserMapping = LastSetStreamUserMapping.load(receiversHash.toHexString());
 
-  // We need to use the LastSetDripsUserMapping to look up the userId and assetId associated with this receiverHash
-  if (lastSetDripsUserMapping) {
-    const userId = lastSetDripsUserMapping.userId.toString();
-    const userAssetConfigId = userId + '-' + lastSetDripsUserMapping.assetId.toString();
+  // We need to use the LastSetStreamUserMapping to look up the userId and assetId associated with this receiverHash
+  if (lastSetStreamsUserMapping) {
+    const userId = lastSetStreamsUserMapping.userId.toString();
+    const userAssetConfigId = userId + '-' + lastSetStreamsUserMapping.assetId.toString();
     const userAssetConfig = getOrCreateUserAssetConfig(
       userId,
-      lastSetDripsUserMapping.assetId,
+      lastSetStreamsUserMapping.assetId,
       event.block.timestamp
     );
 
-    // Now we can create the DripsEntry
-    if (!userAssetConfig.dripsEntryIds) userAssetConfig.dripsEntryIds = [];
-    const newDripsEntryIds = userAssetConfig.dripsEntryIds;
-    const dripsEntryId =
-      lastSetDripsUserMapping.userId.toString() +
+    // Now we can create the StreamsEntry
+    if (!userAssetConfig.streamsEntryIds) userAssetConfig.streamsEntryIds = [];
+    const newStreamsEntryIds = userAssetConfig.streamsEntryIds;
+    const streamsEntryId =
+      lastSetStreamsUserMapping.userId.toString() +
       '-' +
       event.params.userId.toString() +
       '-' +
-      lastSetDripsUserMapping.assetId.toString();
-    let dripsEntry = DripsEntry.load(dripsEntryId);
-    if (!dripsEntry) {
-      dripsEntry = new DripsEntry(dripsEntryId);
+      lastSetStreamsUserMapping.assetId.toString();
+    let streamsEntry = StreamsEntry.load(streamsEntryId);
+    if (!streamsEntry) {
+      streamsEntry = new StreamsEntry(streamsEntryId);
     }
-    dripsEntry.sender = lastSetDripsUserMapping.userId.toString();
-    dripsEntry.senderAssetConfig = userAssetConfigId;
-    dripsEntry.userId = event.params.userId.toString();
-    dripsEntry.config = event.params.config;
-    dripsEntry.save();
+    streamsEntry.sender = lastSetStreamsUserMapping.userId.toString();
+    streamsEntry.senderAssetConfig = userAssetConfigId;
+    streamsEntry.userId = event.params.userId.toString();
+    streamsEntry.config = event.params.config;
+    streamsEntry.save();
 
-    newDripsEntryIds.push(dripsEntryId);
-    userAssetConfig.dripsEntryIds = newDripsEntryIds;
+    newStreamsEntryIds.push(streamsEntryId);
+    userAssetConfig.streamsEntryIds = newStreamsEntryIds;
     userAssetConfig.lastUpdatedBlockTimestamp = event.block.timestamp;
     userAssetConfig.save();
   }
 
-  // Create the DripsReceiverSeenEvent entity
-  const dripsReceiverSeenEventId =
+  // Create the StreamReceiverSeenEvent entity
+  const streamReceiverSeenEventId =
     event.transaction.hash.toHexString() + '-' + event.logIndex.toString();
-  const dripsReceiverSeenEvent = new DripsReceiverSeenEvent(dripsReceiverSeenEventId);
-  if (lastSetDripsUserMapping) {
-    dripsReceiverSeenEvent.dripsSetEvent = lastSetDripsUserMapping.dripsSetEventId;
+  const streamReceiverSeenEvent = new StreamReceiverSeenEvent(streamReceiverSeenEventId);
+  if (lastSetStreamsUserMapping) {
+    streamReceiverSeenEvent.streamsSetEvent = lastSetStreamsUserMapping.streamsSetEventId;
   }
-  dripsReceiverSeenEvent.receiversHash = event.params.receiversHash;
-  if (lastSetDripsUserMapping) {
-    dripsReceiverSeenEvent.senderUserId = lastSetDripsUserMapping.userId;
+  streamReceiverSeenEvent.receiversHash = event.params.receiversHash;
+  if (lastSetStreamsUserMapping) {
+    streamReceiverSeenEvent.senderUserId = lastSetStreamsUserMapping.userId;
   }
-  dripsReceiverSeenEvent.receiverUserId = event.params.userId.toString();
-  dripsReceiverSeenEvent.config = event.params.config;
-  dripsReceiverSeenEvent.blockTimestamp = event.block.timestamp;
-  dripsReceiverSeenEvent.save();
+  streamReceiverSeenEvent.receiverUserId = event.params.userId.toString();
+  streamReceiverSeenEvent.config = event.params.config;
+  streamReceiverSeenEvent.blockTimestamp = event.block.timestamp;
+  streamReceiverSeenEvent.save();
 
-  // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
+  // TODO -- we need to add some kind of sequence number so we can historically order StreamsSetEvents that occur within the same block
 }
 
-export function handleSqueezedDrips(event: SqueezedDrips): void {
-  const squeezedDripsEvent = new SqueezedDripsEvent(
+export function handleSqueezedStreams(event: SqueezedStreams): void {
+  const squeezedStreamsEvent = new SqueezedStreamsEvent(
     event.transaction.hash.toHexString() + '-' + event.logIndex.toString()
   );
-  squeezedDripsEvent.userId = event.params.userId.toString();
-  squeezedDripsEvent.assetId = event.params.assetId;
-  squeezedDripsEvent.senderId = event.params.senderId.toString();
-  squeezedDripsEvent.amt = event.params.amt;
-  squeezedDripsEvent.dripsHistoryHashes = event.params.dripsHistoryHashes;
-  squeezedDripsEvent.blockTimestamp = event.block.timestamp;
-  squeezedDripsEvent.save();
+  squeezedStreamsEvent.userId = event.params.userId.toString();
+  squeezedStreamsEvent.assetId = event.params.assetId;
+  squeezedStreamsEvent.senderId = event.params.senderId.toString();
+  squeezedStreamsEvent.amt = event.params.amt;
+  squeezedStreamsEvent.streamsHistoryHashes = event.params.streamsHistoryHashes;
+  squeezedStreamsEvent.blockTimestamp = event.block.timestamp;
+  squeezedStreamsEvent.save();
 
   // Note the tokens received on the UserAssetConfig of the receiving user
   const userAssetConfig = getOrCreateUserAssetConfig(
-    squeezedDripsEvent.userId,
-    squeezedDripsEvent.assetId,
+    squeezedStreamsEvent.userId,
+    squeezedStreamsEvent.assetId,
     event.block.timestamp
   );
   userAssetConfig.amountSplittable = userAssetConfig.amountSplittable.plus(event.params.amt);
@@ -255,22 +255,22 @@ export function handleSqueezedDrips(event: SqueezedDrips): void {
   userAssetConfig.save();
 }
 
-export function handleReceivedDrips(event: ReceivedDrips): void {
+export function handleReceivedStreams(event: ReceivedStreams): void {
   // Store the raw event
-  const receivedDripsEvent = new ReceivedDripsEvent(
+  const receivedStreamsEvent = new ReceivedStreamsEvent(
     event.transaction.hash.toHexString() + '-' + event.logIndex.toString()
   );
-  receivedDripsEvent.userId = event.params.userId.toString();
-  receivedDripsEvent.assetId = event.params.assetId;
-  receivedDripsEvent.amt = event.params.amt;
-  receivedDripsEvent.receivableCycles = event.params.receivableCycles;
-  receivedDripsEvent.blockTimestamp = event.block.timestamp;
-  receivedDripsEvent.save();
+  receivedStreamsEvent.userId = event.params.userId.toString();
+  receivedStreamsEvent.assetId = event.params.assetId;
+  receivedStreamsEvent.amt = event.params.amt;
+  receivedStreamsEvent.receivableCycles = event.params.receivableCycles;
+  receivedStreamsEvent.blockTimestamp = event.block.timestamp;
+  receivedStreamsEvent.save();
 
   // Note the tokens received on the UserAssetConfig of the receiving user
   const userAssetConfig = getOrCreateUserAssetConfig(
-    receivedDripsEvent.userId,
-    receivedDripsEvent.assetId,
+    receivedStreamsEvent.userId,
+    receivedStreamsEvent.assetId,
     event.block.timestamp
   );
   userAssetConfig.amountSplittable = userAssetConfig.amountSplittable.plus(event.params.amt);
@@ -322,7 +322,7 @@ export function handleSplitsSet(event: SplitsSet): void {
   lastSplitsSetUserMapping.userId = event.params.userId.toString();
   lastSplitsSetUserMapping.save();
 
-  // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
+  // TODO -- we need to add some kind of sequence number so we can historically order StreamsSetEvents that occur within the same block
 }
 
 export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
@@ -370,7 +370,7 @@ export function handleSplitsReceiverSeen(event: SplitsReceiverSeen): void {
   splitsReceiverSeenEvent.blockTimestamp = event.block.timestamp;
   splitsReceiverSeenEvent.save();
 
-  // TODO -- we need to add some kind of sequence number so we can historically order DripsSetEvents that occur within the same block
+  // TODO -- we need to add some kind of sequence number so we can historically order StreamsSetEvents that occur within the same block
 }
 
 export function handleSplit(event: Split): void {
@@ -504,7 +504,7 @@ function getOrCreateUserAssetConfig(
 
     userAssetConfig.user = userId;
     userAssetConfig.assetId = assetId;
-    userAssetConfig.dripsEntryIds = [];
+    userAssetConfig.streamsEntryIds = [];
     userAssetConfig.balance = BigInt.fromI32(0);
     userAssetConfig.amountCollected = BigInt.fromI32(0);
     userAssetConfig.amountSplittable = BigInt.fromI32(0);

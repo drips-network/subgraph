@@ -1,8 +1,8 @@
 import { BigInt, Bytes } from '@graphprotocol/graph-ts';
 import {
   App,
-  DripsEntry,
-  LastSetDripsUserMapping,
+  StreamsEntry,
+  LastSetStreamUserMapping,
   LastSetSplitsUserMapping,
   User,
   UserAssetConfig
@@ -29,15 +29,15 @@ export function defaultApp(id: string): App {
   return app;
 }
 
-export function defaultDripsEntry(id: string): DripsEntry {
-  const dripsEntry = new DripsEntry(id);
+export function defaultStreamsEntry(id: string): StreamsEntry {
+  const streamsEntry = new StreamsEntry(id);
 
-  dripsEntry.userId = 'userId';
-  dripsEntry.sender = 'sender';
-  dripsEntry.senderAssetConfig = 'senderAssetConfig';
-  dripsEntry.config = BigInt.fromI32(0);
+  streamsEntry.userId = 'userId';
+  streamsEntry.sender = 'sender';
+  streamsEntry.senderAssetConfig = 'senderAssetConfig';
+  streamsEntry.config = BigInt.fromI32(0);
 
-  return dripsEntry;
+  return streamsEntry;
 }
 
 export function defaultUserAssetConfig(id: string): UserAssetConfig {
@@ -45,8 +45,8 @@ export function defaultUserAssetConfig(id: string): UserAssetConfig {
 
   userAssetConfig.user = 'userId';
   userAssetConfig.assetId = BigInt.fromI32(0);
-  userAssetConfig.dripsEntryIds = [];
-  userAssetConfig.dripsEntries = [];
+  userAssetConfig.streamsEntryIds = [];
+  userAssetConfig.streamsEntries = [];
   userAssetConfig.balance = BigInt.fromI32(0);
   userAssetConfig.assetConfigHash = Bytes.fromUTF8('assetConfigHash');
   userAssetConfig.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
@@ -57,20 +57,20 @@ export function defaultUserAssetConfig(id: string): UserAssetConfig {
   return userAssetConfig;
 }
 
-export function defaultLastSetDripsUserMapping(id: string): LastSetDripsUserMapping {
-  const lastSetDripsUserMapping = new LastSetDripsUserMapping(id);
+export function defaultLastSetStreamsUserMapping(id: string): LastSetStreamUserMapping {
+  const lastSetStreamUserMapping = new LastSetStreamUserMapping(id);
 
-  lastSetDripsUserMapping.dripsSetEventId = 'dripsSetEventId';
-  lastSetDripsUserMapping.userId = 'userId';
-  lastSetDripsUserMapping.assetId = BigInt.fromI32(0);
+  lastSetStreamUserMapping.streamsSetEventId = 'streamsSetEventId';
+  lastSetStreamUserMapping.userId = 'userId';
+  lastSetStreamUserMapping.assetId = BigInt.fromI32(0);
 
-  return lastSetDripsUserMapping;
+  return lastSetStreamUserMapping;
 }
 
 export function defaultLastSetSplitsUserMapping(id: string): LastSetSplitsUserMapping {
   const lastSetSplitsUserMapping = new LastSetSplitsUserMapping(id);
 
-  lastSetSplitsUserMapping.splitsSetEventId = 'dripsSetEventId';
+  lastSetSplitsUserMapping.splitsSetEventId = 'streamHistoryHashSetEventId';
   lastSetSplitsUserMapping.userId = 'userId';
 
   return lastSetSplitsUserMapping;

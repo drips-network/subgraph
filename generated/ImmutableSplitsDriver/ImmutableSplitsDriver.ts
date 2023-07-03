@@ -286,14 +286,14 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  dripsHub(): Address {
-    let result = super.call("dripsHub", "dripsHub():(address)", []);
+  drips(): Address {
+    let result = super.call("drips", "drips():(address)", []);
 
     return result[0].toAddress();
   }
 
-  try_dripsHub(): ethereum.CallResult<Address> {
-    let result = super.tryCall("dripsHub", "dripsHub():(address)", []);
+  try_drips(): ethereum.CallResult<Address> {
+    let result = super.tryCall("drips", "drips():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -463,7 +463,7 @@ export class ConstructorCall__Inputs {
     this._call = call;
   }
 
-  get _dripsHub(): Address {
+  get _drips(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 

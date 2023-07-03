@@ -27,8 +27,8 @@ type UserAssetConfig @entity {
   id: ID! # the userId + "-" + assetId
   user: User!
   assetId: BigInt!
-  dripsEntryIds: [String!]!
-  dripsEntries: [DripsEntry!]! @derivedFrom(field: "senderAssetConfig")
+  streamsEntryIds: [String!]!
+  streamsEntries: [StreamsEntry!]! @derivedFrom(field: "senderAssetConfig")
   balance: BigInt! # the user's balance for the asset at last top-up
   assetConfigHash: Bytes!
   amountSplittable: BigInt!
@@ -37,28 +37,28 @@ type UserAssetConfig @entity {
   lastUpdatedBlockTimestamp: BigInt!
 }
 
-type DripsSetEvent @entity {
+type StreamsSetEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   userId: String! # the userId of the sender
   assetId: BigInt!
   receiversHash: Bytes! # the hash of the receivers list
-  dripsReceiverSeenEvents: [DripsReceiverSeenEvent!]! @derivedFrom(field: "dripsSetEvent")
-  dripsHistoryHash: Bytes! # the history hash of this drips-set for squeezing
+  StreamReceiverSeenEvents: [StreamReceiverSeenEvent!]! @derivedFrom(field: "streamsSetEvent")
+  streamsHistoryHash: Bytes! # the history hash of this streams-set for squeezing
   balance: BigInt!
   blockTimestamp: BigInt!
   maxEnd: BigInt!
 }
 
-type LastSetDripsUserMapping @entity {
+type LastSetStreamUserMapping @entity {
   id: ID! # receiversHash
-  dripsSetEventId: String! # the ID of the last DripsSetEvent that was created with this receiversHash
-  userId: String! # the last userId that SetDrips was called for with this receiversHash
-  assetId: BigInt! # the last assetId that SetDrips was called for with this receiversHash
+  streamsSetEventId: String! # the ID of the last StreamsSetEvent that was created with this receiversHash
+  userId: String! # the last userId that SetStreams was called for with this receiversHash
+  assetId: BigInt! # the last assetId that SetStreams was called for with this receiversHash
 }
 
-type DripsReceiverSeenEvent @entity {
+type StreamReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  dripsSetEvent: DripsSetEvent!
+  streamsSetEvent: StreamsSetEvent!
   receiversHash: Bytes!
   senderUserId: String!
   receiverUserId: String! # the receiver's userId
@@ -66,7 +66,7 @@ type DripsReceiverSeenEvent @entity {
   blockTimestamp: BigInt!
 }
 
-type DripsEntry @entity {
+type StreamsEntry @entity {
   id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
   sender: User!
   senderAssetConfig: UserAssetConfig!
@@ -74,7 +74,7 @@ type DripsEntry @entity {
   config: BigInt!
 }
 
-type ReceivedDripsEvent @entity {
+type ReceivedStreamsEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   userId: String! # the sender's userId
   assetId: BigInt!
@@ -83,14 +83,14 @@ type ReceivedDripsEvent @entity {
   blockTimestamp: BigInt!
 }
 
-type SqueezedDripsEvent @entity {
+type SqueezedStreamsEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   userId: String! # the sender's userId
   assetId: BigInt!
   senderId: String!
   amt: BigInt!
   blockTimestamp: BigInt!
-  dripsHistoryHashes: [Bytes!]!
+  streamsHistoryHashes: [Bytes!]!
 }
 
 type SplitsSetEvent @entity {

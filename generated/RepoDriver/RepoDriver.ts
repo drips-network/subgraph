@@ -276,7 +276,7 @@ export class RepoDriver__anyApiOperatorResult {
   }
 }
 
-export class RepoDriver__setDripsInputCurrReceiversStruct extends ethereum.Tuple {
+export class RepoDriver__setStreamsInputCurrReceiversStruct extends ethereum.Tuple {
   get userId(): BigInt {
     return this[0].toBigInt();
   }
@@ -286,7 +286,7 @@ export class RepoDriver__setDripsInputCurrReceiversStruct extends ethereum.Tuple
   }
 }
 
-export class RepoDriver__setDripsInputNewReceiversStruct extends ethereum.Tuple {
+export class RepoDriver__setStreamsInputNewReceiversStruct extends ethereum.Tuple {
   get userId(): BigInt {
     return this[0].toBigInt();
   }
@@ -424,14 +424,14 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  dripsHub(): Address {
-    let result = super.call("dripsHub", "dripsHub():(address)", []);
+  drips(): Address {
+    let result = super.call("drips", "drips():(address)", []);
 
     return result[0].toAddress();
   }
 
-  try_dripsHub(): ethereum.CallResult<Address> {
-    let result = super.tryCall("dripsHub", "dripsHub():(address)", []);
+  try_drips(): ethereum.CallResult<Address> {
+    let result = super.tryCall("drips", "drips():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -631,19 +631,19 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  setDrips(
+  setStreams(
     userId: BigInt,
     erc20: Address,
-    currReceivers: Array<RepoDriver__setDripsInputCurrReceiversStruct>,
+    currReceivers: Array<RepoDriver__setStreamsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
-    newReceivers: Array<RepoDriver__setDripsInputNewReceiversStruct>,
+    newReceivers: Array<RepoDriver__setStreamsInputNewReceiversStruct>,
     maxEndHint1: BigInt,
     maxEndHint2: BigInt,
     transferTo: Address
   ): BigInt {
     let result = super.call(
-      "setDrips",
-      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
+      "setStreams",
+      "setStreams(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
@@ -659,19 +659,19 @@ export class RepoDriver extends ethereum.SmartContract {
     return result[0].toBigInt();
   }
 
-  try_setDrips(
+  try_setStreams(
     userId: BigInt,
     erc20: Address,
-    currReceivers: Array<RepoDriver__setDripsInputCurrReceiversStruct>,
+    currReceivers: Array<RepoDriver__setStreamsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
-    newReceivers: Array<RepoDriver__setDripsInputNewReceiversStruct>,
+    newReceivers: Array<RepoDriver__setStreamsInputNewReceiversStruct>,
     maxEndHint1: BigInt,
     maxEndHint2: BigInt,
     transferTo: Address
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "setDrips",
-      "setDrips(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
+      "setStreams",
+      "setStreams(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
         ethereum.Value.fromUnsignedBigInt(userId),
         ethereum.Value.fromAddress(erc20),
@@ -708,7 +708,7 @@ export class ConstructorCall__Inputs {
     this._call = call;
   }
 
-  get _dripsHub(): Address {
+  get _drips(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 
@@ -915,6 +915,44 @@ export class GrantPauserCall__Outputs {
   }
 }
 
+export class InitializeAnyApiOperatorCall extends ethereum.Call {
+  get inputs(): InitializeAnyApiOperatorCall__Inputs {
+    return new InitializeAnyApiOperatorCall__Inputs(this);
+  }
+
+  get outputs(): InitializeAnyApiOperatorCall__Outputs {
+    return new InitializeAnyApiOperatorCall__Outputs(this);
+  }
+}
+
+export class InitializeAnyApiOperatorCall__Inputs {
+  _call: InitializeAnyApiOperatorCall;
+
+  constructor(call: InitializeAnyApiOperatorCall) {
+    this._call = call;
+  }
+
+  get operator(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get jobId(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get defaultFee(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class InitializeAnyApiOperatorCall__Outputs {
+  _call: InitializeAnyApiOperatorCall;
+
+  constructor(call: InitializeAnyApiOperatorCall) {
+    this._call = call;
+  }
+}
+
 export class OnTokenTransferCall extends ethereum.Call {
   get inputs(): OnTokenTransferCall__Inputs {
     return new OnTokenTransferCall__Inputs(this);
@@ -1103,92 +1141,6 @@ export class RevokePauserCall__Outputs {
   }
 }
 
-export class SetDripsCall extends ethereum.Call {
-  get inputs(): SetDripsCall__Inputs {
-    return new SetDripsCall__Inputs(this);
-  }
-
-  get outputs(): SetDripsCall__Outputs {
-    return new SetDripsCall__Outputs(this);
-  }
-}
-
-export class SetDripsCall__Inputs {
-  _call: SetDripsCall;
-
-  constructor(call: SetDripsCall) {
-    this._call = call;
-  }
-
-  get userId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get erc20(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get currReceivers(): Array<SetDripsCallCurrReceiversStruct> {
-    return this._call.inputValues[2].value.toTupleArray<
-      SetDripsCallCurrReceiversStruct
-    >();
-  }
-
-  get balanceDelta(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get newReceivers(): Array<SetDripsCallNewReceiversStruct> {
-    return this._call.inputValues[4].value.toTupleArray<
-      SetDripsCallNewReceiversStruct
-    >();
-  }
-
-  get maxEndHint1(): BigInt {
-    return this._call.inputValues[5].value.toBigInt();
-  }
-
-  get maxEndHint2(): BigInt {
-    return this._call.inputValues[6].value.toBigInt();
-  }
-
-  get transferTo(): Address {
-    return this._call.inputValues[7].value.toAddress();
-  }
-}
-
-export class SetDripsCall__Outputs {
-  _call: SetDripsCall;
-
-  constructor(call: SetDripsCall) {
-    this._call = call;
-  }
-
-  get realBalanceDelta(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-}
-
-export class SetDripsCallCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get config(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
-export class SetDripsCallNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get config(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
 export class SetSplitsCall extends ethereum.Call {
   get inputs(): SetSplitsCall__Inputs {
     return new SetSplitsCall__Inputs(this);
@@ -1231,6 +1183,92 @@ export class SetSplitsCallReceiversStruct extends ethereum.Tuple {
   }
 
   get weight(): BigInt {
+    return this[1].toBigInt();
+  }
+}
+
+export class SetStreamsCall extends ethereum.Call {
+  get inputs(): SetStreamsCall__Inputs {
+    return new SetStreamsCall__Inputs(this);
+  }
+
+  get outputs(): SetStreamsCall__Outputs {
+    return new SetStreamsCall__Outputs(this);
+  }
+}
+
+export class SetStreamsCall__Inputs {
+  _call: SetStreamsCall;
+
+  constructor(call: SetStreamsCall) {
+    this._call = call;
+  }
+
+  get userId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get erc20(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get currReceivers(): Array<SetStreamsCallCurrReceiversStruct> {
+    return this._call.inputValues[2].value.toTupleArray<
+      SetStreamsCallCurrReceiversStruct
+    >();
+  }
+
+  get balanceDelta(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get newReceivers(): Array<SetStreamsCallNewReceiversStruct> {
+    return this._call.inputValues[4].value.toTupleArray<
+      SetStreamsCallNewReceiversStruct
+    >();
+  }
+
+  get maxEndHint1(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get maxEndHint2(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+
+  get transferTo(): Address {
+    return this._call.inputValues[7].value.toAddress();
+  }
+}
+
+export class SetStreamsCall__Outputs {
+  _call: SetStreamsCall;
+
+  constructor(call: SetStreamsCall) {
+    this._call = call;
+  }
+
+  get realBalanceDelta(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
+  get userId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get config(): BigInt {
+    return this[1].toBigInt();
+  }
+}
+
+export class SetStreamsCallNewReceiversStruct extends ethereum.Tuple {
+  get userId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get config(): BigInt {
     return this[1].toBigInt();
   }
 }

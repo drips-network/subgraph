@@ -1,11 +1,11 @@
 import { BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { ReceivedDripsEvent, UserAssetConfig } from '../generated/schema';
-import { handleReceivedDrips } from '../src/mapping';
-import { createReceivedDrips } from './helpers/eventCreators';
+import { ReceivedStreamsEvent, UserAssetConfig } from '../generated/schema';
+import { handleReceivedStreams } from '../src/mapping';
+import { createReceivedStreams } from './helpers/eventCreators';
 import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
 
-describe('handleReceivedDrips', () => {
+describe('handleReceivedStreams', () => {
   beforeEach(() => {
     clearStore();
   });
@@ -17,7 +17,7 @@ describe('handleReceivedDrips', () => {
     const amt = BigInt.fromI32(3);
     const receivableCycles = BigInt.fromI32(4);
 
-    const incomingReceivedDrips = createReceivedDrips(userId, assetId, amt, receivableCycles);
+    const incomingReceivedStreams = createReceivedStreams(userId, assetId, amt, receivableCycles);
 
     const userAssetConfigId = userId.toString() + '-' + assetId.toString();
     const userAssetConfigBefore = defaultUserAssetConfig(userAssetConfigId);
@@ -25,31 +25,31 @@ describe('handleReceivedDrips', () => {
     userAssetConfigBefore.save();
 
     // Act
-    handleReceivedDrips(incomingReceivedDrips);
+    handleReceivedStreams(incomingReceivedStreams);
 
     // Assert
     const id =
-      incomingReceivedDrips.transaction.hash.toHexString() +
+      incomingReceivedStreams.transaction.hash.toHexString() +
       '-' +
-      incomingReceivedDrips.logIndex.toString();
-    const receivedDrips = ReceivedDripsEvent.load(id) as ReceivedDripsEvent;
-    assert.stringEquals(receivedDrips.userId, incomingReceivedDrips.params.userId.toString());
-    assert.bigIntEquals(receivedDrips.assetId, incomingReceivedDrips.params.assetId);
-    assert.bigIntEquals(receivedDrips.amt, incomingReceivedDrips.params.amt);
+      incomingReceivedStreams.logIndex.toString();
+    const receivedStreams = ReceivedStreamsEvent.load(id) as ReceivedStreamsEvent;
+    assert.stringEquals(receivedStreams.userId, incomingReceivedStreams.params.userId.toString());
+    assert.bigIntEquals(receivedStreams.assetId, incomingReceivedStreams.params.assetId);
+    assert.bigIntEquals(receivedStreams.amt, incomingReceivedStreams.params.amt);
     assert.bigIntEquals(
-      receivedDrips.receivableCycles,
-      incomingReceivedDrips.params.receivableCycles
+      receivedStreams.receivableCycles,
+      incomingReceivedStreams.params.receivableCycles
     );
-    assert.bigIntEquals(receivedDrips.blockTimestamp, incomingReceivedDrips.block.timestamp);
+    assert.bigIntEquals(receivedStreams.blockTimestamp, incomingReceivedStreams.block.timestamp);
 
     const userAssetConfigAfter = UserAssetConfig.load(userAssetConfigId) as UserAssetConfig;
     assert.bigIntEquals(
       userAssetConfigAfter.amountSplittable,
-      userAssetConfigBefore.amountSplittable.plus(incomingReceivedDrips.params.amt)
+      userAssetConfigBefore.amountSplittable.plus(incomingReceivedStreams.params.amt)
     );
     assert.bigIntEquals(
       userAssetConfigAfter.lastUpdatedBlockTimestamp,
-      incomingReceivedDrips.block.timestamp
+      incomingReceivedStreams.block.timestamp
     );
   });
 });

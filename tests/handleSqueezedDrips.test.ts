@@ -1,10 +1,10 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { SqueezedDripsEvent } from '../generated/schema';
-import { handleSqueezedDrips } from '../src/mapping';
-import { createSqueezedDrips } from './helpers/eventCreators';
+import { SqueezedStreamsEvent } from '../generated/schema';
+import { handleSqueezedStreams } from '../src/mapping';
+import { createSqueezedStreams } from './helpers/eventCreators';
 
-describe('handleSqueezedDrips', () => {
+describe('handleSqueezedStreams', () => {
   beforeEach(() => {
     clearStore();
   });
@@ -15,33 +15,36 @@ describe('handleSqueezedDrips', () => {
     const assetId = BigInt.fromI32(2);
     const senderId = BigInt.fromI32(3);
     const amt = BigInt.fromI32(4);
-    const dripsHistoryHashes = [Bytes.fromUTF8('dripsHistoryHashes')];
+    const streamsHistoryHashes = [Bytes.fromUTF8('streamsHistoryHashes')];
 
-    const incomingSqueezedDrips = createSqueezedDrips(
+    const incomingSqueezedStreams = createSqueezedStreams(
       userId,
       assetId,
       senderId,
       amt,
-      dripsHistoryHashes
+      streamsHistoryHashes
     );
 
     // Act
-    handleSqueezedDrips(incomingSqueezedDrips);
+    handleSqueezedStreams(incomingSqueezedStreams);
 
     // Assert
     const id =
-      incomingSqueezedDrips.transaction.hash.toHexString() +
+      incomingSqueezedStreams.transaction.hash.toHexString() +
       '-' +
-      incomingSqueezedDrips.logIndex.toString();
-    const squeezedDrips = SqueezedDripsEvent.load(id) as SqueezedDripsEvent;
-    assert.stringEquals(squeezedDrips.userId, incomingSqueezedDrips.params.userId.toString());
-    assert.bigIntEquals(squeezedDrips.assetId, incomingSqueezedDrips.params.assetId);
-    assert.stringEquals(squeezedDrips.senderId, incomingSqueezedDrips.params.senderId.toString());
-    assert.bigIntEquals(squeezedDrips.amt, incomingSqueezedDrips.params.amt);
-    assert.bigIntEquals(squeezedDrips.blockTimestamp, incomingSqueezedDrips.block.timestamp);
+      incomingSqueezedStreams.logIndex.toString();
+    const squeezedStreams = SqueezedStreamsEvent.load(id) as SqueezedStreamsEvent;
+    assert.stringEquals(squeezedStreams.userId, incomingSqueezedStreams.params.userId.toString());
+    assert.bigIntEquals(squeezedStreams.assetId, incomingSqueezedStreams.params.assetId);
+    assert.stringEquals(
+      squeezedStreams.senderId,
+      incomingSqueezedStreams.params.senderId.toString()
+    );
+    assert.bigIntEquals(squeezedStreams.amt, incomingSqueezedStreams.params.amt);
+    assert.bigIntEquals(squeezedStreams.blockTimestamp, incomingSqueezedStreams.block.timestamp);
     assert.arrayEquals(
-      squeezedDrips.dripsHistoryHashes.map<ethereum.Value>((s) => ethereum.Value.fromBytes(s)),
-      [ethereum.Value.fromBytes(Bytes.fromUTF8('dripsHistoryHashes'))]
+      squeezedStreams.streamsHistoryHashes.map<ethereum.Value>((s) => ethereum.Value.fromBytes(s)),
+      [ethereum.Value.fromBytes(Bytes.fromUTF8('streamsHistoryHashes'))]
     );
   });
 });

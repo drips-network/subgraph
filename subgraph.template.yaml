@@ -3,32 +3,32 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: DripsHub
+    name: Drips
     network: {{ network }}
     source:
-      address: '{{dripsHub.address}}'
-      abi: DripsHub
-      startBlock: {{ dripsHub.block }}
+      address: '{{drips.address}}'
+      abi: Drips
+      startBlock: {{ drips.block }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - DripsHub
+        - Drips
       abis:
-        - name: DripsHub
-          file: ./abis/DripsHub.json
+        - name: Drips
+          file: ./abis/Drips.json
       eventHandlers:
         - event: UserMetadataEmitted(indexed uint256,indexed bytes32,bytes)
           handler: handleUserMetadata
         - event: Collected(indexed uint256,indexed uint256,uint128)
           handler: handleCollected
-        - event: DripsSet(indexed uint256,indexed uint256,indexed bytes32,bytes32,uint128,uint32)
-          handler: handleDripsSet
-        - event: DripsReceiverSeen(indexed bytes32,indexed uint256,uint256)
-          handler: handleDripsReceiverSeen
-        - event: SqueezedDrips(indexed uint256,indexed uint256,indexed uint256,uint128,bytes32[])
-          handler: handleSqueezedDrips
+        - event: StreamsSet(indexed uint256,indexed uint256,indexed bytes32,bytes32,uint128,uint32)
+          handler: handleStreamsSet
+        - event: StreamReceiverSeen(indexed bytes32,indexed uint256,uint256)
+          handler: handleStreamReceiverSeen
+        - event: SqueezedStreams(indexed uint256,indexed uint256,indexed uint256,uint128,bytes32[])
+          handler: handleSqueezedStreams
         - event: SplitsSet(indexed uint256,indexed bytes32)
           handler: handleSplitsSet
         - event: SplitsReceiverSeen(indexed bytes32,indexed uint256,uint32)
@@ -41,8 +41,8 @@ dataSources:
           handler: handleAppAddressUpdated
         - event: Split(indexed uint256,indexed uint256,indexed uint256,uint128)
           handler: handleSplit
-        - event: ReceivedDrips(indexed uint256,indexed uint256,uint128,uint32)
-          handler: handleReceivedDrips
+        - event: ReceivedStreams(indexed uint256,indexed uint256,uint128,uint32)
+          handler: handleReceivedStreams
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: NFTDriver

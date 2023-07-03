@@ -277,22 +277,22 @@ export class UserAssetConfig extends Entity {
     this.set("assetId", Value.fromBigInt(value));
   }
 
-  get dripsEntryIds(): Array<string> {
-    let value = this.get("dripsEntryIds");
+  get streamsEntryIds(): Array<string> {
+    let value = this.get("streamsEntryIds");
     return value!.toStringArray();
   }
 
-  set dripsEntryIds(value: Array<string>) {
-    this.set("dripsEntryIds", Value.fromStringArray(value));
+  set streamsEntryIds(value: Array<string>) {
+    this.set("streamsEntryIds", Value.fromStringArray(value));
   }
 
-  get dripsEntries(): Array<string> {
-    let value = this.get("dripsEntries");
+  get streamsEntries(): Array<string> {
+    let value = this.get("streamsEntries");
     return value!.toStringArray();
   }
 
-  set dripsEntries(value: Array<string>) {
-    this.set("dripsEntries", Value.fromStringArray(value));
+  set streamsEntries(value: Array<string>) {
+    this.set("streamsEntries", Value.fromStringArray(value));
   }
 
   get balance(): BigInt {
@@ -350,7 +350,7 @@ export class UserAssetConfig extends Entity {
   }
 }
 
-export class DripsSetEvent extends Entity {
+export class StreamsSetEvent extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -358,18 +358,18 @@ export class DripsSetEvent extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save DripsSetEvent entity without an ID");
+    assert(id != null, "Cannot save StreamsSetEvent entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type DripsSetEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type StreamsSetEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("DripsSetEvent", id.toString(), this);
+      store.set("StreamsSetEvent", id.toString(), this);
     }
   }
 
-  static load(id: string): DripsSetEvent | null {
-    return changetype<DripsSetEvent | null>(store.get("DripsSetEvent", id));
+  static load(id: string): StreamsSetEvent | null {
+    return changetype<StreamsSetEvent | null>(store.get("StreamsSetEvent", id));
   }
 
   get id(): string {
@@ -408,22 +408,22 @@ export class DripsSetEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get dripsReceiverSeenEvents(): Array<string> {
-    let value = this.get("dripsReceiverSeenEvents");
+  get StreamReceiverSeenEvents(): Array<string> {
+    let value = this.get("StreamReceiverSeenEvents");
     return value!.toStringArray();
   }
 
-  set dripsReceiverSeenEvents(value: Array<string>) {
-    this.set("dripsReceiverSeenEvents", Value.fromStringArray(value));
+  set StreamReceiverSeenEvents(value: Array<string>) {
+    this.set("StreamReceiverSeenEvents", Value.fromStringArray(value));
   }
 
-  get dripsHistoryHash(): Bytes {
-    let value = this.get("dripsHistoryHash");
+  get streamsHistoryHash(): Bytes {
+    let value = this.get("streamsHistoryHash");
     return value!.toBytes();
   }
 
-  set dripsHistoryHash(value: Bytes) {
-    this.set("dripsHistoryHash", Value.fromBytes(value));
+  set streamsHistoryHash(value: Bytes) {
+    this.set("streamsHistoryHash", Value.fromBytes(value));
   }
 
   get balance(): BigInt {
@@ -454,7 +454,7 @@ export class DripsSetEvent extends Entity {
   }
 }
 
-export class LastSetDripsUserMapping extends Entity {
+export class LastSetStreamUserMapping extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -464,20 +464,20 @@ export class LastSetDripsUserMapping extends Entity {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save LastSetDripsUserMapping entity without an ID"
+      "Cannot save LastSetStreamUserMapping entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type LastSetDripsUserMapping must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type LastSetStreamUserMapping must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("LastSetDripsUserMapping", id.toString(), this);
+      store.set("LastSetStreamUserMapping", id.toString(), this);
     }
   }
 
-  static load(id: string): LastSetDripsUserMapping | null {
-    return changetype<LastSetDripsUserMapping | null>(
-      store.get("LastSetDripsUserMapping", id)
+  static load(id: string): LastSetStreamUserMapping | null {
+    return changetype<LastSetStreamUserMapping | null>(
+      store.get("LastSetStreamUserMapping", id)
     );
   }
 
@@ -490,13 +490,13 @@ export class LastSetDripsUserMapping extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get dripsSetEventId(): string {
-    let value = this.get("dripsSetEventId");
+  get streamsSetEventId(): string {
+    let value = this.get("streamsSetEventId");
     return value!.toString();
   }
 
-  set dripsSetEventId(value: string) {
-    this.set("dripsSetEventId", Value.fromString(value));
+  set streamsSetEventId(value: string) {
+    this.set("streamsSetEventId", Value.fromString(value));
   }
 
   get userId(): string {
@@ -518,7 +518,7 @@ export class LastSetDripsUserMapping extends Entity {
   }
 }
 
-export class DripsReceiverSeenEvent extends Entity {
+export class StreamReceiverSeenEvent extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -528,20 +528,20 @@ export class DripsReceiverSeenEvent extends Entity {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save DripsReceiverSeenEvent entity without an ID"
+      "Cannot save StreamReceiverSeenEvent entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type DripsReceiverSeenEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type StreamReceiverSeenEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("DripsReceiverSeenEvent", id.toString(), this);
+      store.set("StreamReceiverSeenEvent", id.toString(), this);
     }
   }
 
-  static load(id: string): DripsReceiverSeenEvent | null {
-    return changetype<DripsReceiverSeenEvent | null>(
-      store.get("DripsReceiverSeenEvent", id)
+  static load(id: string): StreamReceiverSeenEvent | null {
+    return changetype<StreamReceiverSeenEvent | null>(
+      store.get("StreamReceiverSeenEvent", id)
     );
   }
 
@@ -554,13 +554,13 @@ export class DripsReceiverSeenEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get dripsSetEvent(): string {
-    let value = this.get("dripsSetEvent");
+  get streamsSetEvent(): string {
+    let value = this.get("streamsSetEvent");
     return value!.toString();
   }
 
-  set dripsSetEvent(value: string) {
-    this.set("dripsSetEvent", Value.fromString(value));
+  set streamsSetEvent(value: string) {
+    this.set("streamsSetEvent", Value.fromString(value));
   }
 
   get receiversHash(): Bytes {
@@ -609,7 +609,7 @@ export class DripsReceiverSeenEvent extends Entity {
   }
 }
 
-export class DripsEntry extends Entity {
+export class StreamsEntry extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -617,18 +617,18 @@ export class DripsEntry extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save DripsEntry entity without an ID");
+    assert(id != null, "Cannot save StreamsEntry entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type DripsEntry must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type StreamsEntry must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("DripsEntry", id.toString(), this);
+      store.set("StreamsEntry", id.toString(), this);
     }
   }
 
-  static load(id: string): DripsEntry | null {
-    return changetype<DripsEntry | null>(store.get("DripsEntry", id));
+  static load(id: string): StreamsEntry | null {
+    return changetype<StreamsEntry | null>(store.get("StreamsEntry", id));
   }
 
   get id(): string {
@@ -677,7 +677,7 @@ export class DripsEntry extends Entity {
   }
 }
 
-export class ReceivedDripsEvent extends Entity {
+export class ReceivedStreamsEvent extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -685,19 +685,19 @@ export class ReceivedDripsEvent extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ReceivedDripsEvent entity without an ID");
+    assert(id != null, "Cannot save ReceivedStreamsEvent entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type ReceivedDripsEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type ReceivedStreamsEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("ReceivedDripsEvent", id.toString(), this);
+      store.set("ReceivedStreamsEvent", id.toString(), this);
     }
   }
 
-  static load(id: string): ReceivedDripsEvent | null {
-    return changetype<ReceivedDripsEvent | null>(
-      store.get("ReceivedDripsEvent", id)
+  static load(id: string): ReceivedStreamsEvent | null {
+    return changetype<ReceivedStreamsEvent | null>(
+      store.get("ReceivedStreamsEvent", id)
     );
   }
 
@@ -756,7 +756,7 @@ export class ReceivedDripsEvent extends Entity {
   }
 }
 
-export class SqueezedDripsEvent extends Entity {
+export class SqueezedStreamsEvent extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -764,19 +764,19 @@ export class SqueezedDripsEvent extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save SqueezedDripsEvent entity without an ID");
+    assert(id != null, "Cannot save SqueezedStreamsEvent entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type SqueezedDripsEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type SqueezedStreamsEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("SqueezedDripsEvent", id.toString(), this);
+      store.set("SqueezedStreamsEvent", id.toString(), this);
     }
   }
 
-  static load(id: string): SqueezedDripsEvent | null {
-    return changetype<SqueezedDripsEvent | null>(
-      store.get("SqueezedDripsEvent", id)
+  static load(id: string): SqueezedStreamsEvent | null {
+    return changetype<SqueezedStreamsEvent | null>(
+      store.get("SqueezedStreamsEvent", id)
     );
   }
 
@@ -834,13 +834,13 @@ export class SqueezedDripsEvent extends Entity {
     this.set("blockTimestamp", Value.fromBigInt(value));
   }
 
-  get dripsHistoryHashes(): Array<Bytes> {
-    let value = this.get("dripsHistoryHashes");
+  get streamsHistoryHashes(): Array<Bytes> {
+    let value = this.get("streamsHistoryHashes");
     return value!.toBytesArray();
   }
 
-  set dripsHistoryHashes(value: Array<Bytes>) {
-    this.set("dripsHistoryHashes", Value.fromBytesArray(value));
+  set streamsHistoryHashes(value: Array<Bytes>) {
+    this.set("streamsHistoryHashes", Value.fromBytesArray(value));
   }
 }
 

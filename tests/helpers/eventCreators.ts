@@ -4,34 +4,34 @@ import { newMockEvent } from 'matchstick-as/assembly/index';
 import {
   Collectable,
   Collected,
-  DripsReceiverSeen,
-  DripsSet,
+  StreamReceiverSeen,
+  StreamsSet,
   DriverAddressUpdated,
   DriverRegistered,
   Given,
-  ReceivedDrips,
+  ReceivedStreams,
   Split,
   SplitsReceiverSeen,
   SplitsSet,
-  SqueezedDrips,
+  SqueezedStreams,
   UserMetadataEmitted
-} from '../../generated/DripsHub/DripsHub';
+} from '../../generated/Drips/Drips';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
 import { OwnerUpdateRequested } from '../../generated/RepoDriver/RepoDriver';
 import { OwnerUpdated } from '../../generated/RepoDriver/RepoDriver';
 
-export function createDripsSetEvent(
+export function createStreamSetEvent(
   userId: BigInt,
   assetId: BigInt,
   receiversHash: Bytes,
-  dripsHistoryHash: Bytes,
+  streamHistoryHash: Bytes,
   balance: BigInt,
   maxEnd: BigInt
-): DripsSet {
-  const dripsSetEvent = changetype<DripsSet>(newMockEvent()) as DripsSet;
+): StreamsSet {
+  const streamSetEvent = changetype<StreamsSet>(newMockEvent()) as StreamsSet;
 
-  dripsSetEvent.parameters = [];
+  streamSetEvent.parameters = [];
 
   const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
   const assetIdParam = new ethereum.EventParam(
@@ -42,9 +42,9 @@ export function createDripsSetEvent(
     'receiversHash',
     ethereum.Value.fromBytes(receiversHash)
   );
-  const dripsHistoryHashParam = new ethereum.EventParam(
-    'dripsHistoryHash',
-    ethereum.Value.fromBytes(dripsHistoryHash)
+  const streamHistoryHashParam = new ethereum.EventParam(
+    'streamHistoryHash',
+    ethereum.Value.fromBytes(streamHistoryHash)
   );
   const balanceParam = new ethereum.EventParam(
     'balance',
@@ -52,24 +52,24 @@ export function createDripsSetEvent(
   );
   const maxEndParam = new ethereum.EventParam('maxEnd', ethereum.Value.fromUnsignedBigInt(maxEnd));
 
-  dripsSetEvent.parameters.push(userIdParam);
-  dripsSetEvent.parameters.push(assetIdParam);
-  dripsSetEvent.parameters.push(receiversHashParam);
-  dripsSetEvent.parameters.push(dripsHistoryHashParam);
-  dripsSetEvent.parameters.push(balanceParam);
-  dripsSetEvent.parameters.push(maxEndParam);
+  streamSetEvent.parameters.push(userIdParam);
+  streamSetEvent.parameters.push(assetIdParam);
+  streamSetEvent.parameters.push(receiversHashParam);
+  streamSetEvent.parameters.push(streamHistoryHashParam);
+  streamSetEvent.parameters.push(balanceParam);
+  streamSetEvent.parameters.push(maxEndParam);
 
-  return dripsSetEvent;
+  return streamSetEvent;
 }
 
-export function createDripsReceiverSeen(
+export function createStreamsReceiverSeen(
   receiversHash: Bytes,
   userId: BigInt,
   config: BigInt
-): DripsReceiverSeen {
-  const dripsSetEvent = changetype<DripsReceiverSeen>(newMockEvent()) as DripsReceiverSeen;
+): StreamReceiverSeen {
+  const streamSetEvent = changetype<StreamReceiverSeen>(newMockEvent()) as StreamReceiverSeen;
 
-  dripsSetEvent.parameters = [];
+  streamSetEvent.parameters = [];
 
   const userIdParam = new ethereum.EventParam(
     'userIdParam',
@@ -81,11 +81,11 @@ export function createDripsReceiverSeen(
     ethereum.Value.fromBytes(receiversHash)
   );
 
-  dripsSetEvent.parameters.push(receiversHashParam);
-  dripsSetEvent.parameters.push(userIdParam);
-  dripsSetEvent.parameters.push(configParam);
+  streamSetEvent.parameters.push(receiversHashParam);
+  streamSetEvent.parameters.push(userIdParam);
+  streamSetEvent.parameters.push(configParam);
 
-  return dripsSetEvent;
+  return streamSetEvent;
 }
 
 export function createCreatedSplits(userId: BigInt, receiversHash: string): CreatedSplits {
@@ -305,13 +305,13 @@ export function createSplitsSet(userId: BigInt, receiversHash: Bytes): SplitsSet
   return givenEvent;
 }
 
-export function createReceivedDrips(
+export function createReceivedStreams(
   userId: BigInt,
   assetId: BigInt,
   amt: BigInt,
   receivableCycles: BigInt
-): ReceivedDrips {
-  const givenEvent = changetype<ReceivedDrips>(newMockEvent()) as ReceivedDrips;
+): ReceivedStreams {
+  const givenEvent = changetype<ReceivedStreams>(newMockEvent()) as ReceivedStreams;
 
   givenEvent.parameters = [];
 
@@ -334,14 +334,14 @@ export function createReceivedDrips(
   return givenEvent;
 }
 
-export function createSqueezedDrips(
+export function createSqueezedStreams(
   userId: BigInt,
   assetId: BigInt,
   senderId: BigInt,
   amt: BigInt,
-  dripsHistoryHashes: Array<Bytes>
-): SqueezedDrips {
-  const givenEvent = changetype<SqueezedDrips>(newMockEvent()) as SqueezedDrips;
+  streamsHistoryHashes: Array<Bytes>
+): SqueezedStreams {
+  const givenEvent = changetype<SqueezedStreams>(newMockEvent()) as SqueezedStreams;
 
   givenEvent.parameters = [];
 
@@ -355,16 +355,16 @@ export function createSqueezedDrips(
     ethereum.Value.fromUnsignedBigInt(senderId)
   );
   const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
-  const dripsHistoryHashesParam = new ethereum.EventParam(
-    'dripsHistoryHashes',
-    ethereum.Value.fromBytesArray(dripsHistoryHashes)
+  const streamsHistoryHashesParam = new ethereum.EventParam(
+    'streamsHistoryHashes',
+    ethereum.Value.fromBytesArray(streamsHistoryHashes)
   );
 
   givenEvent.parameters.push(userIdParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(senderIdParam);
   givenEvent.parameters.push(amtParam);
-  givenEvent.parameters.push(dripsHistoryHashesParam);
+  givenEvent.parameters.push(streamsHistoryHashesParam);
 
   return givenEvent;
 }
