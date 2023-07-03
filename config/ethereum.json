@@ -1,6 +1,6 @@
 {
   "network": "mainnet",
-  "dripsHub": {
+  "drips": {
     "address": "0xA175154911D9Bf062E11083d7e1AaBA3A929d1E4",
     "block": 16840977
   },
