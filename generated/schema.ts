@@ -408,13 +408,13 @@ export class StreamsSetEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get StreamReceiverSeenEvents(): Array<string> {
-    let value = this.get("StreamReceiverSeenEvents");
+  get streamReceiverSeenEvents(): Array<string> {
+    let value = this.get("streamReceiverSeenEvents");
     return value!.toStringArray();
   }
 
-  set StreamReceiverSeenEvents(value: Array<string>) {
-    this.set("StreamReceiverSeenEvents", Value.fromStringArray(value));
+  set streamReceiverSeenEvents(value: Array<string>) {
+    this.set("streamReceiverSeenEvents", Value.fromStringArray(value));
   }
 
   get streamsHistoryHash(): Bytes {

@@ -42,7 +42,7 @@ type StreamsSetEvent @entity {
   userId: String! # the userId of the sender
   assetId: BigInt!
   receiversHash: Bytes! # the hash of the receivers list
-  StreamReceiverSeenEvents: [StreamReceiverSeenEvent!]! @derivedFrom(field: "streamsSetEvent")
+  streamReceiverSeenEvents: [StreamReceiverSeenEvent!]! @derivedFrom(field: "streamsSetEvent")
   streamsHistoryHash: Bytes! # the history hash of this streams-set for squeezing
   balance: BigInt!
   blockTimestamp: BigInt!
