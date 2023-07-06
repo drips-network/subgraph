@@ -17,7 +17,7 @@ describe('handleOwnerUpdated', () => {
 
     const incomingOwnerUpdated = createOwnerUpdated(repoId, owner);
 
-    const id = incomingOwnerUpdated.params.userId.toString();
+    const id = incomingOwnerUpdated.params.accountId.toString();
     const repoAccountBefore = new RepoAccount(id);
     repoAccountBefore.name = 'test';
     repoAccountBefore.forge = BigInt.fromI32(0);

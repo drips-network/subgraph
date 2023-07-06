@@ -63,7 +63,7 @@ export class CreatedSplits__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -193,7 +193,7 @@ export class Upgraded__Params {
 }
 
 export class ImmutableSplitsDriver__createSplitsInputReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -202,7 +202,7 @@ export class ImmutableSplitsDriver__createSplitsInputReceiversStruct extends eth
   }
 }
 
-export class ImmutableSplitsDriver__createSplitsInputUserMetadataStruct extends ethereum.Tuple {
+export class ImmutableSplitsDriver__createSplitsInputAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -249,8 +249,8 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
 
   createSplits(
     receivers: Array<ImmutableSplitsDriver__createSplitsInputReceiversStruct>,
-    userMetadata: Array<
-      ImmutableSplitsDriver__createSplitsInputUserMetadataStruct
+    accountMetadata: Array<
+      ImmutableSplitsDriver__createSplitsInputAccountMetadataStruct
     >
   ): BigInt {
     let result = super.call(
@@ -258,7 +258,7 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
       "createSplits((uint256,uint32)[],(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromTupleArray(receivers),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
 
@@ -267,8 +267,8 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
 
   try_createSplits(
     receivers: Array<ImmutableSplitsDriver__createSplitsInputReceiversStruct>,
-    userMetadata: Array<
-      ImmutableSplitsDriver__createSplitsInputUserMetadataStruct
+    accountMetadata: Array<
+      ImmutableSplitsDriver__createSplitsInputAccountMetadataStruct
     >
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
@@ -276,7 +276,7 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
       "createSplits((uint256,uint32)[],(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromTupleArray(receivers),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
     if (result.reverted) {
@@ -369,14 +369,18 @@ export class ImmutableSplitsDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  nextUserId(): BigInt {
-    let result = super.call("nextUserId", "nextUserId():(uint256)", []);
+  nextAccountId(): BigInt {
+    let result = super.call("nextAccountId", "nextAccountId():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_nextUserId(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("nextUserId", "nextUserId():(uint256)", []);
+  try_nextAccountId(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "nextAccountId",
+      "nextAccountId():(uint256)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -529,9 +533,9 @@ export class CreateSplitsCall__Inputs {
     >();
   }
 
-  get userMetadata(): Array<CreateSplitsCallUserMetadataStruct> {
+  get accountMetadata(): Array<CreateSplitsCallAccountMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      CreateSplitsCallUserMetadataStruct
+      CreateSplitsCallAccountMetadataStruct
     >();
   }
 }
@@ -543,13 +547,13 @@ export class CreateSplitsCall__Outputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
 }
 
 export class CreateSplitsCallReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -558,7 +562,7 @@ export class CreateSplitsCallReceiversStruct extends ethereum.Tuple {
   }
 }
 
-export class CreateSplitsCallUserMetadataStruct extends ethereum.Tuple {
+export class CreateSplitsCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }

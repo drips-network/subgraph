@@ -10,6 +10,32 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class AccountMetadataEmitted extends ethereum.Event {
+  get params(): AccountMetadataEmitted__Params {
+    return new AccountMetadataEmitted__Params(this);
+  }
+}
+
+export class AccountMetadataEmitted__Params {
+  _event: AccountMetadataEmitted;
+
+  constructor(event: AccountMetadataEmitted) {
+    this._event = event;
+  }
+
+  get accountId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get key(): Bytes {
+    return this._event.parameters[1].value.toBytes();
+  }
+
+  get value(): Bytes {
+    return this._event.parameters[2].value.toBytes();
+  }
+}
+
 export class AdminChanged extends ethereum.Event {
   get params(): AdminChanged__Params {
     return new AdminChanged__Params(this);
@@ -63,12 +89,12 @@ export class Collectable__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 
   get amt(): BigInt {
@@ -89,12 +115,12 @@ export class Collected__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 
   get collected(): BigInt {
@@ -163,7 +189,7 @@ export class Given__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -171,8 +197,8 @@ export class Given__Params {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[2].value.toAddress();
   }
 
   get amt(): BigInt {
@@ -277,12 +303,12 @@ export class ReceivedStreams__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 
   get amt(): BigInt {
@@ -307,7 +333,7 @@ export class Split__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -315,8 +341,8 @@ export class Split__Params {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[2].value.toAddress();
   }
 
   get amt(): BigInt {
@@ -341,7 +367,7 @@ export class SplitsReceiverSeen__Params {
     return this._event.parameters[0].value.toBytes();
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
@@ -363,7 +389,7 @@ export class SplitsSet__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -385,12 +411,12 @@ export class SqueezedStreams__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 
   get senderId(): BigInt {
@@ -423,7 +449,7 @@ export class StreamReceiverSeen__Params {
     return this._event.parameters[0].value.toBytes();
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
@@ -445,12 +471,12 @@ export class StreamsSet__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get assetId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get erc20(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 
   get receiversHash(): Bytes {
@@ -506,32 +532,6 @@ export class Upgraded__Params {
   }
 }
 
-export class UserMetadataEmitted extends ethereum.Event {
-  get params(): UserMetadataEmitted__Params {
-    return new UserMetadataEmitted__Params(this);
-  }
-}
-
-export class UserMetadataEmitted__Params {
-  _event: UserMetadataEmitted;
-
-  constructor(event: UserMetadataEmitted) {
-    this._event = event;
-  }
-
-  get userId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get key(): Bytes {
-    return this._event.parameters[1].value.toBytes();
-  }
-
-  get value(): Bytes {
-    return this._event.parameters[2].value.toBytes();
-  }
-}
-
 export class Withdrawn extends ethereum.Event {
   get params(): Withdrawn__Params {
     return new Withdrawn__Params(this);
@@ -559,7 +559,7 @@ export class Withdrawn__Params {
 }
 
 export class Drips__balanceAtInputCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -594,7 +594,7 @@ export class Drips__balancesResult {
 }
 
 export class Drips__hashSplitsInputReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -604,7 +604,7 @@ export class Drips__hashSplitsInputReceiversStruct extends ethereum.Tuple {
 }
 
 export class Drips__hashStreamsInputReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -614,7 +614,7 @@ export class Drips__hashStreamsInputReceiversStruct extends ethereum.Tuple {
 }
 
 export class Drips__setStreamsInputCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -624,7 +624,7 @@ export class Drips__setStreamsInputCurrReceiversStruct extends ethereum.Tuple {
 }
 
 export class Drips__setStreamsInputNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -659,7 +659,7 @@ export class Drips__splitResult {
 }
 
 export class Drips__splitInputCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -694,7 +694,7 @@ export class Drips__splitResultResult {
 }
 
 export class Drips__splitResultInputCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -726,7 +726,7 @@ export class Drips__squeezeStreamsInputStreamsHistoryStruct extends ethereum.Tup
 }
 
 export class Drips__squeezeStreamsInputStreamsHistoryReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -758,7 +758,7 @@ export class Drips__squeezeStreamsResultInputStreamsHistoryStruct extends ethere
 }
 
 export class Drips__squeezeStreamsResultInputStreamsHistoryReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -1016,7 +1016,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   balanceAt(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<Drips__balanceAtInputCurrReceiversStruct>,
     timestamp: BigInt
@@ -1025,7 +1025,7 @@ export class Drips extends ethereum.SmartContract {
       "balanceAt",
       "balanceAt(uint256,address,(uint256,uint256)[],uint32):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromUnsignedBigInt(timestamp)
@@ -1036,7 +1036,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_balanceAt(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<Drips__balanceAtInputCurrReceiversStruct>,
     timestamp: BigInt
@@ -1045,7 +1045,7 @@ export class Drips extends ethereum.SmartContract {
       "balanceAt",
       "balanceAt(uint256,address,(uint256,uint256)[],uint32):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromUnsignedBigInt(timestamp)
@@ -1084,21 +1084,21 @@ export class Drips extends ethereum.SmartContract {
     );
   }
 
-  collect(userId: BigInt, erc20: Address): BigInt {
+  collect(accountId: BigInt, erc20: Address): BigInt {
     let result = super.call("collect", "collect(uint256,address):(uint128)", [
-      ethereum.Value.fromUnsignedBigInt(userId),
+      ethereum.Value.fromUnsignedBigInt(accountId),
       ethereum.Value.fromAddress(erc20)
     ]);
 
     return result[0].toBigInt();
   }
 
-  try_collect(userId: BigInt, erc20: Address): ethereum.CallResult<BigInt> {
+  try_collect(accountId: BigInt, erc20: Address): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "collect",
       "collect(uint256,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1109,12 +1109,12 @@ export class Drips extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  collectable(userId: BigInt, erc20: Address): BigInt {
+  collectable(accountId: BigInt, erc20: Address): BigInt {
     let result = super.call(
       "collectable",
       "collectable(uint256,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1122,12 +1122,15 @@ export class Drips extends ethereum.SmartContract {
     return result[0].toBigInt();
   }
 
-  try_collectable(userId: BigInt, erc20: Address): ethereum.CallResult<BigInt> {
+  try_collectable(
+    accountId: BigInt,
+    erc20: Address
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "collectable",
       "collectable(uint256,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1390,12 +1393,12 @@ export class Drips extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  receivableStreamsCycles(userId: BigInt, erc20: Address): BigInt {
+  receivableStreamsCycles(accountId: BigInt, erc20: Address): BigInt {
     let result = super.call(
       "receivableStreamsCycles",
       "receivableStreamsCycles(uint256,address):(uint32)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1404,14 +1407,14 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_receivableStreamsCycles(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "receivableStreamsCycles",
       "receivableStreamsCycles(uint256,address):(uint32)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1422,12 +1425,12 @@ export class Drips extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  receiveStreams(userId: BigInt, erc20: Address, maxCycles: BigInt): BigInt {
+  receiveStreams(accountId: BigInt, erc20: Address, maxCycles: BigInt): BigInt {
     let result = super.call(
       "receiveStreams",
       "receiveStreams(uint256,address,uint32):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(maxCycles)
       ]
@@ -1437,7 +1440,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_receiveStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     maxCycles: BigInt
   ): ethereum.CallResult<BigInt> {
@@ -1445,7 +1448,7 @@ export class Drips extends ethereum.SmartContract {
       "receiveStreams",
       "receiveStreams(uint256,address,uint32):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(maxCycles)
       ]
@@ -1458,7 +1461,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   receiveStreamsResult(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     maxCycles: BigInt
   ): BigInt {
@@ -1466,7 +1469,7 @@ export class Drips extends ethereum.SmartContract {
       "receiveStreamsResult",
       "receiveStreamsResult(uint256,address,uint32):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(maxCycles)
       ]
@@ -1476,7 +1479,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_receiveStreamsResult(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     maxCycles: BigInt
   ): ethereum.CallResult<BigInt> {
@@ -1484,7 +1487,7 @@ export class Drips extends ethereum.SmartContract {
       "receiveStreamsResult",
       "receiveStreamsResult(uint256,address,uint32):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(maxCycles)
       ]
@@ -1520,7 +1523,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   setStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<Drips__setStreamsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
@@ -1532,7 +1535,7 @@ export class Drips extends ethereum.SmartContract {
       "setStreams",
       "setStreams(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32):(int128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
@@ -1546,7 +1549,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_setStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<Drips__setStreamsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
@@ -1558,7 +1561,7 @@ export class Drips extends ethereum.SmartContract {
       "setStreams",
       "setStreams(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32):(int128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
@@ -1575,7 +1578,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   split(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<Drips__splitInputCurrReceiversStruct>
   ): Drips__splitResult {
@@ -1583,7 +1586,7 @@ export class Drips extends ethereum.SmartContract {
       "split",
       "split(uint256,address,(uint256,uint32)[]):(uint128,uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers)
       ]
@@ -1593,7 +1596,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_split(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<Drips__splitInputCurrReceiversStruct>
   ): ethereum.CallResult<Drips__splitResult> {
@@ -1601,7 +1604,7 @@ export class Drips extends ethereum.SmartContract {
       "split",
       "split(uint256,address,(uint256,uint32)[]):(uint128,uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers)
       ]
@@ -1616,7 +1619,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   splitResult(
-    userId: BigInt,
+    accountId: BigInt,
     currReceivers: Array<Drips__splitResultInputCurrReceiversStruct>,
     amount: BigInt
   ): Drips__splitResultResult {
@@ -1624,7 +1627,7 @@ export class Drips extends ethereum.SmartContract {
       "splitResult",
       "splitResult(uint256,(uint256,uint32)[],uint128):(uint128,uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromUnsignedBigInt(amount)
       ]
@@ -1637,7 +1640,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_splitResult(
-    userId: BigInt,
+    accountId: BigInt,
     currReceivers: Array<Drips__splitResultInputCurrReceiversStruct>,
     amount: BigInt
   ): ethereum.CallResult<Drips__splitResultResult> {
@@ -1645,7 +1648,7 @@ export class Drips extends ethereum.SmartContract {
       "splitResult",
       "splitResult(uint256,(uint256,uint32)[],uint128):(uint128,uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromUnsignedBigInt(amount)
       ]
@@ -1659,17 +1662,17 @@ export class Drips extends ethereum.SmartContract {
     );
   }
 
-  splitsHash(userId: BigInt): Bytes {
+  splitsHash(accountId: BigInt): Bytes {
     let result = super.call("splitsHash", "splitsHash(uint256):(bytes32)", [
-      ethereum.Value.fromUnsignedBigInt(userId)
+      ethereum.Value.fromUnsignedBigInt(accountId)
     ]);
 
     return result[0].toBytes();
   }
 
-  try_splitsHash(userId: BigInt): ethereum.CallResult<Bytes> {
+  try_splitsHash(accountId: BigInt): ethereum.CallResult<Bytes> {
     let result = super.tryCall("splitsHash", "splitsHash(uint256):(bytes32)", [
-      ethereum.Value.fromUnsignedBigInt(userId)
+      ethereum.Value.fromUnsignedBigInt(accountId)
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1678,12 +1681,12 @@ export class Drips extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  splittable(userId: BigInt, erc20: Address): BigInt {
+  splittable(accountId: BigInt, erc20: Address): BigInt {
     let result = super.call(
       "splittable",
       "splittable(uint256,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1691,12 +1694,15 @@ export class Drips extends ethereum.SmartContract {
     return result[0].toBigInt();
   }
 
-  try_splittable(userId: BigInt, erc20: Address): ethereum.CallResult<BigInt> {
+  try_splittable(
+    accountId: BigInt,
+    erc20: Address
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "splittable",
       "splittable(uint256,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1708,7 +1714,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   squeezeStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     senderId: BigInt,
     historyHash: Bytes,
@@ -1718,7 +1724,7 @@ export class Drips extends ethereum.SmartContract {
       "squeezeStreams",
       "squeezeStreams(uint256,address,uint256,bytes32,(bytes32,(uint256,uint256)[],uint32,uint32)[]):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(senderId),
         ethereum.Value.fromFixedBytes(historyHash),
@@ -1730,7 +1736,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_squeezeStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     senderId: BigInt,
     historyHash: Bytes,
@@ -1740,7 +1746,7 @@ export class Drips extends ethereum.SmartContract {
       "squeezeStreams",
       "squeezeStreams(uint256,address,uint256,bytes32,(bytes32,(uint256,uint256)[],uint32,uint32)[]):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(senderId),
         ethereum.Value.fromFixedBytes(historyHash),
@@ -1755,7 +1761,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   squeezeStreamsResult(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     senderId: BigInt,
     historyHash: Bytes,
@@ -1765,7 +1771,7 @@ export class Drips extends ethereum.SmartContract {
       "squeezeStreamsResult",
       "squeezeStreamsResult(uint256,address,uint256,bytes32,(bytes32,(uint256,uint256)[],uint32,uint32)[]):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(senderId),
         ethereum.Value.fromFixedBytes(historyHash),
@@ -1777,7 +1783,7 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_squeezeStreamsResult(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     senderId: BigInt,
     historyHash: Bytes,
@@ -1787,7 +1793,7 @@ export class Drips extends ethereum.SmartContract {
       "squeezeStreamsResult",
       "squeezeStreamsResult(uint256,address,uint256,bytes32,(bytes32,(uint256,uint256)[],uint32,uint32)[]):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromUnsignedBigInt(senderId),
         ethereum.Value.fromFixedBytes(historyHash),
@@ -1801,12 +1807,12 @@ export class Drips extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  streamsState(userId: BigInt, erc20: Address): Drips__streamsStateResult {
+  streamsState(accountId: BigInt, erc20: Address): Drips__streamsStateResult {
     let result = super.call(
       "streamsState",
       "streamsState(uint256,address):(bytes32,bytes32,uint32,uint128,uint32)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1821,14 +1827,14 @@ export class Drips extends ethereum.SmartContract {
   }
 
   try_streamsState(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address
   ): ethereum.CallResult<Drips__streamsStateResult> {
     let result = super.tryCall(
       "streamsState",
       "streamsState(uint256,address):(bytes32,bytes32,uint32,uint128,uint32)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20)
       ]
     );
@@ -1921,7 +1927,7 @@ export class CollectCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1942,43 +1948,43 @@ export class CollectCall__Outputs {
   }
 }
 
-export class EmitUserMetadataCall extends ethereum.Call {
-  get inputs(): EmitUserMetadataCall__Inputs {
-    return new EmitUserMetadataCall__Inputs(this);
+export class EmitAccountMetadataCall extends ethereum.Call {
+  get inputs(): EmitAccountMetadataCall__Inputs {
+    return new EmitAccountMetadataCall__Inputs(this);
   }
 
-  get outputs(): EmitUserMetadataCall__Outputs {
-    return new EmitUserMetadataCall__Outputs(this);
+  get outputs(): EmitAccountMetadataCall__Outputs {
+    return new EmitAccountMetadataCall__Outputs(this);
   }
 }
 
-export class EmitUserMetadataCall__Inputs {
-  _call: EmitUserMetadataCall;
+export class EmitAccountMetadataCall__Inputs {
+  _call: EmitAccountMetadataCall;
 
-  constructor(call: EmitUserMetadataCall) {
+  constructor(call: EmitAccountMetadataCall) {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get userMetadata(): Array<EmitUserMetadataCallUserMetadataStruct> {
+  get accountMetadata(): Array<EmitAccountMetadataCallAccountMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      EmitUserMetadataCallUserMetadataStruct
+      EmitAccountMetadataCallAccountMetadataStruct
     >();
   }
 }
 
-export class EmitUserMetadataCall__Outputs {
-  _call: EmitUserMetadataCall;
+export class EmitAccountMetadataCall__Outputs {
+  _call: EmitAccountMetadataCall;
 
-  constructor(call: EmitUserMetadataCall) {
+  constructor(call: EmitAccountMetadataCall) {
     this._call = call;
   }
 }
 
-export class EmitUserMetadataCallUserMetadataStruct extends ethereum.Tuple {
+export class EmitAccountMetadataCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -2005,7 +2011,7 @@ export class GiveCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -2133,7 +2139,7 @@ export class ReceiveStreamsCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -2265,7 +2271,7 @@ export class SetSplitsCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -2285,7 +2291,7 @@ export class SetSplitsCall__Outputs {
 }
 
 export class SetSplitsCallReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -2311,7 +2317,7 @@ export class SetStreamsCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -2357,7 +2363,7 @@ export class SetStreamsCall__Outputs {
 }
 
 export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -2367,7 +2373,7 @@ export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
 }
 
 export class SetStreamsCallNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -2393,7 +2399,7 @@ export class SplitCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -2425,7 +2431,7 @@ export class SplitCall__Outputs {
 }
 
 export class SplitCallCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -2451,7 +2457,7 @@ export class SqueezeStreamsCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -2507,7 +2513,7 @@ export class SqueezeStreamsCallStreamsHistoryStruct extends ethereum.Tuple {
 }
 
 export class SqueezeStreamsCallStreamsHistoryReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 

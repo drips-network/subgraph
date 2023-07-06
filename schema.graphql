@@ -1,35 +1,35 @@
-type UserMetadataByKey @entity {
-  id: ID! # userId + "-" + key
-  userId: String!
+type AccountMetadataByKey @entity {
+  id: ID! # accountId + "-" + key
+  accountId: String!
   key: Bytes!
   value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
 }
 
-type UserMetadataEvent @entity {
+type AccountMetadataEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String!
+  accountId: String!
   key: Bytes!
   value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
 }
 
-type User @entity {
-  id: ID! # the userId
-  assetConfigs: [UserAssetConfig!]! @derivedFrom(field: "user")
+type Account @entity {
+  id: ID! # the accountId
+  assetConfigs: [AccountAssetConfig!]! @derivedFrom(field: "account")
   splitsEntryIds: [String!]!
   splitsEntries: [SplitsEntry!]! @derivedFrom(field: "sender")
   splitsReceiversHash: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
 }
 
-type UserAssetConfig @entity {
-  id: ID! # the userId + "-" + assetId
-  user: User!
+type AccountAssetConfig @entity {
+  id: ID! # the accountId + "-" + assetId
+  account: Account!
   assetId: BigInt!
   streamsEntryIds: [String!]!
   streamsEntries: [StreamsEntry!]! @derivedFrom(field: "senderAssetConfig")
-  balance: BigInt! # the user's balance for the asset at last top-up
+  balance: BigInt! # the account's balance for the asset at last top-up
   assetConfigHash: Bytes!
   amountSplittable: BigInt!
   amountPostSplitCollectable: BigInt!
@@ -39,7 +39,7 @@ type UserAssetConfig @entity {
 
 type StreamsSetEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the userId of the sender
+  accountId: String! # the accountId of the sender
   assetId: BigInt!
   receiversHash: Bytes! # the hash of the receivers list
   streamReceiverSeenEvents: [StreamReceiverSeenEvent!]! @derivedFrom(field: "streamsSetEvent")
@@ -49,10 +49,10 @@ type StreamsSetEvent @entity {
   maxEnd: BigInt!
 }
 
-type LastSetStreamUserMapping @entity {
+type LastSetStreamAccountMapping @entity {
   id: ID! # receiversHash
   streamsSetEventId: String! # the ID of the last StreamsSetEvent that was created with this receiversHash
-  userId: String! # the last userId that SetStreams was called for with this receiversHash
+  accountId: String! # the last accountId that SetStreams was called for with this receiversHash
   assetId: BigInt! # the last assetId that SetStreams was called for with this receiversHash
 }
 
@@ -60,23 +60,23 @@ type StreamReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   streamsSetEvent: StreamsSetEvent!
   receiversHash: Bytes!
-  senderUserId: String!
-  receiverUserId: String! # the receiver's userId
+  senderAccountId: String!
+  receiverAccountId: String! # the receiver's accountId
   config: BigInt!
   blockTimestamp: BigInt!
 }
 
 type StreamsEntry @entity {
-  id: ID! # sender's userId + "-" + receiver's userId + "-" + assetId
-  sender: User!
-  senderAssetConfig: UserAssetConfig!
-  userId: String! # the receiver's userId
+  id: ID! # sender's accountId + "-" + receiver's accountId + "-" + assetId
+  sender: Account!
+  senderAssetConfig: AccountAssetConfig!
+  accountId: String! # the receiver's accountId
   config: BigInt!
 }
 
 type ReceivedStreamsEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the sender's userId
+  accountId: String! # the sender's accountId
   assetId: BigInt!
   amt: BigInt!
   receivableCycles: BigInt!
@@ -85,7 +85,7 @@ type ReceivedStreamsEvent @entity {
 
 type SqueezedStreamsEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the sender's userId
+  accountId: String! # the sender's accountId
   assetId: BigInt!
   senderId: String!
   amt: BigInt!
@@ -95,39 +95,39 @@ type SqueezedStreamsEvent @entity {
 
 type SplitsSetEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the userId of the sender
+  accountId: String! # the accountId of the sender
   receiversHash: Bytes! # the hash of the receivers list
   splitsReceiverSeenEvents: [SplitsReceiverSeenEvent!]! @derivedFrom(field: "splitsSetEvent")
   blockTimestamp: BigInt!
 }
 
-type LastSetSplitsUserMapping @entity {
+type LastSetSplitsAccountMapping @entity {
   id: ID! # receiversHash
   splitsSetEventId: String! # the ID of the last SplitsSetEvent that was created with this receiversHash
-  userId: String! # the last userId that SetSplits was called for with this receiversHash
+  accountId: String! # the last accountId that SetSplits was called for with this receiversHash
 }
 
 type SplitsReceiverSeenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   splitsSetEvent: SplitsSetEvent!
   receiversHash: Bytes!
-  senderUserId: String! # the sender's userId
-  receiverUserId: String! # the receiver's userId
+  senderAccountId: String! # the sender's accountId
+  receiverAccountId: String! # the receiver's accountId
   weight: BigInt!
   blockTimestamp: BigInt!
 }
 
 type SplitsEntry @entity {
-  id: ID! # sender's userId + "-" + receiver's userId
-  sender: User!
-  userId: String! # the receiver's userId
+  id: ID! # sender's accountId + "-" + receiver's accountId
+  sender: Account!
+  accountId: String! # the receiver's accountId
   weight: BigInt!
 }
 
 type SplitEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String! # the sender's userId
-  receiverId: String! # the receiver's userId
+  accountId: String! # the sender's accountId
+  receiverId: String! # the receiver's accountId
   assetId: BigInt!
   amt: BigInt!
   blockTimestamp: BigInt!
@@ -135,7 +135,7 @@ type SplitEvent @entity {
 
 type CollectableEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  user: User!
+  account: Account!
   assetId: BigInt!
   amt: BigInt!
   blockTimestamp: BigInt!
@@ -143,7 +143,7 @@ type CollectableEvent @entity {
 
 type CollectedEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  user: User!
+  account: Account!
   assetId: BigInt!
   collected: BigInt!
   blockTimestamp: BigInt!
@@ -151,8 +151,8 @@ type CollectedEvent @entity {
 
 type GivenEvent @entity {
   id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  userId: String!
-  receiverUserId: String! # the receiver's userId
+  accountId: String!
+  receiverAccountId: String! # the receiver's accountId
   assetId: BigInt!
   amt: BigInt!
   blockTimestamp: BigInt!
@@ -170,13 +170,13 @@ type NFTSubAccount @entity {
 }
 
 type ImmutableSplitsCreated @entity {
-  id: ID! # userId + "-" + receiversHash
-  userId: String!
+  id: ID! # accountId + "-" + receiversHash
+  accountId: String!
   receiversHash: Bytes!
 }
 
 type RepoAccount @entity {
-  id: ID! # the userId
+  id: ID! # the accountId
   name: String! # The name of the repository.
   forge: BigInt!
   status: String # null, 'CLAIMED' or 'OWNER_UPDATE_REQUESTED'.

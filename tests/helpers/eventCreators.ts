@@ -14,7 +14,7 @@ import {
   SplitsReceiverSeen,
   SplitsSet,
   SqueezedStreams,
-  UserMetadataEmitted
+  AccountMetadataEmitted
 } from '../../generated/Drips/Drips';
 import { CreatedSplits } from '../../generated/ImmutableSplitsDriver/ImmutableSplitsDriver';
 import { Transfer } from '../../generated/NFTDriver/NFTDriver';
@@ -22,8 +22,8 @@ import { OwnerUpdateRequested } from '../../generated/RepoDriver/RepoDriver';
 import { OwnerUpdated } from '../../generated/RepoDriver/RepoDriver';
 
 export function createStreamSetEvent(
-  userId: BigInt,
-  assetId: BigInt,
+  accountId: BigInt,
+  erc20: Address,
   receiversHash: Bytes,
   streamHistoryHash: Bytes,
   balance: BigInt,
@@ -33,11 +33,11 @@ export function createStreamSetEvent(
 
   streamSetEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const receiversHashParam = new ethereum.EventParam(
     'receiversHash',
     ethereum.Value.fromBytes(receiversHash)
@@ -52,7 +52,7 @@ export function createStreamSetEvent(
   );
   const maxEndParam = new ethereum.EventParam('maxEnd', ethereum.Value.fromUnsignedBigInt(maxEnd));
 
-  streamSetEvent.parameters.push(userIdParam);
+  streamSetEvent.parameters.push(accountIdParam);
   streamSetEvent.parameters.push(assetIdParam);
   streamSetEvent.parameters.push(receiversHashParam);
   streamSetEvent.parameters.push(streamHistoryHashParam);
@@ -64,16 +64,16 @@ export function createStreamSetEvent(
 
 export function createStreamsReceiverSeen(
   receiversHash: Bytes,
-  userId: BigInt,
+  accountId: BigInt,
   config: BigInt
 ): StreamReceiverSeen {
   const streamSetEvent = changetype<StreamReceiverSeen>(newMockEvent()) as StreamReceiverSeen;
 
   streamSetEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam(
-    'userIdParam',
-    ethereum.Value.fromUnsignedBigInt(userId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountIdParam',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
   const configParam = new ethereum.EventParam('config', ethereum.Value.fromUnsignedBigInt(config));
   const receiversHashParam = new ethereum.EventParam(
@@ -82,27 +82,27 @@ export function createStreamsReceiverSeen(
   );
 
   streamSetEvent.parameters.push(receiversHashParam);
-  streamSetEvent.parameters.push(userIdParam);
+  streamSetEvent.parameters.push(accountIdParam);
   streamSetEvent.parameters.push(configParam);
 
   return streamSetEvent;
 }
 
-export function createCreatedSplits(userId: BigInt, receiversHash: string): CreatedSplits {
+export function createCreatedSplits(accountId: BigInt, receiversHash: string): CreatedSplits {
   const createdSplitsEvent = changetype<CreatedSplits>(newMockEvent()) as CreatedSplits;
 
   createdSplitsEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam(
-    'userIdParam',
-    ethereum.Value.fromUnsignedBigInt(userId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountIdParam',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
   const receiversHashParam = new ethereum.EventParam(
     'receiversHash',
     ethereum.Value.fromBytes(Bytes.fromUTF8(receiversHash))
   );
 
-  createdSplitsEvent.parameters.push(userIdParam);
+  createdSplitsEvent.parameters.push(accountIdParam);
   createdSplitsEvent.parameters.push(receiversHashParam);
 
   return createdSplitsEvent;
@@ -217,23 +217,28 @@ export function createOwnerUpdated(repoId: BigInt, owner: Address): OwnerUpdated
   return OwnerUpdatedEvent;
 }
 
-export function createGiven(userId: BigInt, receiver: BigInt, assetId: BigInt, amt: BigInt): Given {
+export function createGiven(
+  accountId: BigInt,
+  receiver: BigInt,
+  erc20: Address,
+  amt: BigInt
+): Given {
   const givenEvent = changetype<Given>(newMockEvent()) as Given;
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
+  );
   const receiverParam = new ethereum.EventParam(
     'receiver',
     ethereum.Value.fromUnsignedBigInt(receiver)
   );
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
-  );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(receiverParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
@@ -241,23 +246,28 @@ export function createGiven(userId: BigInt, receiver: BigInt, assetId: BigInt, a
   return givenEvent;
 }
 
-export function createSplit(userId: BigInt, receiver: BigInt, assetId: BigInt, amt: BigInt): Split {
+export function createSplit(
+  accountId: BigInt,
+  receiver: BigInt,
+  erc20: Address,
+  amt: BigInt
+): Split {
   const givenEvent = changetype<Split>(newMockEvent()) as Split;
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
+  );
   const receiverParam = new ethereum.EventParam(
     'receiver',
     ethereum.Value.fromUnsignedBigInt(receiver)
   );
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
-  );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(receiverParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
@@ -267,7 +277,7 @@ export function createSplit(userId: BigInt, receiver: BigInt, assetId: BigInt, a
 
 export function createSplitsReceiverSeen(
   receiversHash: Bytes,
-  userId: BigInt,
+  accountId: BigInt,
   weight: BigInt
 ): SplitsReceiverSeen {
   const givenEvent = changetype<SplitsReceiverSeen>(newMockEvent()) as SplitsReceiverSeen;
@@ -278,36 +288,42 @@ export function createSplitsReceiverSeen(
     'receiversHash',
     ethereum.Value.fromBytes(receiversHash)
   );
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
+  );
   const weightParam = new ethereum.EventParam('weight', ethereum.Value.fromUnsignedBigInt(weight));
 
   givenEvent.parameters.push(receiversHashParam);
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(weightParam);
 
   return givenEvent;
 }
 
-export function createSplitsSet(userId: BigInt, receiversHash: Bytes): SplitsSet {
+export function createSplitsSet(accountId: BigInt, receiversHash: Bytes): SplitsSet {
   const givenEvent = changetype<SplitsSet>(newMockEvent()) as SplitsSet;
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
+  );
   const receiversHashParam = new ethereum.EventParam(
     'receiversHash',
     ethereum.Value.fromBytes(receiversHash)
   );
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(receiversHashParam);
 
   return givenEvent;
 }
 
 export function createReceivedStreams(
-  userId: BigInt,
-  assetId: BigInt,
+  accountId: BigInt,
+  erc20: Address,
   amt: BigInt,
   receivableCycles: BigInt
 ): ReceivedStreams {
@@ -315,18 +331,18 @@ export function createReceivedStreams(
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
   const receivableCyclesParam = new ethereum.EventParam(
     'receivableCycles',
     ethereum.Value.fromUnsignedBigInt(receivableCycles)
   );
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
   givenEvent.parameters.push(receivableCyclesParam);
@@ -335,8 +351,8 @@ export function createReceivedStreams(
 }
 
 export function createSqueezedStreams(
-  userId: BigInt,
-  assetId: BigInt,
+  accountId: BigInt,
+  erc20: Address,
   senderId: BigInt,
   amt: BigInt,
   streamsHistoryHashes: Array<Bytes>
@@ -345,11 +361,11 @@ export function createSqueezedStreams(
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const senderIdParam = new ethereum.EventParam(
     'senderId',
     ethereum.Value.fromUnsignedBigInt(senderId)
@@ -360,7 +376,7 @@ export function createSqueezedStreams(
     ethereum.Value.fromBytesArray(streamsHistoryHashes)
   );
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(senderIdParam);
   givenEvent.parameters.push(amtParam);
@@ -369,61 +385,64 @@ export function createSqueezedStreams(
   return givenEvent;
 }
 
-export function createCollected(userId: BigInt, assetId: BigInt, collected: BigInt): Collected {
+export function createCollected(accountId: BigInt, erc20: Address, collected: BigInt): Collected {
   const givenEvent = changetype<Collected>(newMockEvent()) as Collected;
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const collectedParam = new ethereum.EventParam(
     'collected',
     ethereum.Value.fromUnsignedBigInt(collected)
   );
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(collectedParam);
 
   return givenEvent;
 }
 
-export function createCollectable(userId: BigInt, assetId: BigInt, amt: BigInt): Collectable {
+export function createCollectable(accountId: BigInt, erc20: Address, amt: BigInt): Collectable {
   const givenEvent = changetype<Collectable>(newMockEvent()) as Collectable;
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
-  const assetIdParam = new ethereum.EventParam(
-    'assetId',
-    ethereum.Value.fromUnsignedBigInt(assetId)
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
   );
+  const assetIdParam = new ethereum.EventParam('assetId', ethereum.Value.fromAddress(erc20));
   const amtParam = new ethereum.EventParam('amt', ethereum.Value.fromUnsignedBigInt(amt));
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(assetIdParam);
   givenEvent.parameters.push(amtParam);
 
   return givenEvent;
 }
 
-export function createUserMetadataEmitted(
-  userId: BigInt,
+export function createAccountMetadataEmitted(
+  accountId: BigInt,
   key: Bytes,
   value: Bytes
-): UserMetadataEmitted {
-  const givenEvent = changetype<UserMetadataEmitted>(newMockEvent()) as UserMetadataEmitted;
+): AccountMetadataEmitted {
+  const givenEvent = changetype<AccountMetadataEmitted>(newMockEvent()) as AccountMetadataEmitted;
 
   givenEvent.parameters = [];
 
-  const userIdParam = new ethereum.EventParam('userId', ethereum.Value.fromUnsignedBigInt(userId));
+  const accountIdParam = new ethereum.EventParam(
+    'accountId',
+    ethereum.Value.fromUnsignedBigInt(accountId)
+  );
   const keyParam = new ethereum.EventParam('key', ethereum.Value.fromBytes(key));
   const valueParam = new ethereum.EventParam('value', ethereum.Value.fromBytes(value));
 
-  givenEvent.parameters.push(userIdParam);
+  givenEvent.parameters.push(accountIdParam);
   givenEvent.parameters.push(keyParam);
   givenEvent.parameters.push(valueParam);
 

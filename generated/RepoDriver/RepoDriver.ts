@@ -111,7 +111,7 @@ export class OwnerUpdateRequested__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -137,7 +137,7 @@ export class OwnerUpdated__Params {
     this._event = event;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -277,7 +277,7 @@ export class RepoDriver__anyApiOperatorResult {
 }
 
 export class RepoDriver__setStreamsInputCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -287,7 +287,7 @@ export class RepoDriver__setStreamsInputCurrReceiversStruct extends ethereum.Tup
 }
 
 export class RepoDriver__setStreamsInputNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -364,19 +364,23 @@ export class RepoDriver extends ethereum.SmartContract {
     );
   }
 
-  calcUserId(forge: i32, name: Bytes): BigInt {
-    let result = super.call("calcUserId", "calcUserId(uint8,bytes):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
-      ethereum.Value.fromBytes(name)
-    ]);
+  calcAccountId(forge: i32, name: Bytes): BigInt {
+    let result = super.call(
+      "calcAccountId",
+      "calcAccountId(uint8,bytes):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
+        ethereum.Value.fromBytes(name)
+      ]
+    );
 
     return result[0].toBigInt();
   }
 
-  try_calcUserId(forge: i32, name: Bytes): ethereum.CallResult<BigInt> {
+  try_calcAccountId(forge: i32, name: Bytes): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "calcUserId",
-      "calcUserId(uint8,bytes):(uint256)",
+      "calcAccountId",
+      "calcAccountId(uint8,bytes):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(forge)),
         ethereum.Value.fromBytes(name)
@@ -389,12 +393,12 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  collect(userId: BigInt, erc20: Address, transferTo: Address): BigInt {
+  collect(accountId: BigInt, erc20: Address, transferTo: Address): BigInt {
     let result = super.call(
       "collect",
       "collect(uint256,address,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromAddress(transferTo)
       ]
@@ -404,7 +408,7 @@ export class RepoDriver extends ethereum.SmartContract {
   }
 
   try_collect(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     transferTo: Address
   ): ethereum.CallResult<BigInt> {
@@ -412,7 +416,7 @@ export class RepoDriver extends ethereum.SmartContract {
       "collect",
       "collect(uint256,address,address):(uint128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromAddress(transferTo)
       ]
@@ -545,17 +549,17 @@ export class RepoDriver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  ownerOf(userId: BigInt): Address {
+  ownerOf(accountId: BigInt): Address {
     let result = super.call("ownerOf", "ownerOf(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(userId)
+      ethereum.Value.fromUnsignedBigInt(accountId)
     ]);
 
     return result[0].toAddress();
   }
 
-  try_ownerOf(userId: BigInt): ethereum.CallResult<Address> {
+  try_ownerOf(accountId: BigInt): ethereum.CallResult<Address> {
     let result = super.tryCall("ownerOf", "ownerOf(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(userId)
+      ethereum.Value.fromUnsignedBigInt(accountId)
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -632,7 +636,7 @@ export class RepoDriver extends ethereum.SmartContract {
   }
 
   setStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<RepoDriver__setStreamsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
@@ -645,7 +649,7 @@ export class RepoDriver extends ethereum.SmartContract {
       "setStreams",
       "setStreams(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
@@ -660,7 +664,7 @@ export class RepoDriver extends ethereum.SmartContract {
   }
 
   try_setStreams(
-    userId: BigInt,
+    accountId: BigInt,
     erc20: Address,
     currReceivers: Array<RepoDriver__setStreamsInputCurrReceiversStruct>,
     balanceDelta: BigInt,
@@ -673,7 +677,7 @@ export class RepoDriver extends ethereum.SmartContract {
       "setStreams",
       "setStreams(uint256,address,(uint256,uint256)[],int128,(uint256,uint256)[],uint32,uint32,address):(int128)",
       [
-        ethereum.Value.fromUnsignedBigInt(userId),
+        ethereum.Value.fromUnsignedBigInt(accountId),
         ethereum.Value.fromAddress(erc20),
         ethereum.Value.fromTupleArray(currReceivers),
         ethereum.Value.fromSignedBigInt(balanceDelta),
@@ -772,7 +776,7 @@ export class CollectCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -797,43 +801,43 @@ export class CollectCall__Outputs {
   }
 }
 
-export class EmitUserMetadataCall extends ethereum.Call {
-  get inputs(): EmitUserMetadataCall__Inputs {
-    return new EmitUserMetadataCall__Inputs(this);
+export class EmitAccountMetadataCall extends ethereum.Call {
+  get inputs(): EmitAccountMetadataCall__Inputs {
+    return new EmitAccountMetadataCall__Inputs(this);
   }
 
-  get outputs(): EmitUserMetadataCall__Outputs {
-    return new EmitUserMetadataCall__Outputs(this);
+  get outputs(): EmitAccountMetadataCall__Outputs {
+    return new EmitAccountMetadataCall__Outputs(this);
   }
 }
 
-export class EmitUserMetadataCall__Inputs {
-  _call: EmitUserMetadataCall;
+export class EmitAccountMetadataCall__Inputs {
+  _call: EmitAccountMetadataCall;
 
-  constructor(call: EmitUserMetadataCall) {
+  constructor(call: EmitAccountMetadataCall) {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get userMetadata(): Array<EmitUserMetadataCallUserMetadataStruct> {
+  get accountMetadata(): Array<EmitAccountMetadataCallAccountMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      EmitUserMetadataCallUserMetadataStruct
+      EmitAccountMetadataCallAccountMetadataStruct
     >();
   }
 }
 
-export class EmitUserMetadataCall__Outputs {
-  _call: EmitUserMetadataCall;
+export class EmitAccountMetadataCall__Outputs {
+  _call: EmitAccountMetadataCall;
 
-  constructor(call: EmitUserMetadataCall) {
+  constructor(call: EmitAccountMetadataCall) {
     this._call = call;
   }
 }
 
-export class EmitUserMetadataCallUserMetadataStruct extends ethereum.Tuple {
+export class EmitAccountMetadataCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -860,7 +864,7 @@ export class GiveCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1106,7 +1110,7 @@ export class RequestUpdateOwnerCall__Outputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
 }
@@ -1158,7 +1162,7 @@ export class SetSplitsCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1178,7 +1182,7 @@ export class SetSplitsCall__Outputs {
 }
 
 export class SetSplitsCallReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -1204,7 +1208,7 @@ export class SetStreamsCall__Inputs {
     this._call = call;
   }
 
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 
@@ -1254,7 +1258,7 @@ export class SetStreamsCall__Outputs {
 }
 
 export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -1264,7 +1268,7 @@ export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
 }
 
 export class SetStreamsCallNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 

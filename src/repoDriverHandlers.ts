@@ -5,7 +5,7 @@ import { RepoAccount } from '../generated/schema';
 export function handleOwnerUpdateRequested(event: OwnerUpdateRequested): void {
   const forge = event.params.forge;
   const name = event.params.name.toString();
-  const id = event.params.userId.toString();
+  const id = event.params.accountId.toString();
 
   let repoAccount = RepoAccount.load(id);
   if (!repoAccount) {
@@ -24,7 +24,7 @@ export function handleOwnerUpdateRequested(event: OwnerUpdateRequested): void {
 
 export function handleOwnerUpdated(event: OwnerUpdated): void {
   const owner = event.params.owner.toHexString();
-  const id = event.params.userId.toString();
+  const id = event.params.accountId.toString();
 
   const repoAccount = RepoAccount.load(id);
   if (!repoAccount) {

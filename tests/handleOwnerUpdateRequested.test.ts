@@ -22,7 +22,7 @@ describe('handleOwnerUpdateRequested', () => {
     handleOwnerUpdateRequested(incomingOwnerUpdateRequested);
 
     // Assert
-    const id = incomingOwnerUpdateRequested.params.userId.toString();
+    const id = incomingOwnerUpdateRequested.params.accountId.toString();
     const repoAccount = RepoAccount.load(id) as RepoAccount;
 
     assert.assertNull(repoAccount.ownerAddress);

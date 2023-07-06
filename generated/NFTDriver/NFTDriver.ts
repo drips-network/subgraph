@@ -248,7 +248,7 @@ export class Upgraded__Params {
   }
 }
 
-export class NFTDriver__mintInputUserMetadataStruct extends ethereum.Tuple {
+export class NFTDriver__mintInputAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -258,7 +258,7 @@ export class NFTDriver__mintInputUserMetadataStruct extends ethereum.Tuple {
   }
 }
 
-export class NFTDriver__mintWithSaltInputUserMetadataStruct extends ethereum.Tuple {
+export class NFTDriver__mintWithSaltInputAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -268,7 +268,7 @@ export class NFTDriver__mintWithSaltInputUserMetadataStruct extends ethereum.Tup
   }
 }
 
-export class NFTDriver__safeMintInputUserMetadataStruct extends ethereum.Tuple {
+export class NFTDriver__safeMintInputAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -278,7 +278,7 @@ export class NFTDriver__safeMintInputUserMetadataStruct extends ethereum.Tuple {
   }
 }
 
-export class NFTDriver__safeMintWithSaltInputUserMetadataStruct extends ethereum.Tuple {
+export class NFTDriver__safeMintWithSaltInputAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -289,7 +289,7 @@ export class NFTDriver__safeMintWithSaltInputUserMetadataStruct extends ethereum
 }
 
 export class NFTDriver__setStreamsInputCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -299,7 +299,7 @@ export class NFTDriver__setStreamsInputCurrReceiversStruct extends ethereum.Tupl
 }
 
 export class NFTDriver__setStreamsInputNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -609,14 +609,14 @@ export class NFTDriver extends ethereum.SmartContract {
 
   mint(
     to: Address,
-    userMetadata: Array<NFTDriver__mintInputUserMetadataStruct>
+    accountMetadata: Array<NFTDriver__mintInputAccountMetadataStruct>
   ): BigInt {
     let result = super.call(
       "mint",
       "mint(address,(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
 
@@ -625,14 +625,14 @@ export class NFTDriver extends ethereum.SmartContract {
 
   try_mint(
     to: Address,
-    userMetadata: Array<NFTDriver__mintInputUserMetadataStruct>
+    accountMetadata: Array<NFTDriver__mintInputAccountMetadataStruct>
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "mint",
       "mint(address,(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
     if (result.reverted) {
@@ -645,7 +645,7 @@ export class NFTDriver extends ethereum.SmartContract {
   mintWithSalt(
     salt: BigInt,
     to: Address,
-    userMetadata: Array<NFTDriver__mintWithSaltInputUserMetadataStruct>
+    accountMetadata: Array<NFTDriver__mintWithSaltInputAccountMetadataStruct>
   ): BigInt {
     let result = super.call(
       "mintWithSalt",
@@ -653,7 +653,7 @@ export class NFTDriver extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(salt),
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
 
@@ -663,7 +663,7 @@ export class NFTDriver extends ethereum.SmartContract {
   try_mintWithSalt(
     salt: BigInt,
     to: Address,
-    userMetadata: Array<NFTDriver__mintWithSaltInputUserMetadataStruct>
+    accountMetadata: Array<NFTDriver__mintWithSaltInputAccountMetadataStruct>
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "mintWithSalt",
@@ -671,7 +671,7 @@ export class NFTDriver extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(salt),
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
     if (result.reverted) {
@@ -770,14 +770,14 @@ export class NFTDriver extends ethereum.SmartContract {
 
   safeMint(
     to: Address,
-    userMetadata: Array<NFTDriver__safeMintInputUserMetadataStruct>
+    accountMetadata: Array<NFTDriver__safeMintInputAccountMetadataStruct>
   ): BigInt {
     let result = super.call(
       "safeMint",
       "safeMint(address,(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
 
@@ -786,14 +786,14 @@ export class NFTDriver extends ethereum.SmartContract {
 
   try_safeMint(
     to: Address,
-    userMetadata: Array<NFTDriver__safeMintInputUserMetadataStruct>
+    accountMetadata: Array<NFTDriver__safeMintInputAccountMetadataStruct>
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "safeMint",
       "safeMint(address,(bytes32,bytes)[]):(uint256)",
       [
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
     if (result.reverted) {
@@ -806,7 +806,9 @@ export class NFTDriver extends ethereum.SmartContract {
   safeMintWithSalt(
     salt: BigInt,
     to: Address,
-    userMetadata: Array<NFTDriver__safeMintWithSaltInputUserMetadataStruct>
+    accountMetadata: Array<
+      NFTDriver__safeMintWithSaltInputAccountMetadataStruct
+    >
   ): BigInt {
     let result = super.call(
       "safeMintWithSalt",
@@ -814,7 +816,7 @@ export class NFTDriver extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(salt),
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
 
@@ -824,7 +826,9 @@ export class NFTDriver extends ethereum.SmartContract {
   try_safeMintWithSalt(
     salt: BigInt,
     to: Address,
-    userMetadata: Array<NFTDriver__safeMintWithSaltInputUserMetadataStruct>
+    accountMetadata: Array<
+      NFTDriver__safeMintWithSaltInputAccountMetadataStruct
+    >
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "safeMintWithSalt",
@@ -832,7 +836,7 @@ export class NFTDriver extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(salt),
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromTupleArray(userMetadata)
+        ethereum.Value.fromTupleArray(accountMetadata)
       ]
     );
     if (result.reverted) {
@@ -1129,20 +1133,20 @@ export class CollectCall__Outputs {
   }
 }
 
-export class EmitUserMetadataCall extends ethereum.Call {
-  get inputs(): EmitUserMetadataCall__Inputs {
-    return new EmitUserMetadataCall__Inputs(this);
+export class EmitAccountMetadataCall extends ethereum.Call {
+  get inputs(): EmitAccountMetadataCall__Inputs {
+    return new EmitAccountMetadataCall__Inputs(this);
   }
 
-  get outputs(): EmitUserMetadataCall__Outputs {
-    return new EmitUserMetadataCall__Outputs(this);
+  get outputs(): EmitAccountMetadataCall__Outputs {
+    return new EmitAccountMetadataCall__Outputs(this);
   }
 }
 
-export class EmitUserMetadataCall__Inputs {
-  _call: EmitUserMetadataCall;
+export class EmitAccountMetadataCall__Inputs {
+  _call: EmitAccountMetadataCall;
 
-  constructor(call: EmitUserMetadataCall) {
+  constructor(call: EmitAccountMetadataCall) {
     this._call = call;
   }
 
@@ -1150,22 +1154,22 @@ export class EmitUserMetadataCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get userMetadata(): Array<EmitUserMetadataCallUserMetadataStruct> {
+  get accountMetadata(): Array<EmitAccountMetadataCallAccountMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      EmitUserMetadataCallUserMetadataStruct
+      EmitAccountMetadataCallAccountMetadataStruct
     >();
   }
 }
 
-export class EmitUserMetadataCall__Outputs {
-  _call: EmitUserMetadataCall;
+export class EmitAccountMetadataCall__Outputs {
+  _call: EmitAccountMetadataCall;
 
-  constructor(call: EmitUserMetadataCall) {
+  constructor(call: EmitAccountMetadataCall) {
     this._call = call;
   }
 }
 
-export class EmitUserMetadataCallUserMetadataStruct extends ethereum.Tuple {
+export class EmitAccountMetadataCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -1268,9 +1272,9 @@ export class MintCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get userMetadata(): Array<MintCallUserMetadataStruct> {
+  get accountMetadata(): Array<MintCallAccountMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      MintCallUserMetadataStruct
+      MintCallAccountMetadataStruct
     >();
   }
 }
@@ -1287,7 +1291,7 @@ export class MintCall__Outputs {
   }
 }
 
-export class MintCallUserMetadataStruct extends ethereum.Tuple {
+export class MintCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -1322,9 +1326,9 @@ export class MintWithSaltCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get userMetadata(): Array<MintWithSaltCallUserMetadataStruct> {
+  get accountMetadata(): Array<MintWithSaltCallAccountMetadataStruct> {
     return this._call.inputValues[2].value.toTupleArray<
-      MintWithSaltCallUserMetadataStruct
+      MintWithSaltCallAccountMetadataStruct
     >();
   }
 }
@@ -1341,7 +1345,7 @@ export class MintWithSaltCall__Outputs {
   }
 }
 
-export class MintWithSaltCallUserMetadataStruct extends ethereum.Tuple {
+export class MintWithSaltCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -1484,9 +1488,9 @@ export class SafeMintCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get userMetadata(): Array<SafeMintCallUserMetadataStruct> {
+  get accountMetadata(): Array<SafeMintCallAccountMetadataStruct> {
     return this._call.inputValues[1].value.toTupleArray<
-      SafeMintCallUserMetadataStruct
+      SafeMintCallAccountMetadataStruct
     >();
   }
 }
@@ -1503,7 +1507,7 @@ export class SafeMintCall__Outputs {
   }
 }
 
-export class SafeMintCallUserMetadataStruct extends ethereum.Tuple {
+export class SafeMintCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -1538,9 +1542,9 @@ export class SafeMintWithSaltCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get userMetadata(): Array<SafeMintWithSaltCallUserMetadataStruct> {
+  get accountMetadata(): Array<SafeMintWithSaltCallAccountMetadataStruct> {
     return this._call.inputValues[2].value.toTupleArray<
-      SafeMintWithSaltCallUserMetadataStruct
+      SafeMintWithSaltCallAccountMetadataStruct
     >();
   }
 }
@@ -1557,7 +1561,7 @@ export class SafeMintWithSaltCall__Outputs {
   }
 }
 
-export class SafeMintWithSaltCallUserMetadataStruct extends ethereum.Tuple {
+export class SafeMintWithSaltCallAccountMetadataStruct extends ethereum.Tuple {
   get key(): Bytes {
     return this[0].toBytes();
   }
@@ -1718,7 +1722,7 @@ export class SetSplitsCall__Outputs {
 }
 
 export class SetSplitsCallReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -1794,7 +1798,7 @@ export class SetStreamsCall__Outputs {
 }
 
 export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 
@@ -1804,7 +1808,7 @@ export class SetStreamsCallCurrReceiversStruct extends ethereum.Tuple {
 }
 
 export class SetStreamsCallNewReceiversStruct extends ethereum.Tuple {
-  get userId(): BigInt {
+  get accountId(): BigInt {
     return this[0].toBigInt();
   }
 

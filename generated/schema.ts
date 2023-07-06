@@ -11,7 +11,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class UserMetadataByKey extends Entity {
+export class AccountMetadataByKey extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -19,19 +19,19 @@ export class UserMetadataByKey extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save UserMetadataByKey entity without an ID");
+    assert(id != null, "Cannot save AccountMetadataByKey entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type UserMetadataByKey must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type AccountMetadataByKey must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("UserMetadataByKey", id.toString(), this);
+      store.set("AccountMetadataByKey", id.toString(), this);
     }
   }
 
-  static load(id: string): UserMetadataByKey | null {
-    return changetype<UserMetadataByKey | null>(
-      store.get("UserMetadataByKey", id)
+  static load(id: string): AccountMetadataByKey | null {
+    return changetype<AccountMetadataByKey | null>(
+      store.get("AccountMetadataByKey", id)
     );
   }
 
@@ -44,13 +44,13 @@ export class UserMetadataByKey extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get key(): Bytes {
@@ -81,7 +81,7 @@ export class UserMetadataByKey extends Entity {
   }
 }
 
-export class UserMetadataEvent extends Entity {
+export class AccountMetadataEvent extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -89,19 +89,19 @@ export class UserMetadataEvent extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save UserMetadataEvent entity without an ID");
+    assert(id != null, "Cannot save AccountMetadataEvent entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type UserMetadataEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type AccountMetadataEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("UserMetadataEvent", id.toString(), this);
+      store.set("AccountMetadataEvent", id.toString(), this);
     }
   }
 
-  static load(id: string): UserMetadataEvent | null {
-    return changetype<UserMetadataEvent | null>(
-      store.get("UserMetadataEvent", id)
+  static load(id: string): AccountMetadataEvent | null {
+    return changetype<AccountMetadataEvent | null>(
+      store.get("AccountMetadataEvent", id)
     );
   }
 
@@ -114,13 +114,13 @@ export class UserMetadataEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get key(): Bytes {
@@ -151,7 +151,7 @@ export class UserMetadataEvent extends Entity {
   }
 }
 
-export class User extends Entity {
+export class Account extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -159,18 +159,18 @@ export class User extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save User entity without an ID");
+    assert(id != null, "Cannot save Account entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type User must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type Account must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("User", id.toString(), this);
+      store.set("Account", id.toString(), this);
     }
   }
 
-  static load(id: string): User | null {
-    return changetype<User | null>(store.get("User", id));
+  static load(id: string): Account | null {
+    return changetype<Account | null>(store.get("Account", id));
   }
 
   get id(): string {
@@ -228,7 +228,7 @@ export class User extends Entity {
   }
 }
 
-export class UserAssetConfig extends Entity {
+export class AccountAssetConfig extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -236,18 +236,20 @@ export class UserAssetConfig extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save UserAssetConfig entity without an ID");
+    assert(id != null, "Cannot save AccountAssetConfig entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type UserAssetConfig must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type AccountAssetConfig must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("UserAssetConfig", id.toString(), this);
+      store.set("AccountAssetConfig", id.toString(), this);
     }
   }
 
-  static load(id: string): UserAssetConfig | null {
-    return changetype<UserAssetConfig | null>(store.get("UserAssetConfig", id));
+  static load(id: string): AccountAssetConfig | null {
+    return changetype<AccountAssetConfig | null>(
+      store.get("AccountAssetConfig", id)
+    );
   }
 
   get id(): string {
@@ -259,13 +261,13 @@ export class UserAssetConfig extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get user(): string {
-    let value = this.get("user");
+  get account(): string {
+    let value = this.get("account");
     return value!.toString();
   }
 
-  set user(value: string) {
-    this.set("user", Value.fromString(value));
+  set account(value: string) {
+    this.set("account", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -381,13 +383,13 @@ export class StreamsSetEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -454,7 +456,7 @@ export class StreamsSetEvent extends Entity {
   }
 }
 
-export class LastSetStreamUserMapping extends Entity {
+export class LastSetStreamAccountMapping extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -464,20 +466,20 @@ export class LastSetStreamUserMapping extends Entity {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save LastSetStreamUserMapping entity without an ID"
+      "Cannot save LastSetStreamAccountMapping entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type LastSetStreamUserMapping must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type LastSetStreamAccountMapping must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("LastSetStreamUserMapping", id.toString(), this);
+      store.set("LastSetStreamAccountMapping", id.toString(), this);
     }
   }
 
-  static load(id: string): LastSetStreamUserMapping | null {
-    return changetype<LastSetStreamUserMapping | null>(
-      store.get("LastSetStreamUserMapping", id)
+  static load(id: string): LastSetStreamAccountMapping | null {
+    return changetype<LastSetStreamAccountMapping | null>(
+      store.get("LastSetStreamAccountMapping", id)
     );
   }
 
@@ -499,13 +501,13 @@ export class LastSetStreamUserMapping extends Entity {
     this.set("streamsSetEventId", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -572,22 +574,22 @@ export class StreamReceiverSeenEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get senderUserId(): string {
-    let value = this.get("senderUserId");
+  get senderAccountId(): string {
+    let value = this.get("senderAccountId");
     return value!.toString();
   }
 
-  set senderUserId(value: string) {
-    this.set("senderUserId", Value.fromString(value));
+  set senderAccountId(value: string) {
+    this.set("senderAccountId", Value.fromString(value));
   }
 
-  get receiverUserId(): string {
-    let value = this.get("receiverUserId");
+  get receiverAccountId(): string {
+    let value = this.get("receiverAccountId");
     return value!.toString();
   }
 
-  set receiverUserId(value: string) {
-    this.set("receiverUserId", Value.fromString(value));
+  set receiverAccountId(value: string) {
+    this.set("receiverAccountId", Value.fromString(value));
   }
 
   get config(): BigInt {
@@ -658,13 +660,13 @@ export class StreamsEntry extends Entity {
     this.set("senderAssetConfig", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get config(): BigInt {
@@ -710,13 +712,13 @@ export class ReceivedStreamsEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -789,13 +791,13 @@ export class SqueezedStreamsEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -875,13 +877,13 @@ export class SplitsSetEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get receiversHash(): Bytes {
@@ -912,7 +914,7 @@ export class SplitsSetEvent extends Entity {
   }
 }
 
-export class LastSetSplitsUserMapping extends Entity {
+export class LastSetSplitsAccountMapping extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -922,20 +924,20 @@ export class LastSetSplitsUserMapping extends Entity {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save LastSetSplitsUserMapping entity without an ID"
+      "Cannot save LastSetSplitsAccountMapping entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type LastSetSplitsUserMapping must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type LastSetSplitsAccountMapping must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("LastSetSplitsUserMapping", id.toString(), this);
+      store.set("LastSetSplitsAccountMapping", id.toString(), this);
     }
   }
 
-  static load(id: string): LastSetSplitsUserMapping | null {
-    return changetype<LastSetSplitsUserMapping | null>(
-      store.get("LastSetSplitsUserMapping", id)
+  static load(id: string): LastSetSplitsAccountMapping | null {
+    return changetype<LastSetSplitsAccountMapping | null>(
+      store.get("LastSetSplitsAccountMapping", id)
     );
   }
 
@@ -957,13 +959,13 @@ export class LastSetSplitsUserMapping extends Entity {
     this.set("splitsSetEventId", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 }
 
@@ -1021,22 +1023,22 @@ export class SplitsReceiverSeenEvent extends Entity {
     this.set("receiversHash", Value.fromBytes(value));
   }
 
-  get senderUserId(): string {
-    let value = this.get("senderUserId");
+  get senderAccountId(): string {
+    let value = this.get("senderAccountId");
     return value!.toString();
   }
 
-  set senderUserId(value: string) {
-    this.set("senderUserId", Value.fromString(value));
+  set senderAccountId(value: string) {
+    this.set("senderAccountId", Value.fromString(value));
   }
 
-  get receiverUserId(): string {
-    let value = this.get("receiverUserId");
+  get receiverAccountId(): string {
+    let value = this.get("receiverAccountId");
     return value!.toString();
   }
 
-  set receiverUserId(value: string) {
-    this.set("receiverUserId", Value.fromString(value));
+  set receiverAccountId(value: string) {
+    this.set("receiverAccountId", Value.fromString(value));
   }
 
   get weight(): BigInt {
@@ -1098,13 +1100,13 @@ export class SplitsEntry extends Entity {
     this.set("sender", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get weight(): BigInt {
@@ -1148,13 +1150,13 @@ export class SplitEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get receiverId(): string {
@@ -1227,13 +1229,13 @@ export class CollectableEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get user(): string {
-    let value = this.get("user");
+  get account(): string {
+    let value = this.get("account");
     return value!.toString();
   }
 
-  set user(value: string) {
-    this.set("user", Value.fromString(value));
+  set account(value: string) {
+    this.set("account", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -1295,13 +1297,13 @@ export class CollectedEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get user(): string {
-    let value = this.get("user");
+  get account(): string {
+    let value = this.get("account");
     return value!.toString();
   }
 
-  set user(value: string) {
-    this.set("user", Value.fromString(value));
+  set account(value: string) {
+    this.set("account", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -1363,22 +1365,22 @@ export class GivenEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
-  get receiverUserId(): string {
-    let value = this.get("receiverUserId");
+  get receiverAccountId(): string {
+    let value = this.get("receiverAccountId");
     return value!.toString();
   }
 
-  set receiverUserId(value: string) {
-    this.set("receiverUserId", Value.fromString(value));
+  set receiverAccountId(value: string) {
+    this.set("receiverAccountId", Value.fromString(value));
   }
 
   get assetId(): BigInt {
@@ -1536,13 +1538,13 @@ export class ImmutableSplitsCreated extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get userId(): string {
-    let value = this.get("userId");
+  get accountId(): string {
+    let value = this.get("accountId");
     return value!.toString();
   }
 
-  set userId(value: string) {
-    this.set("userId", Value.fromString(value));
+  set accountId(value: string) {
+    this.set("accountId", Value.fromString(value));
   }
 
   get receiversHash(): Bytes {

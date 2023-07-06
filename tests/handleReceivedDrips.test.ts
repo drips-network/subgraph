@@ -1,9 +1,10 @@
-import { BigInt } from '@graphprotocol/graph-ts';
+import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { ReceivedStreamsEvent, UserAssetConfig } from '../generated/schema';
+import { ReceivedStreamsEvent, AccountAssetConfig } from '../generated/schema';
 import { handleReceivedStreams } from '../src/mapping';
 import { createReceivedStreams } from './helpers/eventCreators';
-import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
+import { defaultAccountAssetConfig } from './helpers/defaultEntityCreators';
+import { erc20TokenToAssetId } from '../src/utils';
 
 describe('handleReceivedStreams', () => {
   beforeEach(() => {
@@ -12,17 +13,17 @@ describe('handleReceivedStreams', () => {
 
   test('should create entities as expected when mapping', () => {
     // Arrange
-    const userId = BigInt.fromI32(1);
-    const assetId = BigInt.fromI32(2);
+    const accountId = BigInt.fromI32(1);
+    const erc20 = Address.fromString('0x20a9273a452268E5a034951ae5381a45E14aC2a3');
     const amt = BigInt.fromI32(3);
     const receivableCycles = BigInt.fromI32(4);
 
-    const incomingReceivedStreams = createReceivedStreams(userId, assetId, amt, receivableCycles);
+    const incomingReceivedStreams = createReceivedStreams(accountId, erc20, amt, receivableCycles);
 
-    const userAssetConfigId = userId.toString() + '-' + assetId.toString();
-    const userAssetConfigBefore = defaultUserAssetConfig(userAssetConfigId);
-    userAssetConfigBefore.amountSplittable = BigInt.fromI32(10);
-    userAssetConfigBefore.save();
+    const accountAssetConfigId = accountId.toString() + '-' + erc20TokenToAssetId(erc20).toString();
+    const accountAssetConfigBefore = defaultAccountAssetConfig(accountAssetConfigId);
+    accountAssetConfigBefore.amountSplittable = BigInt.fromI32(10);
+    accountAssetConfigBefore.save();
 
     // Act
     handleReceivedStreams(incomingReceivedStreams);
@@ -33,8 +34,14 @@ describe('handleReceivedStreams', () => {
       '-' +
       incomingReceivedStreams.logIndex.toString();
     const receivedStreams = ReceivedStreamsEvent.load(id) as ReceivedStreamsEvent;
-    assert.stringEquals(receivedStreams.userId, incomingReceivedStreams.params.userId.toString());
-    assert.bigIntEquals(receivedStreams.assetId, incomingReceivedStreams.params.assetId);
+    assert.stringEquals(
+      receivedStreams.accountId,
+      incomingReceivedStreams.params.accountId.toString()
+    );
+    assert.bigIntEquals(
+      receivedStreams.assetId,
+      erc20TokenToAssetId(incomingReceivedStreams.params.erc20)
+    );
     assert.bigIntEquals(receivedStreams.amt, incomingReceivedStreams.params.amt);
     assert.bigIntEquals(
       receivedStreams.receivableCycles,
@@ -42,13 +49,15 @@ describe('handleReceivedStreams', () => {
     );
     assert.bigIntEquals(receivedStreams.blockTimestamp, incomingReceivedStreams.block.timestamp);
 
-    const userAssetConfigAfter = UserAssetConfig.load(userAssetConfigId) as UserAssetConfig;
+    const accountAssetConfigAfter = AccountAssetConfig.load(
+      accountAssetConfigId
+    ) as AccountAssetConfig;
     assert.bigIntEquals(
-      userAssetConfigAfter.amountSplittable,
-      userAssetConfigBefore.amountSplittable.plus(incomingReceivedStreams.params.amt)
+      accountAssetConfigAfter.amountSplittable,
+      accountAssetConfigBefore.amountSplittable.plus(incomingReceivedStreams.params.amt)
     );
     assert.bigIntEquals(
-      userAssetConfigAfter.lastUpdatedBlockTimestamp,
+      accountAssetConfigAfter.lastUpdatedBlockTimestamp,
       incomingReceivedStreams.block.timestamp
     );
   });

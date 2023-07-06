@@ -1,19 +1,20 @@
-import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as';
 import {
   StreamsEntry,
   StreamsSetEvent,
-  LastSetStreamUserMapping,
-  User,
-  UserAssetConfig
+  LastSetStreamAccountMapping,
+  Account,
+  AccountAssetConfig
 } from '../generated/schema';
 import { handleStreamsSet } from '../src/mapping';
 import { createStreamSetEvent } from './helpers/eventCreators';
 import {
   defaultStreamsEntry,
-  defaultUser,
-  defaultUserAssetConfig
+  defaultAccount,
+  defaultAccountAssetConfig
 } from './helpers/defaultEntityCreators';
+import { erc20TokenToAssetId } from '../src/utils';
 
 describe('handleStreamsSet', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('handleStreamsSet', () => {
     // Arrange
     const incomingStreamSetEvent = createStreamSetEvent(
       BigInt.fromI32(1),
-      BigInt.fromI32(2),
+      Address.fromString('0x20a9273a452268E5a034951ae5381a45E14aC2a3'),
       Bytes.fromUTF8('receiversHash'),
       Bytes.fromUTF8('streamHistoryHash'),
       BigInt.fromI32(3),
@@ -35,32 +36,37 @@ describe('handleStreamsSet', () => {
     handleStreamsSet(incomingStreamSetEvent);
 
     // Assert
-    const user = User.load(incomingStreamSetEvent.params.userId.toString());
-    assert.assertNotNull(user);
+    const account = Account.load(incomingStreamSetEvent.params.accountId.toString());
+    assert.assertNotNull(account);
 
-    const userAssetConfigId = `${incomingStreamSetEvent.params.userId.toString()}-${incomingStreamSetEvent.params.assetId.toString()}`;
-    const userAssetConfig = UserAssetConfig.load(userAssetConfigId) as UserAssetConfig;
-    assert.bigIntEquals(userAssetConfig.balance, incomingStreamSetEvent.params.balance);
+    const accountAssetConfigId = `${incomingStreamSetEvent.params.accountId.toString()}-${erc20TokenToAssetId(
+      incomingStreamSetEvent.params.erc20
+    )}`;
+    const accountAssetConfig = AccountAssetConfig.load(accountAssetConfigId) as AccountAssetConfig;
+    assert.bigIntEquals(accountAssetConfig.balance, incomingStreamSetEvent.params.balance);
     assert.bytesEquals(
-      userAssetConfig.assetConfigHash,
+      accountAssetConfig.assetConfigHash,
       incomingStreamSetEvent.params.receiversHash
     );
     assert.bigIntEquals(
-      userAssetConfig.lastUpdatedBlockTimestamp,
+      accountAssetConfig.lastUpdatedBlockTimestamp,
       incomingStreamSetEvent.block.timestamp
     );
     assert.arrayEquals(
-      userAssetConfig.streamsEntryIds.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
+      accountAssetConfig.streamsEntryIds.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
       []
     );
 
     const streamSetEventId = `${incomingStreamSetEvent.transaction.hash.toHexString()}-${incomingStreamSetEvent.logIndex.toString()}`;
     const streamSetEventEntity = StreamsSetEvent.load(streamSetEventId) as StreamsSetEvent;
     assert.stringEquals(
-      streamSetEventEntity.userId,
-      incomingStreamSetEvent.params.userId.toString()
+      streamSetEventEntity.accountId,
+      incomingStreamSetEvent.params.accountId.toString()
     );
-    assert.bigIntEquals(streamSetEventEntity.assetId, incomingStreamSetEvent.params.assetId);
+    assert.bigIntEquals(
+      streamSetEventEntity.assetId,
+      erc20TokenToAssetId(incomingStreamSetEvent.params.erc20)
+    );
     assert.bytesEquals(
       streamSetEventEntity.receiversHash,
       incomingStreamSetEvent.params.receiversHash
@@ -76,27 +82,30 @@ describe('handleStreamsSet', () => {
       incomingStreamSetEvent.block.timestamp
     );
 
-    const laststreamSetUserMappingId = incomingStreamSetEvent.params.receiversHash.toHexString();
-    const laststreamSetUserMapping = LastSetStreamUserMapping.load(
-      laststreamSetUserMappingId
-    ) as LastSetStreamUserMapping;
-    assert.stringEquals(laststreamSetUserMapping.streamsSetEventId, streamSetEventId);
+    const laststreamSetAccountMappingId = incomingStreamSetEvent.params.receiversHash.toHexString();
+    const laststreamSetAccountMapping = LastSetStreamAccountMapping.load(
+      laststreamSetAccountMappingId
+    ) as LastSetStreamAccountMapping;
+    assert.stringEquals(laststreamSetAccountMapping.streamsSetEventId, streamSetEventId);
     assert.stringEquals(
-      laststreamSetUserMapping.userId,
-      incomingStreamSetEvent.params.userId.toString()
+      laststreamSetAccountMapping.accountId,
+      incomingStreamSetEvent.params.accountId.toString()
     );
-    assert.bigIntEquals(laststreamSetUserMapping.assetId, incomingStreamSetEvent.params.assetId);
+    assert.bigIntEquals(
+      laststreamSetAccountMapping.assetId,
+      erc20TokenToAssetId(incomingStreamSetEvent.params.erc20)
+    );
   });
 
   test('should update entities as expected when mapping', () => {
     // Arrange
-    const userId = BigInt.fromI32(1);
-    const user = defaultUser(userId.toString());
-    user.save();
+    const accountId = BigInt.fromI32(1);
+    const account = defaultAccount(accountId.toString());
+    account.save();
 
     const incomingStreamSetEvent = createStreamSetEvent(
-      userId,
-      BigInt.fromI32(2),
+      accountId,
+      Address.fromString('0x20a9273a452268E5a034951ae5381a45E14aC2a3'),
       Bytes.fromUTF8('receiversHash'),
       Bytes.fromUTF8('streamHistoryHash'),
       BigInt.fromI32(3),
@@ -107,10 +116,12 @@ describe('handleStreamsSet', () => {
     const streamEntry = defaultStreamsEntry(streamEntryId);
     streamEntry.save();
 
-    const userAssetConfigId = `${incomingStreamSetEvent.params.userId.toString()}-${incomingStreamSetEvent.params.assetId.toString()}`;
-    let userAssetConfig = defaultUserAssetConfig(userAssetConfigId);
-    userAssetConfig.streamsEntryIds = [streamEntryId];
-    userAssetConfig.save();
+    const accountAssetConfigId = `${incomingStreamSetEvent.params.accountId.toString()}-${erc20TokenToAssetId(
+      incomingStreamSetEvent.params.erc20
+    )}`;
+    let accountAssetConfig = defaultAccountAssetConfig(accountAssetConfigId);
+    accountAssetConfig.streamsEntryIds = [streamEntryId];
+    accountAssetConfig.save();
 
     // Act
     handleStreamsSet(incomingStreamSetEvent);
@@ -118,28 +129,31 @@ describe('handleStreamsSet', () => {
     // Assert
     assert.assertNull(StreamsEntry.load(streamEntryId));
 
-    userAssetConfig = UserAssetConfig.load(userAssetConfigId) as UserAssetConfig;
-    assert.bigIntEquals(userAssetConfig.balance, incomingStreamSetEvent.params.balance);
+    accountAssetConfig = AccountAssetConfig.load(accountAssetConfigId) as AccountAssetConfig;
+    assert.bigIntEquals(accountAssetConfig.balance, incomingStreamSetEvent.params.balance);
     assert.bytesEquals(
-      userAssetConfig.assetConfigHash,
+      accountAssetConfig.assetConfigHash,
       incomingStreamSetEvent.params.receiversHash
     );
     assert.bigIntEquals(
-      userAssetConfig.lastUpdatedBlockTimestamp,
+      accountAssetConfig.lastUpdatedBlockTimestamp,
       incomingStreamSetEvent.block.timestamp
     );
     assert.arrayEquals(
-      userAssetConfig.streamsEntryIds.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
+      accountAssetConfig.streamsEntryIds.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
       []
     );
 
     const streamSetEventId = `${incomingStreamSetEvent.transaction.hash.toHexString()}-${incomingStreamSetEvent.logIndex.toString()}`;
     const streamSetEventEntity = StreamsSetEvent.load(streamSetEventId) as StreamsSetEvent;
     assert.stringEquals(
-      streamSetEventEntity.userId,
-      incomingStreamSetEvent.params.userId.toString()
+      streamSetEventEntity.accountId,
+      incomingStreamSetEvent.params.accountId.toString()
     );
-    assert.bigIntEquals(streamSetEventEntity.assetId, incomingStreamSetEvent.params.assetId);
+    assert.bigIntEquals(
+      streamSetEventEntity.assetId,
+      erc20TokenToAssetId(incomingStreamSetEvent.params.erc20)
+    );
     assert.bytesEquals(
       streamSetEventEntity.receiversHash,
       incomingStreamSetEvent.params.receiversHash
@@ -155,15 +169,18 @@ describe('handleStreamsSet', () => {
       incomingStreamSetEvent.block.timestamp
     );
 
-    const laststreamSetUserMappingId = incomingStreamSetEvent.params.receiversHash.toHexString();
-    const laststreamSetUserMapping = LastSetStreamUserMapping.load(
-      laststreamSetUserMappingId
-    ) as LastSetStreamUserMapping;
-    assert.stringEquals(laststreamSetUserMapping.streamsSetEventId, streamSetEventId);
+    const laststreamSetAccountMappingId = incomingStreamSetEvent.params.receiversHash.toHexString();
+    const laststreamSetAccountMapping = LastSetStreamAccountMapping.load(
+      laststreamSetAccountMappingId
+    ) as LastSetStreamAccountMapping;
+    assert.stringEquals(laststreamSetAccountMapping.streamsSetEventId, streamSetEventId);
     assert.stringEquals(
-      laststreamSetUserMapping.userId,
-      incomingStreamSetEvent.params.userId.toString()
+      laststreamSetAccountMapping.accountId,
+      incomingStreamSetEvent.params.accountId.toString()
     );
-    assert.bigIntEquals(laststreamSetUserMapping.assetId, incomingStreamSetEvent.params.assetId);
+    assert.bigIntEquals(
+      laststreamSetAccountMapping.assetId,
+      erc20TokenToAssetId(incomingStreamSetEvent.params.erc20)
+    );
   });
 });

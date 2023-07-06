@@ -2,22 +2,22 @@ import { BigInt, Bytes } from '@graphprotocol/graph-ts';
 import {
   App,
   StreamsEntry,
-  LastSetStreamUserMapping,
-  LastSetSplitsUserMapping,
-  User,
-  UserAssetConfig
+  LastSetStreamAccountMapping,
+  LastSetSplitsAccountMapping,
+  Account,
+  AccountAssetConfig
 } from '../../generated/schema';
 
-export function defaultUser(id: string): User {
-  const user = new User(id);
+export function defaultAccount(id: string): Account {
+  const account = new Account(id);
 
-  user.assetConfigs = [];
-  user.splitsEntryIds = [];
-  user.splitsEntries = [];
-  user.splitsReceiversHash = Bytes.fromUTF8('splitsReceiversHash');
-  user.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
+  account.assetConfigs = [];
+  account.splitsEntryIds = [];
+  account.splitsEntries = [];
+  account.splitsReceiversHash = Bytes.fromUTF8('splitsReceiversHash');
+  account.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
 
-  return user;
+  return account;
 }
 
 export function defaultApp(id: string): App {
@@ -32,7 +32,7 @@ export function defaultApp(id: string): App {
 export function defaultStreamsEntry(id: string): StreamsEntry {
   const streamsEntry = new StreamsEntry(id);
 
-  streamsEntry.userId = 'userId';
+  streamsEntry.accountId = 'accountId';
   streamsEntry.sender = 'sender';
   streamsEntry.senderAssetConfig = 'senderAssetConfig';
   streamsEntry.config = BigInt.fromI32(0);
@@ -40,38 +40,38 @@ export function defaultStreamsEntry(id: string): StreamsEntry {
   return streamsEntry;
 }
 
-export function defaultUserAssetConfig(id: string): UserAssetConfig {
-  const userAssetConfig = new UserAssetConfig(id);
+export function defaultAccountAssetConfig(id: string): AccountAssetConfig {
+  const accountAssetConfig = new AccountAssetConfig(id);
 
-  userAssetConfig.user = 'userId';
-  userAssetConfig.assetId = BigInt.fromI32(0);
-  userAssetConfig.streamsEntryIds = [];
-  userAssetConfig.streamsEntries = [];
-  userAssetConfig.balance = BigInt.fromI32(0);
-  userAssetConfig.assetConfigHash = Bytes.fromUTF8('assetConfigHash');
-  userAssetConfig.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
-  userAssetConfig.amountSplittable = BigInt.fromI32(0);
-  userAssetConfig.amountPostSplitCollectable = BigInt.fromI32(0);
-  userAssetConfig.amountCollected = BigInt.fromI32(0);
+  accountAssetConfig.account = 'accountId';
+  accountAssetConfig.assetId = BigInt.fromI32(0);
+  accountAssetConfig.streamsEntryIds = [];
+  accountAssetConfig.streamsEntries = [];
+  accountAssetConfig.balance = BigInt.fromI32(0);
+  accountAssetConfig.assetConfigHash = Bytes.fromUTF8('assetConfigHash');
+  accountAssetConfig.lastUpdatedBlockTimestamp = BigInt.fromI32(0);
+  accountAssetConfig.amountSplittable = BigInt.fromI32(0);
+  accountAssetConfig.amountPostSplitCollectable = BigInt.fromI32(0);
+  accountAssetConfig.amountCollected = BigInt.fromI32(0);
 
-  return userAssetConfig;
+  return accountAssetConfig;
 }
 
-export function defaultLastSetStreamsUserMapping(id: string): LastSetStreamUserMapping {
-  const lastSetStreamUserMapping = new LastSetStreamUserMapping(id);
+export function defaultLastSetStreamsAccountMapping(id: string): LastSetStreamAccountMapping {
+  const lastSetStreamAccountMapping = new LastSetStreamAccountMapping(id);
 
-  lastSetStreamUserMapping.streamsSetEventId = 'streamsSetEventId';
-  lastSetStreamUserMapping.userId = 'userId';
-  lastSetStreamUserMapping.assetId = BigInt.fromI32(0);
+  lastSetStreamAccountMapping.streamsSetEventId = 'streamsSetEventId';
+  lastSetStreamAccountMapping.accountId = 'accountId';
+  lastSetStreamAccountMapping.assetId = BigInt.fromI32(0);
 
-  return lastSetStreamUserMapping;
+  return lastSetStreamAccountMapping;
 }
 
-export function defaultLastSetSplitsUserMapping(id: string): LastSetSplitsUserMapping {
-  const lastSetSplitsUserMapping = new LastSetSplitsUserMapping(id);
+export function defaultLastSetSplitsAccountMapping(id: string): LastSetSplitsAccountMapping {
+  const lastSetSplitsAccountMapping = new LastSetSplitsAccountMapping(id);
 
-  lastSetSplitsUserMapping.splitsSetEventId = 'streamHistoryHashSetEventId';
-  lastSetSplitsUserMapping.userId = 'userId';
+  lastSetSplitsAccountMapping.splitsSetEventId = 'streamHistoryHashSetEventId';
+  lastSetSplitsAccountMapping.accountId = 'accountId';
 
-  return lastSetSplitsUserMapping;
+  return lastSetSplitsAccountMapping;
 }

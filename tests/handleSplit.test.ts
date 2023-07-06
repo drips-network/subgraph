@@ -1,9 +1,10 @@
-import { BigInt } from '@graphprotocol/graph-ts';
+import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { SplitEvent, UserAssetConfig } from '../generated/schema';
+import { SplitEvent, AccountAssetConfig } from '../generated/schema';
 import { handleSplit } from '../src/mapping';
 import { createSplit } from './helpers/eventCreators';
-import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
+import { defaultAccountAssetConfig } from './helpers/defaultEntityCreators';
+import { erc20TokenToAssetId } from '../src/utils';
 
 describe('handleSplit', () => {
   beforeEach(() => {
@@ -13,59 +14,59 @@ describe('handleSplit', () => {
   test('should create entities as expected when mapping', () => {
     // Arrange
 
-    const userId = BigInt.fromI32(1);
+    const accountId = BigInt.fromI32(1);
     const receiver = BigInt.fromI32(2);
-    const assetId = BigInt.fromI32(3);
+    const erc20 = Address.fromString('0x20a9273a452268E5a034951ae5381a45E14aC2a3');
     const amt = BigInt.fromI32(4);
 
-    const incomingSplit = createSplit(userId, receiver, assetId, amt);
+    const incomingSplit = createSplit(accountId, receiver, erc20, amt);
 
     const id =
       incomingSplit.transaction.hash.toHexString() + '-' + incomingSplit.logIndex.toString();
 
-    const splittingUserAssetConfigBefore = defaultUserAssetConfig(
-      incomingSplit.params.userId.toString() + '-' + assetId.toString()
+    const splittingAccountAssetConfigBefore = defaultAccountAssetConfig(
+      incomingSplit.params.accountId.toString() + '-' + erc20TokenToAssetId(erc20).toString()
     );
-    splittingUserAssetConfigBefore.amountSplittable = BigInt.fromI32(1000);
-    splittingUserAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(200);
-    splittingUserAssetConfigBefore.save();
+    splittingAccountAssetConfigBefore.amountSplittable = BigInt.fromI32(1000);
+    splittingAccountAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(200);
+    splittingAccountAssetConfigBefore.save();
 
-    const receivingUserAssetConfigBefore = defaultUserAssetConfig(
-      incomingSplit.params.receiver.toString() + '-' + assetId.toString()
+    const receivingAccountAssetConfigBefore = defaultAccountAssetConfig(
+      incomingSplit.params.receiver.toString() + '-' + erc20TokenToAssetId(erc20).toString()
     );
-    receivingUserAssetConfigBefore.amountSplittable = BigInt.fromI32(2000);
-    receivingUserAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(300);
-    receivingUserAssetConfigBefore.save();
+    receivingAccountAssetConfigBefore.amountSplittable = BigInt.fromI32(2000);
+    receivingAccountAssetConfigBefore.lastUpdatedBlockTimestamp = BigInt.fromI32(300);
+    receivingAccountAssetConfigBefore.save();
 
     // Act
     handleSplit(incomingSplit);
 
     // Assert
     const split = SplitEvent.load(id) as SplitEvent;
-    assert.stringEquals(split.userId, incomingSplit.params.userId.toString());
+    assert.stringEquals(split.accountId, incomingSplit.params.accountId.toString());
     assert.stringEquals(split.receiverId, incomingSplit.params.receiver.toString());
-    assert.bigIntEquals(split.assetId, incomingSplit.params.assetId);
+    assert.bigIntEquals(split.assetId, erc20TokenToAssetId(incomingSplit.params.erc20));
     assert.bigIntEquals(split.amt, incomingSplit.params.amt);
     assert.bigIntEquals(split.blockTimestamp, incomingSplit.block.timestamp);
 
-    const splittingUserAssetConfigAfter = UserAssetConfig.load(
-      userId.toString() + '-' + assetId.toString()
-    ) as UserAssetConfig;
-    assert.bigIntEquals(splittingUserAssetConfigAfter.amountSplittable, BigInt.fromI32(0));
+    const splittingAccountAssetConfigAfter = AccountAssetConfig.load(
+      accountId.toString() + '-' + erc20TokenToAssetId(erc20).toString()
+    ) as AccountAssetConfig;
+    assert.bigIntEquals(splittingAccountAssetConfigAfter.amountSplittable, BigInt.fromI32(0));
     assert.bigIntEquals(
-      splittingUserAssetConfigAfter.lastUpdatedBlockTimestamp,
+      splittingAccountAssetConfigAfter.lastUpdatedBlockTimestamp,
       incomingSplit.block.timestamp
     );
 
-    const receivingUserAssetConfigAfter = UserAssetConfig.load(
-      receiver.toString() + '-' + assetId.toString()
-    ) as UserAssetConfig;
+    const receivingAccountAssetConfigAfter = AccountAssetConfig.load(
+      receiver.toString() + '-' + erc20TokenToAssetId(erc20).toString()
+    ) as AccountAssetConfig;
     assert.bigIntEquals(
-      receivingUserAssetConfigAfter.amountSplittable,
-      receivingUserAssetConfigBefore.amountSplittable.plus(incomingSplit.params.amt)
+      receivingAccountAssetConfigAfter.amountSplittable,
+      receivingAccountAssetConfigBefore.amountSplittable.plus(incomingSplit.params.amt)
     );
     assert.bigIntEquals(
-      receivingUserAssetConfigAfter.lastUpdatedBlockTimestamp,
+      receivingAccountAssetConfigAfter.lastUpdatedBlockTimestamp,
       incomingSplit.block.timestamp
     );
   });

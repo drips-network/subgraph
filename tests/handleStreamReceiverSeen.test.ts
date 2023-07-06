@@ -1,9 +1,9 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { beforeEach, assert, clearStore, describe, test } from 'matchstick-as';
-import { StreamsEntry, StreamReceiverSeenEvent, UserAssetConfig } from '../generated/schema';
+import { StreamsEntry, StreamReceiverSeenEvent, AccountAssetConfig } from '../generated/schema';
 import { handleStreamReceiverSeen } from '../src/mapping';
 import { createStreamsReceiverSeen } from './helpers/eventCreators';
-import { defaultLastSetStreamsUserMapping } from './helpers/defaultEntityCreators';
+import { defaultLastSetStreamsAccountMapping } from './helpers/defaultEntityCreators';
 
 describe('handleStreamReceiverSeen', () => {
   beforeEach(() => {
@@ -13,19 +13,21 @@ describe('handleStreamReceiverSeen', () => {
   test('should update entities as expected when mapping', () => {
     // Arrange
     const receiversHash = Bytes.fromUTF8('receiversHash');
-    const userId = BigInt.fromI32(1);
-    const lastSetStreamsUserMapping = defaultLastSetStreamsUserMapping(receiversHash.toHexString());
-    lastSetStreamsUserMapping.userId = userId.toString();
-    lastSetStreamsUserMapping.assetId = BigInt.fromI32(2);
-    lastSetStreamsUserMapping.save();
+    const accountId = BigInt.fromI32(1);
+    const lastSetStreamsAccountMapping = defaultLastSetStreamsAccountMapping(
+      receiversHash.toHexString()
+    );
+    lastSetStreamsAccountMapping.accountId = accountId.toString();
+    lastSetStreamsAccountMapping.assetId = BigInt.fromI32(2);
+    lastSetStreamsAccountMapping.save();
 
-    const userAssetConfigId =
-      userId.toString() + '-' + lastSetStreamsUserMapping.assetId.toString();
-    let userAssetConfig = new UserAssetConfig(userAssetConfigId);
+    const accountAssetConfigId =
+      accountId.toString() + '-' + lastSetStreamsAccountMapping.assetId.toString();
+    let accountAssetConfig = new AccountAssetConfig(accountAssetConfigId);
 
     const incomingStreamsReceiverSeen = createStreamsReceiverSeen(
       receiversHash,
-      userId,
+      accountId,
       BigInt.fromI32(2)
     );
 
@@ -33,16 +35,19 @@ describe('handleStreamReceiverSeen', () => {
     handleStreamReceiverSeen(incomingStreamsReceiverSeen);
 
     // Assert
-    const streamEntryId = `${lastSetStreamsUserMapping.userId.toString()}-${incomingStreamsReceiverSeen.params.userId.toString()}-${lastSetStreamsUserMapping.assetId.toString()}`;
+    const streamEntryId = `${lastSetStreamsAccountMapping.accountId.toString()}-${incomingStreamsReceiverSeen.params.accountId.toString()}-${lastSetStreamsAccountMapping.assetId.toString()}`;
     const streamEntry = StreamsEntry.load(streamEntryId) as StreamsEntry;
-    assert.stringEquals(streamEntry.sender, lastSetStreamsUserMapping.userId.toString());
-    assert.stringEquals(streamEntry.senderAssetConfig, userAssetConfigId);
-    assert.stringEquals(streamEntry.userId, incomingStreamsReceiverSeen.params.userId.toString());
+    assert.stringEquals(streamEntry.sender, lastSetStreamsAccountMapping.accountId.toString());
+    assert.stringEquals(streamEntry.senderAssetConfig, accountAssetConfigId);
+    assert.stringEquals(
+      streamEntry.accountId,
+      incomingStreamsReceiverSeen.params.accountId.toString()
+    );
     assert.bigIntEquals(streamEntry.config, incomingStreamsReceiverSeen.params.config);
 
-    userAssetConfig = UserAssetConfig.load(userAssetConfigId) as UserAssetConfig;
+    accountAssetConfig = AccountAssetConfig.load(accountAssetConfigId) as AccountAssetConfig;
     assert.arrayEquals(
-      userAssetConfig.streamsEntryIds.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
+      accountAssetConfig.streamsEntryIds.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
       [ethereum.Value.fromString(streamEntryId)]
     );
 
@@ -52,16 +57,19 @@ describe('handleStreamReceiverSeen', () => {
     ) as StreamReceiverSeenEvent;
     assert.stringEquals(
       streamReceiverSeenEvent.streamsSetEvent,
-      lastSetStreamsUserMapping.streamsSetEventId
+      lastSetStreamsAccountMapping.streamsSetEventId
     );
     assert.bytesEquals(
       streamReceiverSeenEvent.receiversHash,
       incomingStreamsReceiverSeen.params.receiversHash
     );
-    assert.stringEquals(streamReceiverSeenEvent.senderUserId, lastSetStreamsUserMapping.userId);
     assert.stringEquals(
-      streamReceiverSeenEvent.receiverUserId,
-      incomingStreamsReceiverSeen.params.userId.toString()
+      streamReceiverSeenEvent.senderAccountId,
+      lastSetStreamsAccountMapping.accountId
+    );
+    assert.stringEquals(
+      streamReceiverSeenEvent.receiverAccountId,
+      incomingStreamsReceiverSeen.params.accountId.toString()
     );
     assert.bigIntEquals(streamReceiverSeenEvent.config, incomingStreamsReceiverSeen.params.config);
     assert.bigIntEquals(

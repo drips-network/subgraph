@@ -1,9 +1,9 @@
 import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { SplitsEntry, User } from '../generated/schema';
+import { SplitsEntry, Account } from '../generated/schema';
 import { handleSplitsReceiverSeen } from '../src/mapping';
 import { createSplitsReceiverSeen } from './helpers/eventCreators';
-import { defaultLastSetSplitsUserMapping } from './helpers/defaultEntityCreators';
+import { defaultLastSetSplitsAccountMapping } from './helpers/defaultEntityCreators';
 
 describe('handleSplitsReceiverSeen', () => {
   beforeEach(() => {
@@ -13,29 +13,34 @@ describe('handleSplitsReceiverSeen', () => {
   test('should create entities as expected when mapping', () => {
     // Arrange
     const receiversHash = Bytes.fromUTF8('receiversHash');
-    const userId = BigInt.fromI32(1);
+    const accountId = BigInt.fromI32(1);
     const weight = BigInt.fromI32(2);
 
-    const incomingSplitsReceiverSeen = createSplitsReceiverSeen(receiversHash, userId, weight);
+    const incomingSplitsReceiverSeen = createSplitsReceiverSeen(receiversHash, accountId, weight);
 
-    const lastSplitsSetUserMappingId =
+    const lastSplitsSetAccountMappingId =
       incomingSplitsReceiverSeen.params.receiversHash.toHexString();
-    const lastSplitsSetUserMapping = defaultLastSetSplitsUserMapping(lastSplitsSetUserMappingId);
-    lastSplitsSetUserMapping.save();
+    const lastSplitsSetAccountMapping = defaultLastSetSplitsAccountMapping(
+      lastSplitsSetAccountMappingId
+    );
+    lastSplitsSetAccountMapping.save();
 
     // Act
     handleSplitsReceiverSeen(incomingSplitsReceiverSeen);
 
     // Assert
-    const splitsEntryId = `${lastSplitsSetUserMapping.userId.toString()}-${incomingSplitsReceiverSeen.params.userId.toString()}`;
+    const splitsEntryId = `${lastSplitsSetAccountMapping.accountId.toString()}-${incomingSplitsReceiverSeen.params.accountId.toString()}`;
     const splitsEntry = SplitsEntry.load(splitsEntryId) as SplitsEntry;
-    assert.stringEquals(splitsEntry.sender, lastSplitsSetUserMapping.userId.toString());
-    assert.stringEquals(splitsEntry.userId, incomingSplitsReceiverSeen.params.userId.toString());
+    assert.stringEquals(splitsEntry.sender, lastSplitsSetAccountMapping.accountId.toString());
+    assert.stringEquals(
+      splitsEntry.accountId,
+      incomingSplitsReceiverSeen.params.accountId.toString()
+    );
     assert.bigIntEquals(splitsEntry.weight, incomingSplitsReceiverSeen.params.weight);
 
-    const user = User.load(lastSplitsSetUserMapping.userId.toString()) as User;
+    const account = Account.load(lastSplitsSetAccountMapping.accountId.toString()) as Account;
     assert.arrayEquals(
-      user.splitsEntries.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
+      account.splitsEntries.map<ethereum.Value>((s) => ethereum.Value.fromString(s)),
       [ethereum.Value.fromString(splitsEntryId)]
     );
   });

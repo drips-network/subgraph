@@ -19,29 +19,29 @@ dataSources:
         - name: Drips
           file: ./abis/Drips.json
       eventHandlers:
-        - event: UserMetadataEmitted(indexed uint256,indexed bytes32,bytes)
-          handler: handleUserMetadata
-        - event: Collected(indexed uint256,indexed uint256,uint128)
+        - event: AccountMetadataEmitted(indexed uint256,indexed bytes32,bytes)
+          handler: handleAccountMetadata
+        - event: Collected(indexed uint256,indexed address,uint128)
           handler: handleCollected
-        - event: StreamsSet(indexed uint256,indexed uint256,indexed bytes32,bytes32,uint128,uint32)
+        - event: StreamsSet(indexed uint256,indexed address,indexed bytes32,bytes32,uint128,uint32)
           handler: handleStreamsSet
         - event: StreamReceiverSeen(indexed bytes32,indexed uint256,uint256)
           handler: handleStreamReceiverSeen
-        - event: SqueezedStreams(indexed uint256,indexed uint256,indexed uint256,uint128,bytes32[])
+        - event: SqueezedStreams(indexed uint256,indexed address,indexed uint256,uint128,bytes32[])
           handler: handleSqueezedStreams
         - event: SplitsSet(indexed uint256,indexed bytes32)
           handler: handleSplitsSet
         - event: SplitsReceiverSeen(indexed bytes32,indexed uint256,uint32)
           handler: handleSplitsReceiverSeen
-        - event: Given(indexed uint256,indexed uint256,indexed uint256,uint128)
+        - event: Given(indexed uint256,indexed uint256,indexed address,uint128)
           handler: handleGiven
         - event: DriverRegistered(indexed uint32,indexed address)
           handler: handleAppRegistered
         - event: DriverAddressUpdated(indexed uint32,indexed address,indexed address)
           handler: handleAppAddressUpdated
-        - event: Split(indexed uint256,indexed uint256,indexed uint256,uint128)
+        - event: Split(indexed uint256,indexed uint256,indexed address,uint128)
           handler: handleSplit
-        - event: ReceivedStreams(indexed uint256,indexed uint256,uint128,uint32)
+        - event: ReceivedStreams(indexed uint256,indexed address,uint128,uint32)
           handler: handleReceivedStreams
       file: ./src/mapping.ts
   - kind: ethereum/contract

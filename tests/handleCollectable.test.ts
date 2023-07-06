@@ -1,9 +1,10 @@
-import { BigInt } from '@graphprotocol/graph-ts';
+import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, clearStore, describe, test, beforeEach } from 'matchstick-as';
-import { CollectableEvent, User, UserAssetConfig } from '../generated/schema';
+import { CollectableEvent, Account, AccountAssetConfig } from '../generated/schema';
 import { handleCollectable } from '../src/mapping';
 import { createCollectable } from './helpers/eventCreators';
-import { defaultUserAssetConfig } from './helpers/defaultEntityCreators';
+import { defaultAccountAssetConfig } from './helpers/defaultEntityCreators';
+import { erc20TokenToAssetId } from '../src/utils';
 
 describe('handleCollectable', () => {
   beforeEach(() => {
@@ -12,42 +13,49 @@ describe('handleCollectable', () => {
 
   test('should create entities as expected when mapping', () => {
     // Arrange
-    const userId = BigInt.fromI32(1);
-    const assetId = BigInt.fromI32(2);
+    const accountId = BigInt.fromI32(1);
+    const erc20 = Address.fromString('0x20a9273a452268E5a034951ae5381a45E14aC2a3');
     const amt = BigInt.fromI32(2);
 
-    const incomingCollectable = createCollectable(userId, assetId, amt);
+    const incomingCollectable = createCollectable(accountId, erc20, amt);
 
-    const userAssetConfigId = `${incomingCollectable.params.userId.toString()}-${incomingCollectable.params.assetId.toString()}`;
-    const userAssetConfigBefore = defaultUserAssetConfig(userAssetConfigId);
-    userAssetConfigBefore.amountCollected = BigInt.fromI32(10);
-    userAssetConfigBefore.amountPostSplitCollectable = BigInt.fromI32(10);
-    userAssetConfigBefore.save();
+    const accountAssetConfigId = `${incomingCollectable.params.accountId.toString()}-${erc20TokenToAssetId(
+      incomingCollectable.params.erc20
+    )}`;
+    const accountAssetConfigBefore = defaultAccountAssetConfig(accountAssetConfigId);
+    accountAssetConfigBefore.amountCollected = BigInt.fromI32(10);
+    accountAssetConfigBefore.amountPostSplitCollectable = BigInt.fromI32(10);
+    accountAssetConfigBefore.save();
 
     // Act
     handleCollectable(incomingCollectable);
 
     // Assert
-    const user = User.load(incomingCollectable.params.userId.toString()) as User;
-    assert.assertNotNull(user);
+    const account = Account.load(incomingCollectable.params.accountId.toString()) as Account;
+    assert.assertNotNull(account);
 
     const id =
       incomingCollectable.transaction.hash.toHexString() +
       '-' +
       incomingCollectable.logIndex.toString();
     const collectableEvent = CollectableEvent.load(id) as CollectableEvent;
-    assert.stringEquals(collectableEvent.user, incomingCollectable.params.userId.toString());
-    assert.bigIntEquals(collectableEvent.assetId, incomingCollectable.params.assetId);
+    assert.stringEquals(collectableEvent.account, incomingCollectable.params.accountId.toString());
+    assert.bigIntEquals(
+      collectableEvent.assetId,
+      erc20TokenToAssetId(incomingCollectable.params.erc20)
+    );
     assert.bigIntEquals(collectableEvent.amt, incomingCollectable.params.amt);
     assert.bigIntEquals(collectableEvent.blockTimestamp, incomingCollectable.block.timestamp);
 
-    const userAssetConfigAfter = UserAssetConfig.load(userAssetConfigId) as UserAssetConfig;
+    const accountAssetConfigAfter = AccountAssetConfig.load(
+      accountAssetConfigId
+    ) as AccountAssetConfig;
     assert.bigIntEquals(
-      userAssetConfigAfter.amountPostSplitCollectable,
-      userAssetConfigBefore.amountPostSplitCollectable.plus(incomingCollectable.params.amt)
+      accountAssetConfigAfter.amountPostSplitCollectable,
+      accountAssetConfigBefore.amountPostSplitCollectable.plus(incomingCollectable.params.amt)
     );
     assert.bigIntEquals(
-      userAssetConfigAfter.lastUpdatedBlockTimestamp,
+      accountAssetConfigAfter.lastUpdatedBlockTimestamp,
       incomingCollectable.block.timestamp
     );
   });

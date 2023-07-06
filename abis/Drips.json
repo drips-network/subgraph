@@ -7,6 +7,16 @@
   {
     "anonymous": false,
     "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
+      { "indexed": true, "internalType": "bytes32", "name": "key", "type": "bytes32" },
+      { "indexed": false, "internalType": "bytes", "name": "value", "type": "bytes" }
+    ],
+    "name": "AccountMetadataEmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       { "indexed": false, "internalType": "address", "name": "previousAdmin", "type": "address" },
       { "indexed": false, "internalType": "address", "name": "newAdmin", "type": "address" }
     ],
@@ -22,8 +32,8 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": false, "internalType": "uint128", "name": "amt", "type": "uint128" }
     ],
     "name": "Collectable",
@@ -32,8 +42,8 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": false, "internalType": "uint128", "name": "collected", "type": "uint128" }
     ],
     "name": "Collected",
@@ -61,9 +71,9 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "indexed": true, "internalType": "uint256", "name": "receiver", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": false, "internalType": "uint128", "name": "amt", "type": "uint128" }
     ],
     "name": "Given",
@@ -105,8 +115,8 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": false, "internalType": "uint128", "name": "amt", "type": "uint128" },
       { "indexed": false, "internalType": "uint32", "name": "receivableCycles", "type": "uint32" }
     ],
@@ -116,9 +126,9 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "indexed": true, "internalType": "uint256", "name": "receiver", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": false, "internalType": "uint128", "name": "amt", "type": "uint128" }
     ],
     "name": "Split",
@@ -128,7 +138,7 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "bytes32", "name": "receiversHash", "type": "bytes32" },
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "indexed": false, "internalType": "uint32", "name": "weight", "type": "uint32" }
     ],
     "name": "SplitsReceiverSeen",
@@ -137,7 +147,7 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "indexed": true, "internalType": "bytes32", "name": "receiversHash", "type": "bytes32" }
     ],
     "name": "SplitsSet",
@@ -146,8 +156,8 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": true, "internalType": "uint256", "name": "senderId", "type": "uint256" },
       { "indexed": false, "internalType": "uint128", "name": "amt", "type": "uint128" },
       {
@@ -164,7 +174,7 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "bytes32", "name": "receiversHash", "type": "bytes32" },
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "indexed": false, "internalType": "StreamConfig", "name": "config", "type": "uint256" }
     ],
     "name": "StreamReceiverSeen",
@@ -173,8 +183,8 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
-      { "indexed": true, "internalType": "uint256", "name": "assetId", "type": "uint256" },
+      { "indexed": true, "internalType": "uint256", "name": "accountId", "type": "uint256" },
+      { "indexed": true, "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "indexed": true, "internalType": "bytes32", "name": "receiversHash", "type": "bytes32" },
       {
         "indexed": false,
@@ -200,16 +210,6 @@
       { "indexed": true, "internalType": "address", "name": "implementation", "type": "address" }
     ],
     "name": "Upgraded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "userId", "type": "uint256" },
-      { "indexed": true, "internalType": "bytes32", "name": "key", "type": "bytes32" },
-      { "indexed": false, "internalType": "bytes", "name": "value", "type": "bytes" }
-    ],
-    "name": "UserMetadataEmitted",
     "type": "event"
   },
   {
@@ -294,11 +294,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "StreamConfig", "name": "config", "type": "uint256" }
         ],
         "internalType": "struct StreamReceiver[]",
@@ -324,7 +324,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" }
     ],
     "name": "collect",
@@ -334,7 +334,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" }
     ],
     "name": "collectable",
@@ -358,25 +358,25 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       {
         "components": [
           { "internalType": "bytes32", "name": "key", "type": "bytes32" },
           { "internalType": "bytes", "name": "value", "type": "bytes" }
         ],
-        "internalType": "struct UserMetadata[]",
-        "name": "userMetadata",
+        "internalType": "struct AccountMetadata[]",
+        "name": "accountMetadata",
         "type": "tuple[]"
       }
     ],
-    "name": "emitUserMetadata",
+    "name": "emitAccountMetadata",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "uint256", "name": "receiver", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "internalType": "uint128", "name": "amt", "type": "uint128" }
@@ -397,7 +397,7 @@
     "inputs": [
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "uint32", "name": "weight", "type": "uint32" }
         ],
         "internalType": "struct SplitsReceiver[]",
@@ -414,7 +414,7 @@
     "inputs": [
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "StreamConfig", "name": "config", "type": "uint256" }
         ],
         "internalType": "struct StreamReceiver[]",
@@ -504,7 +504,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" }
     ],
     "name": "receivableStreamsCycles",
@@ -514,7 +514,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "internalType": "uint32", "name": "maxCycles", "type": "uint32" }
     ],
@@ -525,7 +525,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "internalType": "uint32", "name": "maxCycles", "type": "uint32" }
     ],
@@ -557,10 +557,10 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "uint32", "name": "weight", "type": "uint32" }
         ],
         "internalType": "struct SplitsReceiver[]",
@@ -575,11 +575,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "StreamConfig", "name": "config", "type": "uint256" }
         ],
         "internalType": "struct StreamReceiver[]",
@@ -589,7 +589,7 @@
       { "internalType": "int128", "name": "balanceDelta", "type": "int128" },
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "StreamConfig", "name": "config", "type": "uint256" }
         ],
         "internalType": "struct StreamReceiver[]",
@@ -606,11 +606,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "uint32", "name": "weight", "type": "uint32" }
         ],
         "internalType": "struct SplitsReceiver[]",
@@ -628,10 +628,10 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       {
         "components": [
-          { "internalType": "uint256", "name": "userId", "type": "uint256" },
+          { "internalType": "uint256", "name": "accountId", "type": "uint256" },
           { "internalType": "uint32", "name": "weight", "type": "uint32" }
         ],
         "internalType": "struct SplitsReceiver[]",
@@ -649,7 +649,7 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "userId", "type": "uint256" }],
+    "inputs": [{ "internalType": "uint256", "name": "accountId", "type": "uint256" }],
     "name": "splitsHash",
     "outputs": [{ "internalType": "bytes32", "name": "currSplitsHash", "type": "bytes32" }],
     "stateMutability": "view",
@@ -657,7 +657,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" }
     ],
     "name": "splittable",
@@ -667,7 +667,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "internalType": "uint256", "name": "senderId", "type": "uint256" },
       { "internalType": "bytes32", "name": "historyHash", "type": "bytes32" },
@@ -676,7 +676,7 @@
           { "internalType": "bytes32", "name": "streamsHash", "type": "bytes32" },
           {
             "components": [
-              { "internalType": "uint256", "name": "userId", "type": "uint256" },
+              { "internalType": "uint256", "name": "accountId", "type": "uint256" },
               { "internalType": "StreamConfig", "name": "config", "type": "uint256" }
             ],
             "internalType": "struct StreamReceiver[]",
@@ -698,7 +698,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" },
       { "internalType": "uint256", "name": "senderId", "type": "uint256" },
       { "internalType": "bytes32", "name": "historyHash", "type": "bytes32" },
@@ -707,7 +707,7 @@
           { "internalType": "bytes32", "name": "streamsHash", "type": "bytes32" },
           {
             "components": [
-              { "internalType": "uint256", "name": "userId", "type": "uint256" },
+              { "internalType": "uint256", "name": "accountId", "type": "uint256" },
               { "internalType": "StreamConfig", "name": "config", "type": "uint256" }
             ],
             "internalType": "struct StreamReceiver[]",
@@ -729,7 +729,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "accountId", "type": "uint256" },
       { "internalType": "contract IERC20", "name": "erc20", "type": "address" }
     ],
     "name": "streamsState",

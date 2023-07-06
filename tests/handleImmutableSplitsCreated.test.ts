@@ -11,22 +11,22 @@ describe('handleImmutableSplitsCreated', () => {
 
   test('should create entities as expected when mapping', () => {
     // Arrange
-    const userId = BigInt.fromI32(1);
+    const accountId = BigInt.fromI32(1);
     const receiversHash = Bytes.fromUTF8('receiversHash');
 
-    const incomingCreatedSplits = createCreatedSplits(userId, receiversHash.toHexString());
+    const incomingCreatedSplits = createCreatedSplits(accountId, receiversHash.toHexString());
 
     // Act
     handleImmutableSplitsCreated(incomingCreatedSplits);
 
     // Assert
     const immutableSplitsCreated = ImmutableSplitsCreated.load(
-      `${incomingCreatedSplits.params.userId.toString()}-${incomingCreatedSplits.params.receiversHash.toHexString()}`
+      `${incomingCreatedSplits.params.accountId.toString()}-${incomingCreatedSplits.params.receiversHash.toHexString()}`
     ) as ImmutableSplitsCreated;
 
     assert.stringEquals(
-      immutableSplitsCreated.userId,
-      incomingCreatedSplits.params.userId.toString()
+      immutableSplitsCreated.accountId,
+      incomingCreatedSplits.params.accountId.toString()
     );
     assert.bytesEquals(
       immutableSplitsCreated.receiversHash,
