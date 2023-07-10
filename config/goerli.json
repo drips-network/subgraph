@@ -2,18 +2,18 @@
   "network": "goerli",
   "drips": {
     "address": "0x5304DDb08554C45bB7349644C951274cFf7Fd10A",
-    "block": 3588644
+    "block": 9000000
   },
   "nftDriver": {
     "address": "0xCB814605a1e7bB1708D7E6AAA4f4Fd917baAa49f",
-    "block": 3588644
+    "block": 9000000
   },
   "immutableSplitsDriver": {
     "address": "0x9956221470D61fc91C47700705eA6df2d7Eb776b",
-    "block": 3588644
+    "block": 9000000
   },
   "repoDriver": {
     "address": "0x654001762Ed1e067980Ad0314F9647F2691BcD97",
-    "block": 3588644
+    "block": 9000000
   }
 }

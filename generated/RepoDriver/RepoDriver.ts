@@ -712,7 +712,7 @@ export class ConstructorCall__Inputs {
     this._call = call;
   }
 
-  get _drips(): Address {
+  get drips_(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 
@@ -720,7 +720,7 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get _driverId(): BigInt {
+  get driverId_(): BigInt {
     return this._call.inputValues[2].value.toBigInt();
   }
 }

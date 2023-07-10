@@ -14,6 +14,7 @@ type AccountMetadataEvent @entity {
   lastUpdatedBlockTimestamp: BigInt!
 }
 
+# TODO: rename to AddressAccount
 type Account @entity {
   id: ID! # the accountId
   assetConfigs: [AccountAssetConfig!]! @derivedFrom(field: "account")
@@ -23,6 +24,7 @@ type Account @entity {
   lastUpdatedBlockTimestamp: BigInt!
 }
 
+# TODO: rename to AddressAccountAssetConfig
 type AccountAssetConfig @entity {
   id: ID! # the accountId + "-" + assetId
   account: Account!
