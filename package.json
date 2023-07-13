@@ -4,7 +4,8 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy:ethereum": "yarn prepare:ethereum && graph deploy --product hosted-service drips-network-dev/drips-v2-on-ethereum",
+    "deploy:ethereum": "yarn prepare:ethereum && graph deploy --product hosted-service drips-network-dev/drips-on-ethereum",
+    "deploy:ethereum-lts": "yarn prepare:ethereum-lts && graph deploy --product hosted-service drips-network-dev/drips-v2-on-ethereum",
     "deploy:ethereum-pre-prod": "yarn prepare:ethereum-pre-prod && graph deploy --product hosted-service drips-network-dev/drips-v2-on-ethereum-pre-prod",
     "deploy:sepolia": "yarn prepare:sepolia && graph deploy --studio drips-v2-on-sepolia",
     "deploy:goerli": "yarn prepare:goerli && graph deploy --studio drips-v2-on-goerli",
@@ -13,6 +14,7 @@
     "remove-local": "graph remove drips-subgraph-local --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy drips-subgraph-local --node http://127.0.0.1:8020 --ipfs http://127.0.0.1:5001",
     "prepare:ethereum": "mustache config/ethereum.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:ethereum-lts": "mustache config/ethereum-lts.json subgraph.template.yaml > subgraph.yaml",
     "prepare:ethereum-pre-prod": "mustache config/ethereum-pre-prod.json subgraph.template.yaml > subgraph.yaml",
     "prepare:sepolia": "mustache config/sepolia.json subgraph.template.yaml > subgraph.yaml",
     "prepare:goerli": "mustache config/goerli.json subgraph.template.yaml > subgraph.yaml",
