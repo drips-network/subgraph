@@ -1,19 +1,19 @@
 {
   "network": "sepolia",
   "drips": {
-    "address": "0x3E9A943C73125187f62c073F0f42b8E17Cce37AF",
+    "address": "0x74A32a38D945b9527524900429b083547DeB9bF4",
     "block": 3800000
   },
   "nftDriver": {
-    "address": "0x5C9D6b1b95Cc17D671fCA26CcdeD99f861631039",
+    "address": "0xdC773a04C0D6EFdb80E7dfF961B6a7B063a28B44",
     "block": 3800000
   },
   "immutableSplitsDriver": {
-    "address": "0x92DbEc2E7481e35c6AFE6559bB9c07f985Efd530",
+    "address": "0xC3C1955bb50AdA4dC8a55aBC6d4d2a39242685c1",
     "block": 3800000
   },
   "repoDriver": {
-    "address": "0x3E2887E3E156332BE1439be4b8F50FbB1C607CaC",
+    "address": "0xa71bdf410D48d4AA9aE1517A69D7E1Ef0c179b2B",
     "block": 3800000
   }
 }
