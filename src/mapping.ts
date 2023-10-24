@@ -473,11 +473,19 @@ export function handleAppAddressUpdated(event: DriverAddressUpdated): void {
 
 export function handleNFTSubAccountTransfer(event: Transfer): void {
   const id = event.params.tokenId.toString();
+
   let nftSubAccount = NFTSubAccount.load(id);
   if (!nftSubAccount) {
     nftSubAccount = new NFTSubAccount(id);
   }
+
+  // If the from address is zero, this is a mint.
+  if (event.params.from == Address.zero()) {
+    nftSubAccount.originalOwnerAddress = event.params.to;
+  }
+
   nftSubAccount.ownerAddress = event.params.to;
+
   nftSubAccount.save();
 }
 

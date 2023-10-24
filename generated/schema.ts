@@ -2031,6 +2031,23 @@ export class NFTSubAccount extends Entity {
   set ownerAddress(value: Bytes) {
     this.set("ownerAddress", Value.fromBytes(value));
   }
+
+  get originalOwnerAddress(): Bytes | null {
+    let value = this.get("originalOwnerAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set originalOwnerAddress(value: Bytes | null) {
+    if (!value) {
+      this.unset("originalOwnerAddress");
+    } else {
+      this.set("originalOwnerAddress", Value.fromBytes(<Bytes>value));
+    }
+  }
 }
 
 export class ImmutableSplitsCreated extends Entity {
