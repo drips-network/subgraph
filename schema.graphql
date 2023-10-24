@@ -169,6 +169,7 @@ type App @entity {
 type NFTSubAccount @entity {
   id: ID! # the NFT token ID
   ownerAddress: Bytes!
+  originalOwnerAddress: Bytes
 }
 
 type ImmutableSplitsCreated @entity {
