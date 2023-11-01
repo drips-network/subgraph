@@ -1,15 +1,19 @@
 {
   "network": "mainnet",
-  "radicleRegistry": {
-    "address": "0x40e9340BE9326b2e026fDBEfe775F1515939bD46",
-    "block": 13802593 
+  "drips": {
+    "address": "0xd0Dd053392db676D57317CD4fe96Fc2cCf42D0b4",
+    "block": 16840977
   },
-  "daiDripsHub": {
-    "address": "0x73043143e0a6418cc45d82d4505b096b802fd365",
-    "block": 13799866
+  "nftDriver": {
+    "address": "0xcf9c49B0962EDb01Cdaa5326299ba85D72405258",
+    "block": 16840977
   },
-  "metaData": {
-    "address": "0x1C465B0249Fb7c92896709768b9d4aBD0135DBc9",
-    "block": 13799866
+  "immutableSplitsDriver": {
+    "address": "0x1212975c0642B07F696080ec1916998441c2b774",
+    "block": 16840977
+  },
+  "repoDriver": {
+    "address": "0x770023d55D09A9C110694827F1a6B32D5c2b373E",
+    "block": 16840977
   }
 }

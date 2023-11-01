@@ -3,103 +3,106 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: MetaData
-    network: {{network}}
+    name: Drips
+    network: {{ network }}
     source:
-      address: "{{metaData.address}}"
-      abi: MetaData
-      startBlock: {{metaData.block}}
+      address: '{{drips.address}}'
+      abi: Drips
+      startBlock: {{ drips.block }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - IdentityMetaData
+        - Drips
       abis:
-        - name: MetaData
-          file: ./abis/MetaData.json
+        - name: Drips
+          file: ./abis/Drips.json
       eventHandlers:
-        - event: MultiHash(indexed address,indexed bytes32,bytes)
-          handler: handleIdentityMetaData
-      file: ./src/mapping.ts
-  - kind: ethereum/contract
-    name: RadicleRegistry
-    network: {{network}}
-    source:
-      address: "{{radicleRegistry.address}}"
-      abi: RadicleRegistry
-      startBlock: {{radicleRegistry.block}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - FundingProject
-      abis:
-        - name: RadicleRegistry
-          file: ./abis/RadicleRegistry.json
-        - name: DripsToken
-          file: ./abis/DripsToken.json
-      eventHandlers:
-        - event: NewProject(address,indexed address,indexed address,string)
-          handler: handleNewProject
-      file: ./src/mapping.ts
-  - kind: ethereum/contract
-    name: DaiDripsHub
-    network: {{network}}
-    source:
-      address: "{{daiDripsHub.address}}"
-      abi: DaiDripsHub
-      startBlock: {{daiDripsHub.block}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - DaiDripsHub
-      abis:
-        - name: DaiDripsHub
-          file: ./abis/DaiDripsHub.json
-      eventHandlers:
-        - event: Collected(indexed address,uint128,uint128)
+        - event: AccountMetadataEmitted(indexed uint256,indexed bytes32,bytes)
+          handler: handleAccountMetadata
+        - event: Collected(indexed uint256,indexed address,uint128)
           handler: handleCollected
-        - event: SplitsUpdated(indexed address,(address,uint32)[])
-          handler: handleSplitsUpdated
-        - event: DripsUpdated(indexed address,uint128,(address,uint128)[])
-          handler: handleDripsUpdated
-        - event: DripsUpdated(indexed address,indexed uint256,uint128,(address,uint128)[])
-          handler: handleDripsUpdatedWithAccount
-        - event: Given(indexed address,indexed address,uint128)
-          handler: handleGive
-        - event: Given(indexed address,indexed uint256,indexed address,uint128)
-          handler: handleGiveWithAccount
+        - event: StreamsSet(indexed uint256,indexed address,indexed bytes32,bytes32,uint128,uint32)
+          handler: handleStreamsSet
+        - event: StreamReceiverSeen(indexed bytes32,indexed uint256,uint256)
+          handler: handleStreamReceiverSeen
+        - event: SqueezedStreams(indexed uint256,indexed address,indexed uint256,uint128,bytes32[])
+          handler: handleSqueezedStreams
+        - event: SplitsSet(indexed uint256,indexed bytes32)
+          handler: handleSplitsSet
+        - event: SplitsReceiverSeen(indexed bytes32,indexed uint256,uint32)
+          handler: handleSplitsReceiverSeen
+        - event: Given(indexed uint256,indexed uint256,indexed address,uint128)
+          handler: handleGiven
+        - event: DriverRegistered(indexed uint32,indexed address)
+          handler: handleAppRegistered
+        - event: DriverAddressUpdated(indexed uint32,indexed address,indexed address)
+          handler: handleAppAddressUpdated
+        - event: Split(indexed uint256,indexed uint256,indexed address,uint128)
+          handler: handleSplit
+        - event: ReceivedStreams(indexed uint256,indexed address,uint128,uint32)
+          handler: handleReceivedStreams
       file: ./src/mapping.ts
-templates:
   - kind: ethereum/contract
-    name: DripsToken
-    network: {{network}}
+    name: NFTDriver
+    network: {{ network }}
     source:
-      abi: DripsToken
+      address: '{{nftDriver.address}}'
+      abi: NFTDriver
+      startBlock: {{ nftDriver.block }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
-      file: ./src/funding.ts
       entities:
-        - FundingProject
-        - TokenType
-        - Token
+        - NFTDriver
       abis:
-        - name: DripsToken
-          file: ./abis/DripsToken.json
+        - name: NFTDriver
+          file: ./abis/NFTDriver.json
       eventHandlers:
-        - event: NewType(indexed uint128,uint64,uint128,bool,string)
-          handler: handleNewType
-        - event: NewStreamingToken(indexed uint256,indexed address,indexed uint128,uint128,uint128)
-          handler: handleNewStreamingToken
-        - event: NewToken(indexed uint256,indexed address,indexed uint128,uint128)
-          handler: handleNewToken
         - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-        - event: NewContractURI(string)
-          handler: handleNewContractURI
+          handler: handleNFTSubAccountTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: ImmutableSplitsDriver
+    network: {{ network }}
+    source:
+      address: '{{immutableSplitsDriver.address}}'
+      abi: ImmutableSplitsDriver
+      startBlock: {{ immutableSplitsDriver.block }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ImmutableSplitsDriver
+      abis:
+        - name: ImmutableSplitsDriver
+          file: ./abis/ImmutableSplitsDriver.json
+      eventHandlers:
+        - event: CreatedSplits(indexed uint256,indexed bytes32)
+          handler: handleImmutableSplitsCreated
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: RepoDriver
+    network: {{ network }}
+    source:
+      address: '{{repoDriver.address}}'
+      abi: RepoDriver
+      startBlock: {{ repoDriver.block }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - RepoDriver
+      abis:
+        - name: RepoDriver
+          file: ./abis/RepoDriver.json
+      eventHandlers:
+        - event: OwnerUpdateRequested(indexed uint256,uint8,bytes)
+          handler: handleOwnerUpdateRequested
+        - event: OwnerUpdated(indexed uint256,address)
+          handler: handleOwnerUpdated
+      file: ./src/repoDriverHandlers.ts

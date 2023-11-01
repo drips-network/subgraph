@@ -1,98 +1,188 @@
-type FundingProject @entity {
-  id: ID! # the NFT Registry Address (ERC-721 address)
-  projectName: String
-  projectOwner: Bytes! # address
-  dripsTokenTemplate: Bytes! # addess of ERC-721 contract used
-  blockTimestampCreated: BigInt!
-  daiCollected: BigInt!
-  daiSplit: BigInt!
-  tokenTypes: [TokenType!]! @derivedFrom(field: "fundingProject")
-  tokens: [Token!]! @derivedFrom(field: "fundingProject")
-  ipfsHash: String
-}
-
-type TokenType @entity {
-  id: ID! # the ERC-721 address + "-" + the tokenID
-  tokenRegistryAddress: Bytes!
-  tokenTypeId: BigInt!
-  streaming: Boolean!
-  limit: BigInt!
-  minAmtPerSec: BigInt!
-  fundingProject: FundingProject!
-  ipfsHash: String
-  currentTotalAmtPerSec: BigInt!
-  currentTotalGiven: BigInt!
-}
-
-type Token @entity {
-  id: ID! # the tokenId
-  tokenId: BigInt!
-  tokenRegistryAddress: Bytes!
-  tokenType: TokenType!
-  tokenReceiver: Bytes! # address
-  rank: BigInt!
-  amtPerSec: BigInt!
-  giveAmt: BigInt!
-  fundingProject: FundingProject!
-}
-
-type DripsConfig @entity {
-  id: ID! # user
+type AccountMetadataByKey @entity {
+  id: ID! # accountId + "-" + key
+  accountId: String!
+  key: Bytes!
+  value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
-  dripsEntryIDs: [String!]!
-  dripsEntries: [DripsEntry!]! @derivedFrom(field: "dripsConfig")
-  dripsAccount: [DripsAccount!]! @derivedFrom(field: "dripsConfig")
-  balance: BigInt! # the balance of the main account (for detailed sub-account balances, query DripsAccount)
 }
 
-type DripsAccount @entity {
-  id: ID! # user + ["-" + account if present]
+type AccountMetadataEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String!
+  key: Bytes!
+  value: Bytes!
   lastUpdatedBlockTimestamp: BigInt!
-  dripsConfig: DripsConfig!
-  dripsEntries: [DripsEntry!]! @derivedFrom(field: "dripsAccount")
-  isAccountDrip: Boolean! # true if this is a sub-account
-  account: BigInt! # the sub-account (if isAccountDrip == true)
+}
+
+# TODO: rename to AddressAccount
+type Account @entity {
+  id: ID! # the accountId
+  assetConfigs: [AccountAssetConfig!]! @derivedFrom(field: "account")
+  splitsEntryIds: [String!]!
+  splitsEntries: [SplitsEntry!]! @derivedFrom(field: "sender")
+  splitsReceiversHash: Bytes!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
+# TODO: rename to AddressAccountAssetConfig
+type AccountAssetConfig @entity {
+  id: ID! # the accountId + "-" + assetId
+  account: Account!
+  assetId: BigInt!
+  streamsEntryIds: [String!]!
+  streamsEntries: [StreamsEntry!]! @derivedFrom(field: "senderAssetConfig")
+  balance: BigInt! # the account's balance for the asset at last top-up
+  assetConfigHash: Bytes!
+  amountSplittable: BigInt!
+  amountPostSplitCollectable: BigInt!
+  amountCollected: BigInt!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
+type StreamsSetEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String! # the accountId of the sender
+  assetId: BigInt!
+  receiversHash: Bytes! # the hash of the receivers list
+  streamReceiverSeenEvents: [StreamReceiverSeenEvent!]! @derivedFrom(field: "streamsSetEvent")
+  streamsHistoryHash: Bytes! # the history hash of this streams-set for squeezing
   balance: BigInt!
+  blockTimestamp: BigInt!
+  maxEnd: BigInt!
 }
 
-type DripsEntry @entity {
-  id: ID! # user + "-" + receiver + ["-" + account if present]
-  user: Bytes! # the user's address
-  dripsConfig: DripsConfig!
-  dripsAccount: DripsAccount!
-  isAccountDrip: Boolean! # true if this is an account Drip, false otherwise
-  account: BigInt! # the user's account
-  receiver: Bytes! # the receiver's address
-  amtPerSec: BigInt!
+type LastSetStreamAccountMapping @entity {
+  id: ID! # receiversHash
+  streamsSetEventId: String! # the ID of the last StreamsSetEvent that was created with this receiversHash
+  accountId: String! # the last accountId that SetStreams was called for with this receiversHash
+  assetId: BigInt! # the last assetId that SetStreams was called for with this receiversHash
 }
 
-type SplitsConfig @entity {
-  id: ID! # user
-  lastUpdatedBlockTimestamp: BigInt!
-  receiverAddresses: [String!]!
-  splitsEntries: [SplitsEntry!]! @derivedFrom(field: "splitsConfig")
+type StreamReceiverSeenEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  streamsSetEvent: StreamsSetEvent!
+  receiversHash: Bytes!
+  senderAccountId: String!
+  receiverAccountId: String! # the receiver's accountId
+  config: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type StreamsEntry @entity {
+  id: ID! # sender's accountId + "-" + receiver's accountId + "-" + assetId
+  sender: Account!
+  senderAssetConfig: AccountAssetConfig!
+  accountId: String! # the receiver's accountId
+  config: BigInt!
+}
+
+type ReceivedStreamsEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String! # the sender's accountId
+  assetId: BigInt!
+  amt: BigInt!
+  receivableCycles: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type SqueezedStreamsEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String! # the sender's accountId
+  assetId: BigInt!
+  senderId: String!
+  amt: BigInt!
+  blockTimestamp: BigInt!
+  streamsHistoryHashes: [Bytes!]!
+}
+
+type SplitsSetEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String! # the accountId of the sender
+  receiversHash: Bytes! # the hash of the receivers list
+  splitsReceiverSeenEvents: [SplitsReceiverSeenEvent!]! @derivedFrom(field: "splitsSetEvent")
+  blockTimestamp: BigInt!
+}
+
+type LastSetSplitsAccountMapping @entity {
+  id: ID! # receiversHash
+  splitsSetEventId: String! # the ID of the last SplitsSetEvent that was created with this receiversHash
+  accountId: String! # the last accountId that SetSplits was called for with this receiversHash
+}
+
+type SplitsReceiverSeenEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  splitsSetEvent: SplitsSetEvent!
+  receiversHash: Bytes!
+  senderAccountId: String! # the sender's accountId
+  receiverAccountId: String! # the receiver's accountId
+  weight: BigInt!
+  blockTimestamp: BigInt!
 }
 
 type SplitsEntry @entity {
-  id: ID! # user + "-" + receiver
-  splitsConfig: SplitsConfig!
-  sender: Bytes! # the user's address
-  receiver: Bytes! # the receiver's address
+  id: ID! # sender's accountId + "-" + receiver's accountId
+  sender: Account!
+  accountId: String! # the receiver's accountId
   weight: BigInt!
 }
 
-type Give @entity {
-  id: ID! # the transaction hash
-  sender: Bytes!
-  isAccountGive: Boolean! # true if this is a sub-account
-  account: BigInt! # the sub-account (if isAccountDrip == true)
-  receiver: Bytes!
-  amount: BigInt!
-  blockTimestampGiven: BigInt!
+type SplitEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String! # the sender's accountId
+  receiverId: String! # the receiver's accountId
+  assetId: BigInt!
+  amt: BigInt!
+  blockTimestamp: BigInt!
 }
 
-type IdentityMetaData @entity {
-  id: ID! # the address
-  key: Bytes!
-  multiHash: Bytes!
+type CollectableEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  account: Account!
+  assetId: BigInt!
+  amt: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type CollectedEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  account: Account!
+  assetId: BigInt!
+  collected: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type GivenEvent @entity {
+  id: ID! # event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  accountId: String!
+  receiverAccountId: String! # the receiver's accountId
+  assetId: BigInt!
+  amt: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type App @entity {
+  id: ID! # the appId
+  appAddress: Bytes!
+  lastUpdatedBlockTimestamp: BigInt!
+}
+
+type NFTSubAccount @entity {
+  id: ID! # the NFT token ID
+  ownerAddress: Bytes!
+  originalOwnerAddress: Bytes
+}
+
+type ImmutableSplitsCreated @entity {
+  id: ID! # accountId + "-" + receiversHash
+  accountId: String!
+  receiversHash: Bytes!
+}
+
+type RepoAccount @entity {
+  id: ID! # the accountId
+  name: String! # The name of the repository.
+  forge: BigInt!
+  status: String # null, 'CLAIMED' or 'OWNER_UPDATE_REQUESTED'.
+  ownerAddress: String
+  lastUpdatedBlockTimestamp: BigInt!
 }

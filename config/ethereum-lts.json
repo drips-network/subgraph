@@ -1,0 +1,19 @@
+{
+  "network": "mainnet",
+  "drips": {
+    "address": "0x157b4bb9Cf784A34F4aBa8e6dC54f67e9bc01653",
+    "block": 16840977
+  },
+  "nftDriver": {
+    "address": "0xB404D5A09F99D6B48b436EbA28c224F4B48Cc9d8",
+    "block": 16840977
+  },
+  "immutableSplitsDriver": {
+    "address": "0xC6A0f06d06e9DC29a7A33EebA16d77131DAB3599",
+    "block": 16840977
+  },
+  "repoDriver": {
+    "address": "0x93c8761e5Fc46763b8006B14EAFF66E9940014D6",
+    "block": 16840977
+  }
+}

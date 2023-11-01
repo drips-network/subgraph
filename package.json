@@ -4,23 +4,40 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ drips-subgraph-mainnet-v2",
-    "deploy:dev": "graph deploy --product hosted-service evvvritt/drips-dev",
-    "deploy:ethereum": "yarn prepare:ethereum && graph deploy --product hosted-service gh0stwheel/drips-on-ethereum",
-    "deploy:rinkeby": "yarn prepare:rinkeby && graph deploy --product hosted-service gh0stwheel/drips-on-rinkeby",
-    "deploy:matic": "yarn prepare:matic && graph deploy --product hosted-service gh0stwheel/drips-on-matic",
-    "deploy:mumbai": "yarn prepare:mumbai && graph deploy --product hosted-service gh0stwheel/drips-on-mumbai",
-    "create-local": "graph create --node http://localhost:8020/ drips-subgraph-mainnet-v2",
-    "remove-local": "graph remove --node http://localhost:8020/ drips-subgraph-mainnet-v2",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 drips-subgraph-mainnet-v2",
+    "deploy:ethereum": "yarn prepare:ethereum && graph deploy --product hosted-service drips-network-dev/drips-on-ethereum",
+    "deploy:ethereum-lts": "yarn prepare:ethereum-lts && graph deploy --product hosted-service drips-network-dev/drips-v2-on-ethereum",
+    "deploy:ethereum-pre-prod": "yarn prepare:ethereum-pre-prod && graph deploy --product hosted-service drips-network-dev/drips-v2-on-ethereum-pre-prod",
+    "deploy:sepolia": "yarn prepare:sepolia && graph deploy --studio drips-v2-on-sepolia",
+    "deploy:goerli": "yarn prepare:goerli && graph deploy --studio drips-v2-on-goerli",
+    "deploy:sepolia-staging": "yarn prepare:sepolia && graph deploy --product hosted-service jtourkos/drips-v2-on-sepolia-staging",
+    "create-local": "graph create drips-subgraph-local --node http://127.0.0.1:8020",
+    "remove-local": "graph remove drips-subgraph-local --node http://127.0.0.1:8020",
+    "deploy-local": "graph deploy drips-subgraph-local --node http://127.0.0.1:8020 --ipfs http://127.0.0.1:5001",
     "prepare:ethereum": "mustache config/ethereum.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:rinkeby": "mustache config/rinkeby.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:matic": "mustache config/matic.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:mumbai": "mustache config/mumbai.json subgraph.template.yaml > subgraph.yaml"
+    "prepare:ethereum-lts": "mustache config/ethereum-lts.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:ethereum-pre-prod": "mustache config/ethereum-pre-prod.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:sepolia": "mustache config/sepolia.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:goerli": "mustache config/goerli.json subgraph.template.yaml > subgraph.yaml",
+    "lint": "prettier --plugin-search-dir . --check . && eslint .",
+    "format": "prettier --plugin-search-dir . --write .",
+    "test": "graph test",
+    "test:coverage": "graph test -- -c"
   },
-  "dependencies": {
-    "@graphprotocol/graph-cli": "0.26.0",
-    "@graphprotocol/graph-ts": "^0.24.1",
-    "mustache": "^4.2.0"
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.48.0",
+    "@graphprotocol/graph-ts": "^0.29.3",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "matchstick-as": "^0.5.0",
+    "mustache": "^4.2.0",
+    "prettier": "^2.8.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

@@ -4,6 +4,10 @@ node_modules
 subgraph.yaml
 build
 
+tests/.bin
+
+.vscode/
+
 # Log files
 npm-debug.log*
 yarn-debug.log*
