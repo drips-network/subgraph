@@ -8,7 +8,7 @@ Drips is a part of the [Radicle](https://radicle.xyz/) ecosystem of projects. Se
 
 ## How To Use This Repository
 
-Most end users and developers building on Drips will not have a reason to clone or fork this repository. For details on how to access the public subgraph endpoints maintained by the Drips team, please see [here](https://v2.docs.drips.network/docs/for-developers/smart-contract-and-subgraph-details).
+Most end users and developers building on Drips will not have a reason to clone or fork this repository. For details on how to access the public subgraph endpoints maintained by the Drips team, please see [here](https://docs.drips.network/the-protocol/smart-contract-details/#subgraph-details).
 
 However, for contributors to the Drips protocol, the following commands may be helpful if you wish to make changes to this repository:
 
