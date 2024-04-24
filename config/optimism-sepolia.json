@@ -1,0 +1,19 @@
+{
+  "network": "optimism-sepolia",
+  "drips": {
+    "address": "0x74A32a38D945b9527524900429b083547DeB9bF4",
+    "block": 10872697
+  },
+  "nftDriver": {
+    "address": "0xdC773a04C0D6EFdb80E7dfF961B6a7B063a28B44",
+    "block": 10872697
+  },
+  "immutableSplitsDriver": {
+    "address": "0xC3C1955bb50AdA4dC8a55aBC6d4d2a39242685c1",
+    "block": 10872697
+  },
+  "repoDriver": {
+    "address": "0xa71bdf410D48d4AA9aE1517A69D7E1Ef0c179b2B",
+    "block": 10872697
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "network": "polygon-amoy",
+  "drips": {
+    "address": "0xeebCd570e50fa31bcf6eF10f989429C87C3A6981",
+    "block": 6056524
+  },
+  "nftDriver": {
+    "address": "0xDafd9Ab96E62941808caa115D184D30A200FA777",
+    "block": 6056524
+  },
+  "immutableSplitsDriver": {
+    "address": "0x65A48270e51A7aa901fD8fc42ab9cDddb50aff05",
+    "block": 6056524
+  },
+  "repoDriver": {
+    "address": "0x54372850Db72915Fd9C5EC745683EB607b4a8642",
+    "block": 6056524
+  }
+}
